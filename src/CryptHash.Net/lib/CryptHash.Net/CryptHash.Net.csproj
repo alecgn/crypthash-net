@@ -11,6 +11,8 @@
     <PackageTags>encryption decryption cryptography aes aes256 hash md5 sha1 sha256 sha384 sha512 bcrypt c# c-sharp security password</PackageTags>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/alecgn/crypthash-net</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
