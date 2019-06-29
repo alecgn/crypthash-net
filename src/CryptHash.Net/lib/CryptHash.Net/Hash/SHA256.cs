@@ -9,7 +9,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace CryptHash.Core.Hash
+namespace CryptHash.Net.Hash
 {
     public static class SHA256
     {

@@ -1,4 +1,10 @@
-﻿namespace CryptHash.Net.Encryption.AES.EncryptionResults
+﻿/*
+ *      Alessandro Cagliostro, 2019
+ *      
+ *      https://github.com/alecgn
+ */
+
+namespace CryptHash.Net.Encryption.AES.EncryptionResults
 {
     public class AesEncryptionResult
     {

@@ -1,4 +1,10 @@
-﻿using System.Security.Cryptography;
+﻿/*
+ *      Alessandro Cagliostro, 2019
+ *      
+ *      https://github.com/alecgn
+ */
+
+using System.Security.Cryptography;
 
 namespace CryptHash.Net.Encryption.AES.Enums
 {

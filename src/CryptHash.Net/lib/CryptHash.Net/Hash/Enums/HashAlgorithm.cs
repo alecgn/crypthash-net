@@ -4,7 +4,7 @@
  *      https://github.com/alecgn
  */
 
-namespace CryptHash.Core.Hash
+namespace CryptHash.Net.Hash.Enums
 {
     public enum HashAlgorithm { MD5, SHA1, SHA256, SHA384, SHA512, BCrypt }
 }

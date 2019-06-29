@@ -1,4 +1,10 @@
-﻿using CryptHash.Net.Encryption.AES.EncryptionResults;
+﻿/*
+ *      Alessandro Cagliostro, 2019
+ *      
+ *      https://github.com/alecgn
+ */
+
+using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Encryption.Utils;
 using System;
 using System.Linq;
