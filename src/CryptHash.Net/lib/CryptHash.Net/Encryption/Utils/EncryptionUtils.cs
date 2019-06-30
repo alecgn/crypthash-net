@@ -4,6 +4,10 @@
  *      https://github.com/alecgn
  */
 
+using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Cryptography;
 
 namespace CryptHash.Net.Encryption.Utils
@@ -33,6 +37,36 @@ namespace CryptHash.Net.Encryption.Utils
             }
 
             return bytes;
+        }
+
+        public static byte[] ConvertSecureStringToByteArray(SecureString secString)
+        {
+            byte[] byteArray = new byte[secString.Length];
+            IntPtr bstr = IntPtr.Zero;
+
+            RuntimeHelpers.ExecuteCodeWithGuaranteedCleanup(
+                    delegate
+                    {
+                        RuntimeHelpers.PrepareConstrainedRegions();
+                        try { }
+                        finally
+                        {
+                            bstr = Marshal.SecureStringToBSTR(secString);
+                        }
+
+                        Marshal.Copy(bstr, byteArray, 0, secString.Length);
+                    },
+                    delegate
+                    {
+                        if (bstr != IntPtr.Zero)
+                        {
+                            Marshal.ZeroFreeBSTR(bstr);
+                            bstr = IntPtr.Zero;
+                        }
+                    },
+                    null);
+
+            return byteArray;
         }
     }
 }
