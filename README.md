@@ -22,10 +22,6 @@ Video reference for basic usage: https://www.youtube.com/watch?v=ScX_dOnVwEU (vi
 Publish it yourself using the following dotnet client command-line:
 
 >**dotnet publish -c Release -r \<RID\>**
-
-**RID LIST**
-(https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
-
 --------------------------------------------------
 **WINDOWS RIDs**
 
@@ -130,3 +126,8 @@ Publish it yourself using the following dotnet client command-line:
 - osx.10.11-x64
 - osx.10.12-x64 (.NET Core 1.1 or later versions)
 - osx.10.13-x64
+
+--------------------------------------------------
+
+**Complete RID LIST**
+(https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
