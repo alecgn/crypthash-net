@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 
 namespace CryptHash.Net.Encryption.AES.Base
 {
+    // not using "abstract" keyword to allow direct use/instantiation of this class, case desired...
     public class AesBase
     {
         private int _keyBitSize;
