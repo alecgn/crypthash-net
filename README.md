@@ -1,5 +1,6 @@
 # CryptHash.NET
 ### A .NET Standard Library and .NET Core Console Application utility for encryption/decryption and hashing.
+### *** This is still a work in progress, no release yet. ***
 
 This utility is designed to run in Windows, Linux and Mac, for text and files symmetric encryption/decryption (authenticated or not), and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
 
