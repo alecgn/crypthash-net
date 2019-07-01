@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -67,6 +68,41 @@ namespace CryptHash.Net.Encryption.Utils
                     null);
 
             return byteArray;
+        }
+
+        public static void ClearFileAttributes(string filePath)
+        {
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException($"File {filePath} not found.", nameof(filePath));
+
+            File.SetAttributes(filePath, FileAttributes.Normal);
+        }
+
+        public static byte[] CalculateFileSignature(string filePath, byte[] key, int bytesToIgnore = 0)
+        {
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException($"File \"{filePath}\" not found.", filePath);
+            }
+
+            if (key != null && key.Length <= 0)
+            {
+                throw new ArgumentException("Key invalid.", nameof(key));
+            }
+
+            byte[] fileSignature = null;
+
+            using (HMACSHA256 hmacsha256 = new HMACSHA256(key))
+            {
+                using (FileStream fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    fStream.Seek(bytesToIgnore, SeekOrigin.Begin);
+                    fileSignature = hmacsha256.ComputeHash(fStream);
+                    fStream.Close();
+                }
+            }
+
+            return fileSignature;
         }
     }
 }
