@@ -182,7 +182,7 @@ namespace CryptHash.Net.Encryption.AES
 
             try
             {
-                var stringToDecryptBytes = Encoding.UTF8.GetBytes(stringToDecrypt);
+                var stringToDecryptBytes = Convert.FromBase64String(stringToDecrypt);
                 var passwordBytes = Encoding.UTF8.GetBytes(password);
 
                 return DecryptString(stringToDecryptBytes, passwordBytes);
