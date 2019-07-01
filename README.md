@@ -8,7 +8,7 @@ This utility is designed to run in Windows, Linux and Mac, for text and files sy
 Currently supported symmetric encryption algorithm is: **AES 256 bits** in **CBC Mode** with **Salt**. If you choose to use authentication, **HMAC-SHA256** or **HMAC-SHA512** can be used, using the **Encrypt-then-MAC (EtM)** strategy.  
 This lib is ready for **AES GCM** encryption, we're just waiting the launch of .NET Standard 2.1.
 
-Currently supported hash algorithms are: **MD5**, **SHA1**, **SHA256**, **SHA384**, **SHA512** and **BCrypt**.
+Currently supported hash algorithms are: **MD5**, **SHA1**, **SHA256**, **SHA384**, **SHA512**, **BCrypt** and **PBKDF2** (Password-Based Key Derivation Function).
 
 Other encryption/hashing algorithms will be implemented in the future.
 
