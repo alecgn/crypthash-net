@@ -41,262 +41,331 @@ namespace CryptHash.Net.Encryption.AES
         public AES_256_CBC(byte[] key, byte[] IV)
             : base(_keyBitSize, key, _blockBitSize, IV, _cipherMode, _paddingMode, _feedbackSize) { }
 
-        public AesEncryptionResult EncryptString(string stringToEncrypt, string password)
-        {
-            if (string.IsNullOrWhiteSpace(stringToEncrypt))
-            {
-                throw new ArgumentException("String to encrypt required.", nameof(stringToEncrypt));
-            }
+        //public AesEncryptionResult EncryptString(string stringToEncrypt, string password)
+        //{
+        //    if (string.IsNullOrWhiteSpace(stringToEncrypt))
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to encrypt required."
+        //        };
+        //    }
 
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new ArgumentException("Password required.", nameof(password));
-            }
+        //    if (string.IsNullOrWhiteSpace(password))
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "Password required."
+        //        };
+        //    }
 
-            try
-            {
-                var stringToEncryptBytes = Encoding.UTF8.GetBytes(stringToEncrypt);
-                var passwordBytes = Encoding.UTF8.GetBytes(password);
+        //    try
+        //    {
+        //        var stringToEncryptBytes = Encoding.UTF8.GetBytes(stringToEncrypt);
+        //        var passwordBytes = Encoding.UTF8.GetBytes(password);
 
-                return EncryptString(stringToEncryptBytes, passwordBytes);
-            }
-            catch (Exception ex)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = ex.ToString(),
-                    EncryptedDataBytes = null,
-                    EncryptedDataString = null
-                };
-            }
-        }
+        //        return EncryptString(stringToEncryptBytes, passwordBytes);
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-        public AesEncryptionResult EncryptString(string stringToEncrypt, SecureString secStrPassword)
-        {
-            if (string.IsNullOrWhiteSpace(stringToEncrypt))
-            {
-                throw new ArgumentException("String to encrypt required.", nameof(stringToEncrypt));
-            }
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Error while trying to encrypt data:\n{ex.ToString()}"
+        //        };
+        //    }
+        //}
 
-            if (secStrPassword.Length <= 0)
-            {
-                throw new ArgumentException("SecureString length cannot be less or equal zero.", nameof(secStrPassword));
-            }
+        //public AesEncryptionResult EncryptString(string stringToEncrypt, SecureString secStrPassword)
+        //{
+        //    if (string.IsNullOrWhiteSpace(stringToEncrypt))
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to encrypt required."
+        //        };
+        //    }
 
-            byte[] passwordBytes = null;
+        //    if (secStrPassword.Length <= 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "SecureString length cannot be less or equal zero."
+        //        };
+        //    }
 
-            try
-            {
-                var stringToEncryptBytes = Encoding.UTF8.GetBytes(stringToEncrypt);
+        //    byte[] passwordBytes = null;
 
-                //using (secStrPassword)
-                //{
-                    passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
-                //}
+        //    try
+        //    {
+        //        var stringToEncryptBytes = Encoding.UTF8.GetBytes(stringToEncrypt);
 
-                return EncryptString(stringToEncryptBytes, passwordBytes);
-            }
-            catch (Exception ex)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = ex.ToString(),
-                    EncryptedDataBytes = null,
-                    EncryptedDataString = null
-                };
-            }
-            finally
-            {
-                if (passwordBytes != null)
-                {
-                    Array.Clear(passwordBytes, 0, passwordBytes.Length);
-                    passwordBytes = null;
-                }
-            }
-        }
+        //        //using (secStrPassword)
+        //        //{
+        //            passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+        //        //}
 
-        public AesEncryptionResult EncryptString(byte[] stringToEncryptBytes, byte[] passwordBytes)
-        {
-            if (stringToEncryptBytes == null || stringToEncryptBytes.Length == 0)
-            {
-                throw new ArgumentException("String to encrypt required.", nameof(stringToEncryptBytes));
-            }
+        //        return EncryptString(stringToEncryptBytes, passwordBytes);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Error while trying to encrypt data:\n{ex.ToString()}"
+        //        };
+        //    }
+        //    finally
+        //    {
+        //        if (passwordBytes != null)
+        //        {
+        //            Array.Clear(passwordBytes, 0, passwordBytes.Length);
+        //            passwordBytes = null;
+        //        }
+        //    }
+        //}
 
-            if (passwordBytes == null || passwordBytes.Length == 0)
-            {
-                throw new ArgumentException("Password required.", nameof(passwordBytes));
-            }
+        //public AesEncryptionResult EncryptString(byte[] stringToEncryptBytes, byte[] passwordBytes, byte[] salt = null, byte[] IV = null)
+        //{
+        //    if (stringToEncryptBytes == null || stringToEncryptBytes.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to encrypt required."
+        //        };
+        //    }
 
-            try
-            {
-                byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+        //    if (passwordBytes == null || passwordBytes.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "Password required."
+        //        };
+        //    }
 
-                // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] key = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, _keyBytesLength, salt, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+        //    try
+        //    {
+        //        if (salt == null || salt.Length == 0)
+        //        {
+        //            salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+        //        }
 
-                var aesEncryptionResult = base.EncryptWithMemoryStream(stringToEncryptBytes, _keyBitSize, key, _blockBitSize, null, _cipherMode, _paddingMode, _feedbackSize);
+        //        // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
+        //        byte[] key = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, _keyBytesLength, salt, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
-                if (aesEncryptionResult.Success)
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        using (var bw = new BinaryWriter(ms))
-                        {
-                            bw.Write(salt);
-                            bw.Write(aesEncryptionResult.IVOrNonce);
-                            bw.Write(aesEncryptionResult.EncryptedDataBytes);
-                        }
+        //        var aesEncryptionResult = base.EncryptWithMemoryStream(stringToEncryptBytes, _keyBitSize, key, _blockBitSize, null, _cipherMode, _paddingMode, _feedbackSize);
 
-                        aesEncryptionResult.EncryptedDataBytes = ms.ToArray();
-                        aesEncryptionResult.EncryptedDataString = Convert.ToBase64String(aesEncryptionResult.EncryptedDataBytes);
-                    }
-                }
+        //        if (aesEncryptionResult.Success)
+        //        {
+        //            //using (var ms = new MemoryStream())
+        //            //{
+        //                //using (var bw = new BinaryWriter(ms))
+        //                //{
+        //                    //bw.Write(salt);
+        //                    //bw.Write(aesEncryptionResult.IVOrNonce);
+        //                    //bw.Write(aesEncryptionResult.EncryptedDataBytes);
+        //                //}
 
-                return aesEncryptionResult;
-            }
-            catch (Exception ex)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = ex.ToString(),
-                    EncryptedDataBytes = null,
-                    EncryptedDataString = null
-                };
-            }
-        }
+        //                //aesEncryptionResult.EncryptedDataBytes = ms.ToArray();
+        //                aesEncryptionResult.EncryptedDataBase64String = Convert.ToBase64String(aesEncryptionResult.EncryptedDataBytes);
+        //                aesEncryptionResult.Salt = salt;
+        //            //}
+        //        }
 
-        public AesEncryptionResult DecryptString(string stringToDecrypt, string password)
-        {
-            if (string.IsNullOrWhiteSpace(stringToDecrypt))
-            {
-                throw new ArgumentException("String to decrypt required.", nameof(stringToDecrypt));
-            }
+        //        return aesEncryptionResult;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Error while trying to encrypt data:\n{ex.ToString()}"
+        //        };
+        //    }
+        //}
 
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new ArgumentException("Password required.", nameof(password));
-            }
+        //public AesEncryptionResult DecryptString(string stringToDecrypt, string password)
+        //{
+        //    if (string.IsNullOrWhiteSpace(stringToDecrypt))
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to decrypt required."
+        //        };
+        //    }
 
-            try
-            {
-                var stringToDecryptBytes = Convert.FromBase64String(stringToDecrypt);
-                var passwordBytes = Encoding.UTF8.GetBytes(password);
+        //    if (string.IsNullOrWhiteSpace(password))
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "Password required."
+        //        };
+        //    }
 
-                return DecryptString(stringToDecryptBytes, passwordBytes);
-            }
-            catch (Exception ex)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = ex.ToString(),
-                    DecryptedDataBytes = null,
-                    DecryptedDataString = null
-                };
-            }
-        }
+        //    try
+        //    {
+        //        var stringToDecryptBytes = Convert.FromBase64String(stringToDecrypt);
+        //        var passwordBytes = Encoding.UTF8.GetBytes(password);
 
-        public AesEncryptionResult DecryptString(string stringToDecrypt, SecureString secStrPassword)
-        {
-            if (string.IsNullOrWhiteSpace(stringToDecrypt))
-            {
-                throw new ArgumentException("String to decrypt required.", nameof(stringToDecrypt));
-            }
+        //        return DecryptString(stringToDecryptBytes, passwordBytes);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
+        //        };
+        //    }
+        //}
 
-            if (secStrPassword.Length <= 0)
-            {
-                throw new ArgumentException("SecureString length cannot be less or equal zero.", nameof(secStrPassword));
-            }
+        //public AesEncryptionResult DecryptString(string stringToDecrypt, SecureString secStrPassword)
+        //{
+        //    if (string.IsNullOrWhiteSpace(stringToDecrypt))
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to decrypt required."
+        //        };
+        //    }
 
-            byte[] passwordBytes = null;
+        //    if (secStrPassword.Length <= 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "SecureString length cannot be less or equal zero."
+        //        };
+        //    }
 
-            try
-            {
-                var stringToDecryptBytes = Convert.FromBase64String(stringToDecrypt);
+        //    byte[] passwordBytes = null;
 
-                //using (secStrPassword)
-                //{
-                    passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
-                //}
+        //    try
+        //    {
+        //        var stringToDecryptBytes = Convert.FromBase64String(stringToDecrypt);
 
-                return DecryptString(stringToDecryptBytes, passwordBytes);
-            }
-            catch (Exception ex)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = ex.ToString(),
-                    DecryptedDataBytes = null,
-                    DecryptedDataString = null
-                };
-            }
-            finally
-            {
-                if (passwordBytes != null)
-                {
-                    Array.Clear(passwordBytes, 0, passwordBytes.Length);
-                    passwordBytes = null;
-                }
-            }
-        }
+        //        //using (secStrPassword)
+        //        //{
+        //            passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+        //        //}
 
-        public AesEncryptionResult DecryptString(byte[] stringToDecryptBytes, byte[] passwordBytes)
-        {
-            if (stringToDecryptBytes == null || stringToDecryptBytes.Length == 0)
-            {
-                throw new ArgumentException("String to decrypt required.", nameof(stringToDecryptBytes));
-            }
+        //        return DecryptString(stringToDecryptBytes, passwordBytes);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
+        //        };
+        //    }
+        //    finally
+        //    {
+        //        if (passwordBytes != null)
+        //        {
+        //            Array.Clear(passwordBytes, 0, passwordBytes.Length);
+        //            passwordBytes = null;
+        //        }
+        //    }
+        //}
 
-            if (passwordBytes == null || passwordBytes.Length == 0)
-            {
-                throw new ArgumentException("Password required.", nameof(stringToDecryptBytes));
-            }
+        //public AesEncryptionResult DecryptString(byte[] stringToDecryptBytes, byte[] passwordBytes, byte[] IV, byte[] salt)
+        //{
+        //    if (stringToDecryptBytes == null || stringToDecryptBytes.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to decrypt required."
+        //        };
+        //    }
 
-            try
-            {
-                byte[] salt = new byte[_saltBytesLength];
-                Array.Copy(stringToDecryptBytes, 0, salt, 0, salt.Length);
+        //    if (passwordBytes == null || passwordBytes.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "Password required."
+        //        };
+        //    }
 
-                // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] key = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, _keyBytesLength, salt, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+        //    if (IV == null || IV.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "IV required."
+        //        };
+        //    }
 
-                byte[] IV = new byte[_IVBytesLength];
-                Array.Copy(stringToDecryptBytes, salt.Length, IV, 0, IV.Length);
+        //    if (salt == null || salt.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "Salt required."
+        //        };
+        //    }
 
-                byte[] encryptedStringData = new byte[(stringToDecryptBytes.Length - salt.Length - IV.Length)];
-                Array.Copy(stringToDecryptBytes, (salt.Length + IV.Length), encryptedStringData, 0, encryptedStringData.Length);
+        //    try
+        //    {
+        //        //byte[] salt = new byte[_saltBytesLength];
+        //        //Array.Copy(stringToDecryptBytes, 0, salt, 0, salt.Length);
 
-                var aesDecriptionResult = base.DecryptWithMemoryStream(encryptedStringData, _keyBitSize, key, _blockBitSize, IV, _cipherMode, _paddingMode, _feedbackSize);
+        //        // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
+        //        byte[] key = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, _keyBytesLength, salt, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
-                if (aesDecriptionResult.Success)
-                    aesDecriptionResult.DecryptedDataString = Encoding.UTF8.GetString(aesDecriptionResult.DecryptedDataBytes);
+        //        byte[] IV = new byte[_IVBytesLength];
+        //        Array.Copy(stringToDecryptBytes, salt.Length, IV, 0, IV.Length);
 
-                return aesDecriptionResult;
-            }
-            catch (Exception ex)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = ex.ToString(),
-                    DecryptedDataBytes = null,
-                    DecryptedDataString = null
-                };
-            }
-        }
+        //        byte[] encryptedStringData = new byte[(stringToDecryptBytes.Length - salt.Length - IV.Length)];
+        //        Array.Copy(stringToDecryptBytes, (salt.Length + IV.Length), encryptedStringData, 0, encryptedStringData.Length);
 
-        public AesEncryptionResult EncryptFile()
-        {
-            return base.EncryptWithFileStream();
-        }
+        //        var aesDecriptionResult = base.DecryptWithMemoryStream(encryptedStringData, _keyBitSize, key, _blockBitSize, IV, _cipherMode, _paddingMode, _feedbackSize);
 
-        public AesEncryptionResult DecryptFile()
-        {
-            return base.DecryptWithFileStream();
-        }
+        //        if (aesDecriptionResult.Success)
+        //            aesDecriptionResult.DecryptedDataString = Encoding.UTF8.GetString(aesDecriptionResult.DecryptedDataBytes);
+
+        //        return aesDecriptionResult;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = ex.ToString(),
+        //            DecryptedDataBytes = null,
+        //            DecryptedDataString = null
+        //        };
+        //    }
+        //}
+
+        //public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
+        //{
+
+        //    byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+
+        //    // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
+        //    byte[] key = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, _keyBytesLength, salt, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+
+        //    return base.EncryptWithFileStream(sourceFilePath, encryptedFilePath, _keyBitSize, key, _blockBitSize);
+        //}
+
+        //public AesEncryptionResult DecryptFile()
+        //{
+        //    return base.DecryptWithFileStream();
+        //}
+
+
     }
 }
