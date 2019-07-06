@@ -13,8 +13,7 @@ using System.Security.Cryptography;
 
 namespace CryptHash.Net.Encryption.AES.Base
 {
-    // not using "abstract" keyword to allow direct use/instantiation of this base class, case desired...
-    public class AesBase
+    public abstract class AesBase
     {
         #region events
 
@@ -27,42 +26,33 @@ namespace CryptHash.Net.Encryption.AES.Base
 
         #region fields
 
-        private int _keyBitSize;
         private byte[] _key;
-        private int _blockBitSize;
         private byte[] _IV;
         private CipherMode _cipherMode;
         private PaddingMode _paddingMode;
-        private int _feedbackBitSize;
-        private static readonly int[] _allowedKeyBitSizes = new int[] { 128, 192, 256 };
-        private static readonly int _allowedBlockBitSize = 128;
-        private static readonly int _allowedIVBitSize = 128;
 
         #endregion fields
 
 
         #region constructors
 
-        public AesBase() { }
+        internal AesBase() { }
 
-        public AesBase(int keyBitSize, byte[] key, int blockBitSize, byte[] IV, CipherMode cipherMode, PaddingMode paddingMode, int feedbackBitSize)
+        internal AesBase(byte[] key, byte[] IV, CipherMode cipherMode, PaddingMode paddingMode)
         {
-            _keyBitSize = keyBitSize;
             _key = key;
-            _blockBitSize = blockBitSize;
             _IV = IV;
             _cipherMode = cipherMode;
             _paddingMode = paddingMode;
-            _feedbackBitSize = feedbackBitSize;
         }
 
         #endregion constructors
 
 
-        #region public methods
+        #region internal methods
 
-        public AesEncryptionResult EncryptWithMemoryStream(byte[] sourceData, byte[] key = null, byte[] IV = null, CipherMode cipherMode = CipherMode.CBC, 
-            PaddingMode paddingMode = PaddingMode.PKCS7, int keyBitSize = 256, int blockBitSize = 128, int feedbackBitSize = 128)
+        internal AesEncryptionResult EncryptWithMemoryStream(byte[] sourceData, byte[] key = null, byte[] IV = null, CipherMode cipherMode = CipherMode.CBC, 
+            PaddingMode paddingMode = PaddingMode.PKCS7)
         {
             if (sourceData == null || sourceData.Length == 0)
             {
@@ -73,55 +63,10 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            if (key != null)
-            {
-                if (!_allowedKeyBitSizes.Contains((key.Length * 8)))
-                {
-                    return new AesEncryptionResult()
-                    {
-                        Success = false,
-                        Message = $"Key bit size ({(key.Length * 8)}) invalid. Must be one of the following: ({string.Join(",", _allowedKeyBitSizes)})."
-                    };
-                }
-            }
-
-            if (IV != null)
-            {
-                if ((IV.Length * 8) != _allowedIVBitSize)
-                {
-                    return new AesEncryptionResult()
-                    {
-                        Success = false,
-                        Message = $"IV bit size ({(IV.Length * 8)}) invalid. Must be: ({_allowedIVBitSize})."
-                    };
-                }
-            }
-
-            if (!_allowedKeyBitSizes.Contains(keyBitSize))
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Key bit size ({keyBitSize}) invalid. Must be one of the following: ({string.Join(",", _allowedKeyBitSizes)})."
-                };
-            }
-
-            if (blockBitSize != _allowedBlockBitSize)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Block bit size ({blockBitSize} invalid. Must be: ({_allowedBlockBitSize})."
-                };
-            }
-
             _key = key;
             _IV = IV;
             _cipherMode = cipherMode;
             _paddingMode = paddingMode;
-            _keyBitSize = keyBitSize;
-            _blockBitSize = blockBitSize;
-            _feedbackBitSize = feedbackBitSize;
 
             byte[] encryptedData = null;
 
@@ -135,7 +80,18 @@ namespace CryptHash.Net.Encryption.AES.Base
                         _key = aesManaged.Key;
                     }
                     else
-                        aesManaged.Key = _key;
+                    {
+                        if (aesManaged.ValidKeySize((_key.Length * 8)))
+                            aesManaged.Key = _key;
+                        else
+                        {
+                            return new AesEncryptionResult()
+                            {
+                                Success = false,
+                                Message = $"Invalid key bit size ({(_key.Length * 8)})."
+                            };
+                        }
+                    }
 
                     if (_IV == null)
                     {
@@ -147,9 +103,6 @@ namespace CryptHash.Net.Encryption.AES.Base
 
                     aesManaged.Mode = _cipherMode;
                     aesManaged.Padding = _paddingMode;
-                    aesManaged.KeySize = _keyBitSize;
-                    aesManaged.BlockSize = _blockBitSize;
-                    aesManaged.FeedbackSize = _feedbackBitSize;
 
                     using (var encryptor = aesManaged.CreateEncryptor(_key, _IV))
                     {
@@ -187,8 +140,8 @@ namespace CryptHash.Net.Encryption.AES.Base
             };
         }
 
-        public AesEncryptionResult DecryptWithMemoryStream(byte[] encryptedData, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC, 
-            PaddingMode paddingMode = PaddingMode.PKCS7, int keyBitSize = 256, int blockBitSize = 128, int feedbackBitSize = 128)
+        internal AesEncryptionResult DecryptWithMemoryStream(byte[] encryptedData, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC, 
+            PaddingMode paddingMode = PaddingMode.PKCS7)
         {
             if (encryptedData == null || encryptedData.Length == 0)
             {
@@ -199,58 +152,28 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            if (key == null || key.Length == 0)
+            if (key == null)
             {
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Key cannot be null or 0 bytes."
+                    Message = "Key cannot be null."
                 };
             }
 
-            if (IV == null || IV.Length == 0)
+            if (IV == null)
             {
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "IV cannot be null or 0 bytes."
+                    Message = "IV cannot be null."
                 };
             }
-
-            //if (!_allowedKeyBitSizes.Contains(keyBitSize))
-            //{
-            //    return new AesEncryptionResult()
-            //    {
-            //        Success = false,
-            //        Message = $"Key bit size ({keyBitSize} invalid. Must be one of the following: ({string.Join(",", _allowedKeyBitSizes)}).)"
-            //    };
-            //}
-
-            //if (blockBitSize != _allowedBlockBitSize)
-            //{
-            //    return new AesEncryptionResult()
-            //    {
-            //        Success = false,
-            //        Message = $"Block bit size ({blockBitSize} invalid. Must be: ({_allowedBlockBitSize}).)"
-            //    };
-            //}
-
-            //if (cipherMode.Equals(CipherMode.CFB) && blockBitSize == _allowedBlockBitSize && feedbackBitSize != _allowedBlockBitSize)
-            //{
-            //    return new AesEncryptionResult()
-            //    {
-            //        Success = false,
-            //        Message = $"Feedback bit size ({feedbackBitSize} invalid when using CFB mode and block bit size ({_allowedBlockBitSize}). Must be: ({_allowedBlockBitSize}).)"
-            //    };
-            //}
 
             _key = key;
             _IV = IV;
             _cipherMode = cipherMode;
             _paddingMode = paddingMode;
-            _keyBitSize = keyBitSize;
-            _blockBitSize = blockBitSize;
-            _feedbackBitSize = feedbackBitSize;
 
             byte[] decryptedData = null;
 
@@ -258,13 +181,20 @@ namespace CryptHash.Net.Encryption.AES.Base
             {
                 using (AesManaged aesManaged = new AesManaged())
                 {
-                    aesManaged.KeySize = _keyBitSize;
-                    aesManaged.Key = _key;
-                    aesManaged.BlockSize = _blockBitSize;
+                    if (aesManaged.ValidKeySize((_key.Length * 8)))
+                        aesManaged.Key = _key;
+                    else
+                    {
+                        return new AesEncryptionResult()
+                        {
+                            Success = false,
+                            Message = $"Invalid key bit size ({(_key.Length * 8)})."
+                        };
+                    }
+
                     aesManaged.IV = _IV;
                     aesManaged.Mode = _cipherMode;
                     aesManaged.Padding = _paddingMode;
-                    aesManaged.FeedbackSize = _feedbackBitSize;
 
                     using (var decryptor = aesManaged.CreateDecryptor(_key, _IV))
                     {
@@ -301,8 +231,9 @@ namespace CryptHash.Net.Encryption.AES.Base
                 IVOrNonce = _IV
             };
         }
-        
-        public AesEncryptionResult EncryptWithFileStream(string sourceFilePath, string encryptedFilePath, int keyBitSize, byte[] key, int blockBitSize, byte[] IV, CipherMode cipherMode, PaddingMode paddingMode, int feedbackBitSize, bool deleteSourceFile = false, int kBbufferSize = 4)
+
+        internal AesEncryptionResult EncryptWithFileStream(string sourceFilePath, string encryptedFilePath, byte[] key = null, byte[] IV = null, CipherMode cipherMode = CipherMode.CBC, 
+            PaddingMode paddingMode = PaddingMode.PKCS7, bool deleteSourceFile = false, int kBbufferSize = 4)
         {
             if (!File.Exists(sourceFilePath))
             {
@@ -333,40 +264,10 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            //if (!_allowedKeyBitSizes.Contains(keyBitSize))
-            //{
-            //    return new AesEncryptionResult()
-            //    {
-            //        Success = false,
-            //        Message = $"Key bit size ({keyBitSize}) invalid. Must be one of the following: ({string.Join(",", _allowedKeyBitSizes)})."
-            //    };
-            //}
-
-            //if (blockBitSize != _allowedBlockBitSize)
-            //{
-            //    return new AesEncryptionResult()
-            //    {
-            //        Success = false,
-            //        Message = $"Block bit size ({blockBitSize} invalid. Must be: ({_allowedBlockBitSize}).)"
-            //    };
-            //}
-
-            //if (cipherMode.Equals(CipherMode.CFB) && blockBitSize == _allowedBlockBitSize && feedbackBitSize != _allowedBlockBitSize)
-            //{
-            //    return new AesEncryptionResult()
-            //    {
-            //        Success = false,
-            //        Message = $"Feedback bit size ({feedbackBitSize} invalid when using CFB mode and block bit size ({_allowedBlockBitSize}). Must be: ({_allowedBlockBitSize}).)"
-            //    };
-            //}
-
-            _keyBitSize = keyBitSize;
             _key = key;
-            _blockBitSize = blockBitSize;
             _IV = IV;
             _cipherMode = cipherMode;
             _paddingMode = paddingMode;
-            _feedbackBitSize = feedbackBitSize;
 
             bool pathsEqual = encryptedFilePath.Equals(sourceFilePath, StringComparison.InvariantCultureIgnoreCase);
 
@@ -374,17 +275,24 @@ namespace CryptHash.Net.Encryption.AES.Base
             {
                 using (var aesManaged = new AesManaged())
                 {
-                    aesManaged.KeySize = _keyBitSize;
-
-                    if (_key == null || _key.Length == 0)
+                    if (_key == null)
                     {
                         aesManaged.GenerateKey();
                         _key = aesManaged.Key;
                     }
                     else
-                        aesManaged.Key = _key;
-
-                    aesManaged.BlockSize = _blockBitSize;
+                    {
+                        if (aesManaged.ValidKeySize((_key.Length * 8)))
+                            aesManaged.Key = _key;
+                        else
+                        {
+                            return new AesEncryptionResult()
+                            {
+                                Success = false,
+                                Message = $"Invalid key bit size ({(_key.Length * 8)})."
+                            };
+                        }
+                    }
 
                     if (_IV == null || _IV.Length == 0)
                     {
@@ -396,7 +304,6 @@ namespace CryptHash.Net.Encryption.AES.Base
 
                     aesManaged.Mode = _cipherMode;
                     aesManaged.Padding = _paddingMode;
-                    aesManaged.FeedbackSize = _feedbackBitSize;
 
                     using (var encryptor = aesManaged.CreateEncryptor(_key, _IV))
                     {
@@ -416,7 +323,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                                         cs.Write(buffer, 0, read);
 
                                         int percentageDone = (int)(sourceFs.Position * 100 / sourceFs.Length);
-                                        RaiseOnEncryptionProgress(percentageDone, $"{percentageDone}% encrypted{(percentageDone != 100 ? "..." : ".")}");
+                                        RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? $"Encrypting ({percentageDone}%)..." : $"Encrypted ({percentageDone}%)."));
                                     }
                                 }
                             }
@@ -458,7 +365,8 @@ namespace CryptHash.Net.Encryption.AES.Base
             }
         }
 
-        public AesEncryptionResult DecryptWithFileStream(string encryptedFilePath, string decryptedFilePath, int keyBitSize, byte[] key, int blockBitSize, byte[] IV, CipherMode cipherMode, PaddingMode paddingMode, int feedbackBitSize, bool deleteEncryptedFile = false, int kBbufferSize = 4)
+        internal AesEncryptionResult DecryptWithFileStream(string encryptedFilePath, string decryptedFilePath, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC, 
+            PaddingMode paddingMode = PaddingMode.PKCS7, bool deleteEncryptedFile = false, int kBbufferSize = 4)
         {
             if (!File.Exists(encryptedFilePath))
             {
@@ -489,40 +397,28 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            //if (!_allowedKeyBitSizes.Contains(keyBitSize))
-            //{
-            //    return new AesEncryptionResult()
-            //    {
-            //        Success = false,
-            //        Message = $"Key bit size ({keyBitSize}) invalid. Must be one of the following: ({string.Join(",", _allowedKeyBitSizes)})."
-            //    };
-            //}
+            if (key == null)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Key cannot be null."
+                };
+            }
 
-            //if (blockBitSize != _allowedBlockBitSize)
-            //{
-            //    return new AesEncryptionResult()
-            //    {
-            //        Success = false,
-            //        Message = $"Block bit size ({blockBitSize} invalid. Must be: ({_allowedBlockBitSize}).)"
-            //    };
-            //}
+            if (IV == null)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "IV cannot be null."
+                };
+            }
 
-            //if (cipherMode.Equals(CipherMode.CFB) && blockBitSize == _allowedBlockBitSize && feedbackBitSize != _allowedBlockBitSize)
-            //{
-            //    return new AesEncryptionResult()
-            //    {
-            //        Success = false,
-            //        Message = $"Feedback bit size ({feedbackBitSize} invalid when using CFB mode and block bit size ({_allowedBlockBitSize}). Must be: ({_allowedBlockBitSize}).)"
-            //    };
-            //}
-
-            _keyBitSize = keyBitSize;
             _key = key;
-            _blockBitSize = blockBitSize;
             _IV = IV;
             _cipherMode = cipherMode;
             _paddingMode = paddingMode;
-            _feedbackBitSize = feedbackBitSize;
 
             bool pathsEqual = decryptedFilePath.Equals(encryptedFilePath, StringComparison.InvariantCultureIgnoreCase);
 
@@ -530,13 +426,10 @@ namespace CryptHash.Net.Encryption.AES.Base
             {
                 using (var aesManaged = new AesManaged())
                 {
-                    aesManaged.KeySize = _keyBitSize;
                     aesManaged.Key = _key;
-                    aesManaged.BlockSize = _blockBitSize;
                     aesManaged.IV = _IV;
                     aesManaged.Mode = _cipherMode;
                     aesManaged.Padding = _paddingMode;
-                    aesManaged.FeedbackSize = _feedbackBitSize;
 
                     using (FileStream decryptedFs = File.Open((pathsEqual ? decryptedFilePath + "_tmp" : decryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
                     {
@@ -556,7 +449,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                                         cs.Write(buffer, 0, read);
 
                                         int percentageDone = (int)(encryptedFs.Position * 100 / encryptedFs.Length);
-                                        RaiseOnEncryptionProgress(percentageDone, $"{percentageDone}% decrypted{(percentageDone != 100 ? "..." : ".")}");
+                                        RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? $"Decrypting ({percentageDone}%)..." : $"Decrypted ({percentageDone}%)."));
                                     }
                                 }
                             }
@@ -598,17 +491,17 @@ namespace CryptHash.Net.Encryption.AES.Base
             }
         }
 
-        #endregion public methods
+        #endregion internal methods
 
 
         #region private methods
 
-        private void RaiseOnEncryptionMessage(string message)
+        internal void RaiseOnEncryptionMessage(string message)
         {
             OnEncryptionMessage?.Invoke(message);
         }
 
-        private void RaiseOnEncryptionProgress(int percentageDone, string message)
+        internal void RaiseOnEncryptionProgress(int percentageDone, string message)
         {
             OnEncryptionProgress?.Invoke(percentageDone, message);
         }

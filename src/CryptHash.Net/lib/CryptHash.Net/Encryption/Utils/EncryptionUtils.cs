@@ -35,16 +35,16 @@ namespace CryptHash.Net.Encryption.Utils
         }
 
         // waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-        public static byte[] GetBytesFromPBKDF2(byte[] passwordBytes, int keyBytesLength, byte[] saltBytes, int iterations/*, HashAlgorithmName hashAlgorithmName*/)
+        public static byte[] GetBytesFromPBKDF2(byte[] passwordBytes, byte[] saltBytes, int keyBytesLength, int iterations/*, HashAlgorithmName hashAlgorithmName*/)
         {
-            byte[] bytes;
+            byte[] pbkdf2HashedBytes;
 
-            using (var PBKDF2 = new Rfc2898DeriveBytes(passwordBytes, saltBytes, iterations/*, hashAlgorithmName*/))
+            using (var pbkdf2 = new Rfc2898DeriveBytes(passwordBytes, saltBytes, iterations/*, hashAlgorithmName*/))
             {
-                bytes = PBKDF2.GetBytes(keyBytesLength);
+                pbkdf2HashedBytes = pbkdf2.GetBytes(keyBytesLength);
             }
 
-            return bytes;
+            return pbkdf2HashedBytes;
         }
 
         public static byte[] ConvertSecureStringToByteArray(SecureString secString)
@@ -85,34 +85,56 @@ namespace CryptHash.Net.Encryption.Utils
             File.SetAttributes(filePath, FileAttributes.Normal);
         }
 
-        public static byte[] CalculateFileSignature(string filePath, byte[] key, int bytesToIgnore = 0)
+        public static byte[] CalculateHMACSHA256FromFile(string filePath, byte[] authKey, int bytesToIgnore = 0)
         {
             if (!File.Exists(filePath))
             {
                 throw new FileNotFoundException($"File \"{filePath}\" not found.", filePath);
             }
 
-            if (key != null && key.Length <= 0)
+            if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Key invalid.", nameof(key));
+                throw new ArgumentException("Invalid auth key.", nameof(authKey));
             }
 
-            byte[] fileSignature = null;
+            byte[] tag = null;
 
-            using (HMACSHA256 hmacsha256 = new HMACSHA256(key))
+            using (HMACSHA256 hmacsha256 = new HMACSHA256(authKey))
             {
                 using (FileStream fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     fStream.Seek(bytesToIgnore, SeekOrigin.Begin);
-                    fileSignature = hmacsha256.ComputeHash(fStream);
+                    tag = hmacsha256.ComputeHash(fStream);
                     fStream.Close();
                 }
             }
 
-            return fileSignature;
+            return tag;
         }
 
-        public static void WriteSignatureToFile(string filePath, byte[] fileSignature, int kBbufferSize = 4)
+        public static byte[] CalculateHMACSHA256FromDataBytes(byte[] authKey, byte[] dataBytes, int offset, int count)
+        {
+            if (dataBytes == null || dataBytes.Length == 0)
+            {
+                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+            }
+
+            if (authKey == null || authKey.Length == 0)
+            {
+                throw new ArgumentException("Invalid data bytes.", nameof(authKey));
+            }
+
+            byte[] tag = null;
+
+            using (var hmacSha256 = new HMACSHA256(authKey))
+            {
+                tag = hmacSha256.ComputeHash(dataBytes, offset, count);
+            }
+
+            return tag;
+        }
+
+        public static void WriteTagToFile(string filePath, byte[] fileSignature, int kBbufferSize = 4)
         {
             if (!File.Exists(filePath))
             {
@@ -150,7 +172,7 @@ namespace CryptHash.Net.Encryption.Utils
             File.Move(filePath + ".signed", filePath);
         }
 
-        public static byte[] GetDataFromFile(string filePath, int dataLength, int dataPosition = 0)
+        public static byte[] GetBytesFromFile(string filePath, int dataLength, int dataPosition = 0)
         {
             if (!File.Exists(filePath))
             {
@@ -162,24 +184,22 @@ namespace CryptHash.Net.Encryption.Utils
                 throw new ArgumentException("Data length invalid.", nameof(dataLength));
             }
 
-            byte[] data = new byte[dataLength];
+            byte[] dataBytes = new byte[dataLength];
 
-            using (FileStream fStream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 fStream.Seek(dataPosition, SeekOrigin.Begin);
-                fStream.Read(data, 0, dataLength);
+                fStream.Read(dataBytes, 0, dataLength);
                 fStream.Close();
             }
 
-            return data;
+            return dataBytes;
         }
 
-        public static bool SignatureBytesMatch(byte[] calcTag, byte[] sentTag)
+        public static bool TagsMatch(byte[] calcTag, byte[] sentTag)
         {
             if (calcTag.Length != sentTag.Length)
-            {
                 throw new ArgumentException("Signature CalcTag and SentTag length must be igual.");
-            }
 
             var result = true;
             var compare = 0;
@@ -190,9 +210,7 @@ namespace CryptHash.Net.Encryption.Utils
             }
 
             if (compare != 0)
-            {
                 result = false;
-            }
 
             return result;
         }

@@ -16,7 +16,8 @@ namespace CryptHash.Net.Encryption.AES.EncryptionResults
         public string DecryptedDataString { get; set; }
         public byte[] Key { get; set; }
         public byte[] IVOrNonce { get; set; }
-        public byte[] Salt { get; set; }
+        public byte[] CryptSalt { get; set; }
+        public byte[] AuthSalt { get; set; }
         public byte[] Tag { get; set; }
         
     }
