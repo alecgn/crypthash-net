@@ -195,7 +195,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
-        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false, int kBbufferSize = 4)
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
         {
             if (passwordBytes == null || passwordBytes.Length == 0)
             {
@@ -219,28 +219,42 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                 if (aesEncryptionResult.Success)
                 {
-                    using (FileStream fs1 = File.Open(encryptedFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    {
-                        using (FileStream fs2 = File.Open(encryptedFilePath + "_tmp", FileMode.Create, FileAccess.Write, FileShare.None))
-                        {
-                            fs2.Write(cryptSalt, 0, cryptSalt.Length);
-                            fs2.Write(authSalt, 0, authSalt.Length);
-                            fs2.Write(aesEncryptionResult.IVOrNonce, 0, aesEncryptionResult.IVOrNonce.Length);
+                    #region
+                    //using (FileStream fs1 = File.Open(encryptedFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    //{
+                    //    using (FileStream fs2 = File.Open($"{encryptedFilePath}_tmp", FileMode.Create, FileAccess.Write, FileShare.None))
+                    //    {
+                    //        fs2.Write(cryptSalt, 0, cryptSalt.Length);
+                    //        fs2.Write(authSalt, 0, authSalt.Length);
+                    //        fs2.Write(aesEncryptionResult.IVOrNonce, 0, aesEncryptionResult.IVOrNonce.Length);
 
-                            byte[] buffer = new byte[kBbufferSize * 1024];
-                            int read;
+                    //        byte[] buffer = new byte[kBbufferSize * 1024];
+                    //        int read;
 
-                            while ((read = fs1.Read(buffer, 0, buffer.Length)) > 0)
-                            {
-                                fs2.Write(buffer, 0, read);
+                    //        while ((read = fs1.Read(buffer, 0, buffer.Length)) > 0)
+                    //        {
+                    //            fs2.Write(buffer, 0, read);
 
-                                int percentageDone = (int)(fs1.Position * 100 / fs1.Length);
-                                RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? $"Writing additional data ({percentageDone}%)..." : $"({percentageDone}%) written additional data."));
-                            }
-                        }
-                    }
+                    //            int percentageDone = (int)(fs1.Position * 100 / fs1.Length);
+                    //            RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? $"Writing additional data ({percentageDone}%)..." : $"({percentageDone}%) written additional data."));
+                    //        }
+                    //    }
+                    //}
 
-                    // wite tag to file...
+                    //using (FileStream fs = File.Open(encryptedFilePath, FileMode.Append, FileAccess.Write, FileShare.None))
+                    //{
+                    //    fs.Write(cryptSalt, 0, cryptSalt.Length);
+                    //    fs.Write(authSalt, 0, authSalt.Length);
+                    //    fs.Write(aesEncryptionResult.IVOrNonce, 0, aesEncryptionResult.IVOrNonce.Length);
+                    //}
+                    #endregion
+                    EncryptionUtils.AppendDataToFile(encryptedFilePath, aesEncryptionResult.IVOrNonce);
+                    EncryptionUtils.AppendDataToFile(encryptedFilePath, authSalt);
+                    EncryptionUtils.AppendDataToFile(encryptedFilePath, cryptSalt);
+
+                    var tag = EncryptionUtils.CalculateHMACSHA256FromFile(encryptedFilePath, authKey);
+
+                    EncryptionUtils.AppendDataToFile(encryptedFilePath, tag);
 
                     aesEncryptionResult.CryptSalt = cryptSalt;
                     aesEncryptionResult.AuthSalt = authSalt;
@@ -258,9 +272,91 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
-        public AesEncryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, string password, bool deleteSourceFile = false)
+        public AesEncryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
         {
-            throw new NotImplementedException();
+            if (!File.Exists(encryptedFilePath))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Encrypted file \"{encryptedFilePath}\" not found."
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(decryptedFilePath))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Decrypted file path required."
+                };
+            }
+
+            var destinationDirectory = Path.GetDirectoryName(decryptedFilePath);
+
+            if (!Directory.Exists(destinationDirectory))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Destination directory \"{destinationDirectory}\" not found."
+                };
+            }
+
+            if (passwordBytes == null || passwordBytes.Length == 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            try
+            {
+                var encryptedFileSize = new FileInfo(encryptedFilePath).Length;
+
+                var sentTag = EncryptionUtils.GetBytesFromFile(encryptedFilePath, _tagBytesLength, (encryptedFileSize - _tagBytesLength));
+
+                var cryptSalt = EncryptionUtils.GetBytesFromFile(encryptedFilePath, _saltBytesLength, (encryptedFileSize - _tagBytesLength - _saltBytesLength));
+                var cryptKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, cryptSalt, _keyBytesLength, _iterationsForPBKDF2);
+
+                var authSalt = EncryptionUtils.GetBytesFromFile(encryptedFilePath, _saltBytesLength, (encryptedFileSize - _tagBytesLength - (_saltBytesLength * 2)));
+                var authKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, authSalt, _keyBytesLength, _iterationsForPBKDF2);
+
+                var calcTag = EncryptionUtils.CalculateHMACSHA256FromFile(encryptedFilePath, authKey, 0, (encryptedFileSize - _tagBytesLength));
+
+                var IV = EncryptionUtils.GetBytesFromFile(encryptedFilePath, _IVBytesLength, (encryptedFileSize - _tagBytesLength - (_saltBytesLength * 2) -_IVBytesLength));
+
+                if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
+                {
+                    return new AesEncryptionResult()
+                    {
+                        Success = false,
+                        Message = "Authentication for file decryption failed, wrong password or data tampered."
+                    };
+                }
+
+                var aesDecryptionResult = base.DecryptWithFileStream(encryptedFilePath, decryptedFilePath, cryptKey, IV, _cipherMode, _paddingMode, deleteSourceFile);
+
+                if (aesDecryptionResult.Success)
+                {
+                    
+
+                    aesDecryptionResult.CryptSalt = cryptSalt;
+                    aesDecryptionResult.AuthSalt = authSalt;
+                }
+
+                return aesDecryptionResult;
+            }
+            catch (Exception ex)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Error while trying to decrypt file:\n{ex.ToString()}"
+                };
+            }
         }
 
         //public AesEncryptionResult EncryptString(string stringToEncrypt, string password)

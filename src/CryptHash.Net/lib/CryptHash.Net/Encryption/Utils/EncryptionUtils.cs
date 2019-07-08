@@ -85,7 +85,7 @@ namespace CryptHash.Net.Encryption.Utils
             File.SetAttributes(filePath, FileAttributes.Normal);
         }
 
-        public static byte[] CalculateHMACSHA256FromFile(string filePath, byte[] authKey, int bytesToIgnore = 0)
+        public static byte[] CalculateHMACSHA256FromFile(string filePath, byte[] authKey, int offset = 0)
         {
             if (!File.Exists(filePath))
             {
@@ -103,13 +103,49 @@ namespace CryptHash.Net.Encryption.Utils
             {
                 using (FileStream fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    fStream.Seek(bytesToIgnore, SeekOrigin.Begin);
+                    fStream.Seek(offset, SeekOrigin.Begin);
                     tag = hmacsha256.ComputeHash(fStream);
                     fStream.Close();
                 }
             }
 
             return tag;
+        }
+
+        public static byte[] CalculateHMACSHA256FromFile(string filePath, byte[] authKey, long startPosition, long endPosition)
+        {
+            byte[] hash = null;
+
+            using (var fStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                fStream.Position = startPosition;
+                byte[] buffer = new byte[(1024 * 4)];
+                long amount = (endPosition - startPosition);
+
+                using (HMACSHA256 hmacsha256 = new HMACSHA256(authKey))
+                {
+                    while (amount > 0)
+                    {
+                        int bytesRead = fStream.Read(buffer, 0, (int)Math.Min(buffer.Length, amount));
+
+                        if (bytesRead > 0)
+                        {
+                            amount -= bytesRead;
+
+                            if (amount > 0)
+                                hmacsha256.TransformBlock(buffer, 0, bytesRead, buffer, 0);
+                            else
+                                hmacsha256.TransformFinalBlock(buffer, 0, bytesRead);
+                        }
+                        else
+                            throw new InvalidOperationException();
+                    }
+
+                    hash = hmacsha256.Hash;
+                }
+            }
+
+            return hash;
         }
 
         public static byte[] CalculateHMACSHA256FromDataBytes(byte[] authKey, byte[] dataBytes, int offset, int count)
@@ -146,9 +182,9 @@ namespace CryptHash.Net.Encryption.Utils
                 throw new ArgumentException("Signature invalid.", nameof(fileSignature));
             }
 
-            using (FileStream oldFile = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream oldFile = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                using (FileStream newFile = System.IO.File.Open(filePath + ".signed", FileMode.Create, FileAccess.Write, FileShare.None))
+                using (FileStream newFile = File.Open(filePath + ".signed", FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     newFile.Write(fileSignature, 0, fileSignature.Length);
                     //oldFile.CopyTo(newFile);
@@ -172,7 +208,15 @@ namespace CryptHash.Net.Encryption.Utils
             File.Move(filePath + ".signed", filePath);
         }
 
-        public static byte[] GetBytesFromFile(string filePath, int dataLength, int dataPosition = 0)
+        public static void AppendDataToFile(string filePath, byte[] dataBytes)
+        {
+            using (FileStream fs = File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.None))
+            {
+                fs.Write(dataBytes, 0, dataBytes.Length);
+            }
+        }
+
+        public static byte[] GetBytesFromFile(string filePath, int dataLength, long offset = 0)
         {
             if (!File.Exists(filePath))
             {
@@ -188,7 +232,7 @@ namespace CryptHash.Net.Encryption.Utils
 
             using (FileStream fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                fStream.Seek(dataPosition, SeekOrigin.Begin);
+                fStream.Seek(offset, SeekOrigin.Begin);
                 fStream.Read(dataBytes, 0, dataLength);
                 fStream.Close();
             }
