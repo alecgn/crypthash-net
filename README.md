@@ -1,14 +1,12 @@
 # CryptHash.NET
 ### A .NET Standard Library and .NET Core Console Application utility for encryption/decryption and hashing.
-### *** This is still a work in progress, no release yet. ***
 
-This utility is designed to run in Windows, Linux and Mac, for text and files symmetric encryption/decryption (authenticated or not), and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
+This utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
 
 
-Currently supported symmetric encryption algorithm is: **AES 256 bits** in **CBC Mode** with **Salt**. If you choose to use authentication, **HMAC-SHA256** or **HMAC-SHA512** can be used, using the **Encrypt-then-MAC (EtM)** strategy.  
-This lib is ready for **AES GCM** encryption, we're just waiting the launch of .NET Standard 2.1.
+Currently symmetric encryption algorithm is: **AES 256 bits** in **CBC Mode** with **HMACSHA256 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
 
-Currently supported hash algorithms are: **MD5**, **SHA1**, **SHA256**, **SHA384**, **SHA512**, **BCrypt** and **PBKDF2** (Password-Based Key Derivation Function).
+Currently supported hash algorithms are: **MD5**, **SHA1**, **SHA256**, **SHA384**, **SHA512** and **BCrypt**.
 
 Other encryption/hashing algorithms will be implemented in the future.
 
