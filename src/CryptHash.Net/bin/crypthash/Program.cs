@@ -30,13 +30,11 @@ namespace crypthash
 
             Console.WriteLine("\nEnter the source string: ");
             var sourceString = Console.ReadLine();
-            var sourceStringBytes = Encoding.UTF8.GetBytes(sourceString);
 
             Console.WriteLine("Enter encryption password: ");
-            var passwordStr = Console.ReadLine();
-            var passwordBytes = Encoding.UTF8.GetBytes(passwordStr);
+            var password = Console.ReadLine();
 
-            var result = _aes.EncryptString(sourceStringBytes, passwordBytes);
+            var result = _aes.EncryptString(sourceString, password);
 
             if (result.Success)
                 Console.WriteLine($"Encrypted string: {result.EncryptedDataBase64String}");
@@ -51,15 +49,13 @@ namespace crypthash
             Console.WriteLine("\nPress any key to start string decryption test...");
             Console.ReadKey(true);
 
-            Console.WriteLine("\nEnter the encrypted string: ");
+            Console.WriteLine("\nEnter the encrypted base64 string: ");
             var encryptedString = Console.ReadLine();
-            var encryptedStringBytes = Convert.FromBase64String(encryptedString);
 
             Console.WriteLine("Enter decryption password: ");
-            var passwordStr = Console.ReadLine();
-            var passwordBytes = Encoding.UTF8.GetBytes(passwordStr);
+            var password = Console.ReadLine();
 
-            var result = _aes.DecryptString(encryptedStringBytes, passwordBytes);
+            var result = _aes.DecryptString(encryptedString, password);
 
             if (result.Success)
                 Console.WriteLine($"Decrypted string: {result.DecryptedDataString}");
@@ -78,10 +74,9 @@ namespace crypthash
             var sourceFile = Console.ReadLine();
 
             Console.WriteLine("Enter encryption password: ");
-            var passwordStr = Console.ReadLine();
-            var passwordBytes = Encoding.UTF8.GetBytes(passwordStr);
+            var password = Console.ReadLine();
 
-            var result = _aes.EncryptFile(sourceFile, sourceFile, passwordBytes);
+            var result = _aes.EncryptFile(sourceFile, sourceFile, password);
 
             Console.WriteLine(result.Message);
 
@@ -97,10 +92,9 @@ namespace crypthash
             var encryptedFile = Console.ReadLine();
 
             Console.WriteLine("Enter decryption password: ");
-            var passwordStr = Console.ReadLine();
-            var passwordBytes = Encoding.UTF8.GetBytes(passwordStr);
+            var password = Console.ReadLine();
 
-            var result = _aes.DecryptFile(encryptedFile, encryptedFile, passwordBytes);
+            var result = _aes.DecryptFile(encryptedFile, encryptedFile, password);
 
             Console.WriteLine(result.Message);
 

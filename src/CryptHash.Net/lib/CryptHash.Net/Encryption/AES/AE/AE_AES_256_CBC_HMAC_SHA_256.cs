@@ -54,6 +54,32 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region public methods
 
+        public AesEncryptionResult EncryptString(string plainString, string password)
+        {
+            if (string.IsNullOrWhiteSpace(plainString))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to encrypt required."
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            return EncryptString(plainStringBytes, passwordBytes);
+        }
+
         public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes)
         {
             if (plainStringBytes == null || plainStringBytes.Length == 0)
@@ -121,6 +147,32 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Message = $"Error while trying to encrypt string:\n{ex.ToString()}"
                 };
             }
+        }
+
+        public AesEncryptionResult DecryptString(string base64EncryptedString, string password)
+        {
+            if (string.IsNullOrWhiteSpace(base64EncryptedString))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to encrypt required."
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            return DecryptString(encryptedStringBytes, passwordBytes);
         }
 
         public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes)
@@ -208,6 +260,22 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
+        }
+
         public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
         {
             if (passwordBytes == null || passwordBytes.Length == 0)
@@ -260,6 +328,22 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Message = $"Error while trying to encrypt file:\n{ex.ToString()}"
                 };
             }
+        }
+
+        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
         public AesEncryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
