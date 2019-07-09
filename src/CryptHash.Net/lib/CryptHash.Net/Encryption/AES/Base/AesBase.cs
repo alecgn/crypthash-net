@@ -8,7 +8,6 @@ using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Encryption.Utils.EventHandlers;
 using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 
 namespace CryptHash.Net.Encryption.AES.Base
@@ -136,7 +135,9 @@ namespace CryptHash.Net.Encryption.AES.Base
                 Message = "Data succesfully encrypted.",
                 EncryptedDataBytes = encryptedData,
                 Key = _key,
-                IVOrNonce = _IV
+                IVOrNonce = _IV,
+                CipherMode = _cipherMode,
+                PaddingMode = _paddingMode
             };
         }
 
@@ -228,7 +229,9 @@ namespace CryptHash.Net.Encryption.AES.Base
                 Message = "Data succesfully decrypted.",
                 DecryptedDataBytes = decryptedData,
                 Key = _key,
-                IVOrNonce = _IV
+                IVOrNonce = _IV,
+                CipherMode = _cipherMode,
+                PaddingMode = _paddingMode
             };
         }
 
@@ -309,7 +312,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                     {
                         using (FileStream sourceFs = File.Open(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
-                            using (FileStream encryptedFs = File.Open((pathsEqual ? encryptedFilePath + "_tmp" : encryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
+                            using (FileStream encryptedFs = File.Open((pathsEqual ? encryptedFilePath + "_tmpcrypt" : encryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
                             {
                                 using (CryptoStream cs = new CryptoStream(encryptedFs, encryptor, CryptoStreamMode.Write))
                                 {
@@ -317,13 +320,20 @@ namespace CryptHash.Net.Encryption.AES.Base
 
                                     byte[] buffer = new byte[kBbufferSize * 1024];
                                     int read;
+                                    int percentageDone = 0;
 
                                     while ((read = sourceFs.Read(buffer, 0, buffer.Length)) > 0)
                                     {
                                         cs.Write(buffer, 0, read);
 
-                                        int percentageDone = (int)(sourceFs.Position * 100 / sourceFs.Length);
-                                        RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? $"Encrypting ({percentageDone}%)..." : $"Encrypted ({percentageDone}%)."));
+                                        var tmpPercentageDone = (int)(sourceFs.Position * 100 / sourceFs.Length);
+
+                                        if (tmpPercentageDone != percentageDone)
+                                        {
+                                            percentageDone = tmpPercentageDone;
+
+                                            RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? $"Encrypting ({percentageDone}%)..." : $"Encrypted ({percentageDone}%)."));
+                                        }
                                     }
                                 }
                             }
@@ -335,7 +345,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 {
                     Utils.EncryptionUtils.ClearFileAttributes(sourceFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
                     File.Delete(sourceFilePath);
-                    File.Move(encryptedFilePath + "_tmp", encryptedFilePath);
+                    File.Move(encryptedFilePath + "_tmpcrypt", encryptedFilePath);
                 }
 
                 if (deleteSourceFile && !pathsEqual)
@@ -352,7 +362,9 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Success = true,
                     Message = message,
                     Key = _key,
-                    IVOrNonce = _IV
+                    IVOrNonce = _IV,
+                    CipherMode = _cipherMode,
+                    PaddingMode = _paddingMode
                 };
             }
             catch (Exception ex)
@@ -366,7 +378,7 @@ namespace CryptHash.Net.Encryption.AES.Base
         }
 
         internal AesEncryptionResult DecryptWithFileStream(string encryptedFilePath, string decryptedFilePath, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC, 
-            PaddingMode paddingMode = PaddingMode.PKCS7, bool deleteEncryptedFile = false, int kBbufferSize = 4)
+            PaddingMode paddingMode = PaddingMode.PKCS7, bool deleteEncryptedFile = false, int kBbufferSize = 4, long startPosition = 0, long endPosition = 0)
         {
             if (!File.Exists(encryptedFilePath))
             {
@@ -415,6 +427,15 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
+            if (endPosition < startPosition)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"End position (\"{endPosition}\") cannot be less than start position (\"{startPosition}\")."
+                };
+            }
+
             _key = key;
             _IV = IV;
             _cipherMode = cipherMode;
@@ -431,10 +452,12 @@ namespace CryptHash.Net.Encryption.AES.Base
                     aesManaged.Mode = _cipherMode;
                     aesManaged.Padding = _paddingMode;
 
-                    using (FileStream decryptedFs = File.Open((pathsEqual ? decryptedFilePath + "_tmp" : decryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
+                    using (FileStream decryptedFs = File.Open((pathsEqual ? decryptedFilePath + "_tmpdecrypt" : decryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         using (FileStream encryptedFs = File.Open(encryptedFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
+                            encryptedFs.Position = startPosition;
+
                             using (var decryptor = aesManaged.CreateDecryptor(_key, _IV))
                             {
                                 using (CryptoStream cs = new CryptoStream(decryptedFs, decryptor, CryptoStreamMode.Write))
@@ -442,14 +465,30 @@ namespace CryptHash.Net.Encryption.AES.Base
                                     //encrypted.CopyTo(cs);
 
                                     byte[] buffer = new byte[kBbufferSize * 1024];
-                                    int read;
+                                    long totalBytesToRead = ((endPosition == 0 ? encryptedFs.Length : endPosition) - startPosition);
+                                    long totalBytesNotRead = totalBytesToRead;
+                                    long totalBytesRead = 0;
+                                    int percentageDone = 0;
 
-                                    while ((read = encryptedFs.Read(buffer, 0, buffer.Length)) > 0)
+                                    while (totalBytesNotRead > 0)
                                     {
-                                        cs.Write(buffer, 0, read);
+                                        int bytesRead = encryptedFs.Read(buffer, 0, (int)Math.Min(buffer.Length, totalBytesNotRead));
 
-                                        int percentageDone = (int)(encryptedFs.Position * 100 / encryptedFs.Length);
-                                        RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? $"Decrypting ({percentageDone}%)..." : $"Decrypted ({percentageDone}%)."));
+                                        if (bytesRead > 0)
+                                        {
+                                            cs.Write(buffer, 0, bytesRead);
+
+                                            totalBytesRead += bytesRead;
+                                            totalBytesNotRead -= bytesRead;
+                                            var tmpPercentageDone = (int)(totalBytesRead * 100 / totalBytesToRead);
+
+                                            if (tmpPercentageDone != percentageDone)
+                                            {
+                                                percentageDone = tmpPercentageDone;
+
+                                                RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? $"Decrypting ({percentageDone}%)..." : $"Decrypted ({percentageDone}%)."));
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -461,7 +500,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 {
                     Utils.EncryptionUtils.ClearFileAttributes(encryptedFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
                     File.Delete(encryptedFilePath);
-                    File.Move(decryptedFilePath + "_tmp", decryptedFilePath);
+                    File.Move(decryptedFilePath + "_tmpdecrypt", decryptedFilePath);
                 }
 
                 if (deleteEncryptedFile && !pathsEqual)
@@ -478,7 +517,9 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Success = true,
                     Message = message,
                     Key = _key,
-                    IVOrNonce = _IV
+                    IVOrNonce = _IV,
+                    CipherMode =_cipherMode,
+                    PaddingMode = _paddingMode
                 };
             }
             catch (Exception ex)

@@ -16,12 +16,6 @@ namespace CryptHash.Net.Encryption.Utils
 {
     public static class EncryptionUtils
     {
-        #region Events
-
-        public static event OnEncryptionProgressHandler OnEncryptionProgress;
-
-        #endregion
-
         public static byte[] GenerateRandomBytes(int length)
         {
             var randomBytes = new byte[length];
@@ -85,7 +79,7 @@ namespace CryptHash.Net.Encryption.Utils
             File.SetAttributes(filePath, FileAttributes.Normal);
         }
 
-        public static byte[] CalculateHMACSHA256FromFile(string filePath, byte[] authKey, int offset = 0)
+        public static byte[] ComputeHMACSHA256HashFromFile(string filePath, byte[] authKey, int offset = 0)
         {
             if (!File.Exists(filePath))
             {
@@ -112,7 +106,7 @@ namespace CryptHash.Net.Encryption.Utils
             return tag;
         }
 
-        public static byte[] CalculateHMACSHA256FromFile(string filePath, byte[] authKey, long startPosition, long endPosition)
+        public static byte[] ComputeHMACSHA256HashFromFile(string filePath, byte[] authKey, long startPosition, long endPosition)
         {
             byte[] hash = null;
 
@@ -148,7 +142,7 @@ namespace CryptHash.Net.Encryption.Utils
             return hash;
         }
 
-        public static byte[] CalculateHMACSHA256FromDataBytes(byte[] authKey, byte[] dataBytes, int offset, int count)
+        public static byte[] ComputeHMACSHA256HashFromDataBytes(byte[] authKey, byte[] dataBytes, int offset, int count)
         {
             if (dataBytes == null || dataBytes.Length == 0)
             {
@@ -168,44 +162,6 @@ namespace CryptHash.Net.Encryption.Utils
             }
 
             return tag;
-        }
-
-        public static void WriteTagToFile(string filePath, byte[] fileSignature, int kBbufferSize = 4)
-        {
-            if (!File.Exists(filePath))
-            {
-                throw new FileNotFoundException($"File \"{filePath}\" not found.", filePath);
-            }
-
-            if (fileSignature != null && fileSignature.Length <= 0)
-            {
-                throw new ArgumentException("Signature invalid.", nameof(fileSignature));
-            }
-
-            using (FileStream oldFile = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                using (FileStream newFile = File.Open(filePath + ".signed", FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    newFile.Write(fileSignature, 0, fileSignature.Length);
-                    //oldFile.CopyTo(newFile);
-
-                    byte[] buffer = new byte[kBbufferSize * 1024];
-                    int read;
-
-                    while ((read = oldFile.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        newFile.Write(buffer, 0, read);
-
-                        int percentageDone = (int)(oldFile.Position * 100 / oldFile.Length);
-                        RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? "Writing authentication tag to encrypted file..." : "Write authentication tag to encrypted file done."));
-                    }
-
-                    newFile.Close();
-                }
-            }
-
-            File.Delete(filePath);
-            File.Move(filePath + ".signed", filePath);
         }
 
         public static void AppendDataToFile(string filePath, byte[] dataBytes)
@@ -257,11 +213,6 @@ namespace CryptHash.Net.Encryption.Utils
                 result = false;
 
             return result;
-        }
-
-        private static void RaiseOnEncryptionProgress(int percentageDone, string message)
-        {
-            OnEncryptionProgress?.Invoke(percentageDone, message);
         }
     }
 }
