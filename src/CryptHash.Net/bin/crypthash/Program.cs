@@ -1,104 +1,307 @@
-﻿using CryptHash.Net.Encryption.AES.AE;
-using System;
-using System.Text;
+﻿/*
+ *      Alessandro Cagliostro, 2019
+ *      
+ *      https://github.com/alecgn
+ */
 
-namespace crypthash
+using System;
+using System.Collections.Generic;
+using CommandLine;
+using CommandLine.Text;
+using CryptHash.Net.CLI.CommandLineParser;
+using CryptHash.Net.CLI.ConsoleUtil;
+using CryptHash.Net.Encryption.AES.AE;
+using CryptHash.Net.Encryption.AES.EncryptionResults;
+using CryptHash.Net.Hash;
+using CryptHash.Net.Hash.HashResults;
+
+namespace CryptHash.Net.CLI
 {
     class Program
     {
+        private static ProgressBar _progressBar = null;
         private static AE_AES_256_CBC_HMAC_SHA_256 _aes = null;
+        private static MD5 _md5 = null;
+        private static SHA1 _sha1 = null;
+        private static SHA256 _sha256 = null;
+        private static SHA384 _sha384 = null;
+        private static SHA512 _sha512 = null;
+        private static Hash.BCrypt _bcrypt = null;
 
         static void Main(string[] args)
         {
-            _aes = new AE_AES_256_CBC_HMAC_SHA_256();
-            _aes.OnEncryptionProgress += (percentage, msg) => { Console.WriteLine(msg); };
-            _aes.OnEncryptionMessage += (msg) => { Console.WriteLine(msg); };
+            try
+            {
+                //_progressBar = new ProgressBar();
+                //_aes = new AE_AES_256_CBC_HMAC_SHA_256();
+                _aes.OnEncryptionMessage += (msg) => { Console.WriteLine(msg); };
+                _aes.OnEncryptionProgress += (percentageDone, message) => { _progressBar?.Report((double)percentageDone / 100); };
 
-            TestStringEncryption();
-            TestStringDecryption();
-            TestFileEncryption();
-            TestFileDecryption();
+                ProcessArgs(args);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex.Message);
 
-            Console.WriteLine("\nPress any key to finish...");
-            Console.ReadKey();
+                Environment.Exit((int)ExitCode.Error);
+            }
+            finally
+            {
+                _progressBar?.Dispose();
+            }
         }
 
-        private static void TestStringEncryption()
+        private static void ProcessArgs(string[] args)
         {
-            Console.WriteLine("\nPress any key to start string encryption test...");
-            Console.ReadKey(true);
 
-            Console.WriteLine("\nEnter the source string: ");
-            var sourceString = Console.ReadLine();
+            var parserResult = Parser.Default.ParseArguments<CryptOptions,
+                                                             DecryptOptions,
+                                                             HashOptions>(args);
 
-            Console.WriteLine("Enter encryption password: ");
-            var password = Console.ReadLine();
+            var exitCode = parserResult.MapResult(
+                (CryptOptions opts) => RunCryptOptionsAndReturnExitCode(opts),
+                (DecryptOptions opts) => RunDecryptOptionsAndReturnExitCode(opts),
+                (HashOptions opts) => RunHashOptionsAndReturnExitCode(opts),
+                errors => HandleParseError(errors, parserResult)
+            );
 
-            var result = _aes.EncryptString(sourceString, password);
+            Environment.Exit((int)exitCode);
 
-            if (result.Success)
-                Console.WriteLine($"Encrypted string: {result.EncryptedDataBase64String}");
+        }
+
+        private static ExitCode RunCryptOptionsAndReturnExitCode(CryptOptions cryptOptions)
+        {
+            AesEncryptionResult aesEncryptionResult = null;
+
+            switch (cryptOptions.InputType.ToLower())
+            {
+                case "string":
+                    {
+                        switch (cryptOptions.Algorithm.ToLower())
+                        {
+                            case "aes":
+                                {
+                                    _aes = _aes ?? new AE_AES_256_CBC_HMAC_SHA_256();
+                                    aesEncryptionResult = _aes.EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
+                                }
+                                break;
+                            default:
+                                aesEncryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{cryptOptions.Algorithm}\"." };
+                                break;
+                        }
+                    }
+                    break;
+                case "file":
+                    {
+                        switch (cryptOptions.Algorithm.ToLower())
+                        {
+                            case "aes":
+                                {
+                                    _aes = _aes ?? new AE_AES_256_CBC_HMAC_SHA_256();
+                                    aesEncryptionResult = _aes.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
+                                }
+                                break;
+                            default:
+                                aesEncryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{cryptOptions.Algorithm}\"." };
+                                break;
+                        }
+                    }
+                    break;
+                default:
+                    aesEncryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown input type \"{cryptOptions.InputType}\"." };
+                    break;
+            }
+
+            if (aesEncryptionResult.Success)
+            {
+                Console.WriteLine((cryptOptions.InputType.ToLower().Equals("string") ? aesEncryptionResult.EncryptedDataBase64String : $"\n\n{aesEncryptionResult.Message}"));
+
+                return ExitCode.Sucess;
+            }
             else
-                Console.WriteLine(result.Message);
+            {
+                Console.WriteLine(aesEncryptionResult.Message);
 
-            Console.WriteLine("\nString encryption test done.");
+                return ExitCode.Error;
+            }
         }
 
-        private static void TestStringDecryption()
+        private static ExitCode RunDecryptOptionsAndReturnExitCode(DecryptOptions decryptOptions)
         {
-            Console.WriteLine("\nPress any key to start string decryption test...");
-            Console.ReadKey(true);
+            AesEncryptionResult aesDecryptionResult = null;
 
-            Console.WriteLine("\nEnter the encrypted base64 string: ");
-            var encryptedString = Console.ReadLine();
+            switch (decryptOptions.InputType.ToLower())
+            {
+                case "string":
+                    {
+                        switch (decryptOptions.Algorithm.ToLower())
+                        {
+                            case "aes":
+                                {
+                                    _aes = _aes ?? new AE_AES_256_CBC_HMAC_SHA_256();
+                                    aesDecryptionResult = _aes.DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
+                                }
+                                break;
+                            default:
+                                aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
+                                break;
+                        }
+                    }
+                    break;
+                case "file":
+                    {
+                        switch (decryptOptions.Algorithm.ToLower())
+                        {
+                            case "aes":
+                                {
+                                    _aes = _aes ?? new AE_AES_256_CBC_HMAC_SHA_256();
+                                    aesDecryptionResult = _aes.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
+                                }
+                                break;
+                            default:
+                                aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
+                                break;
+                        }
+                    }
+                    break;
+                default:
+                    aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown input type \"{decryptOptions.InputType}\"." };
+                    break;
+            }
 
-            Console.WriteLine("Enter decryption password: ");
-            var password = Console.ReadLine();
+            if (aesDecryptionResult.Success)
+            {
+                Console.WriteLine((decryptOptions.InputType.ToLower().Equals("string") ? aesDecryptionResult.DecryptedDataString : $"\n\n{aesDecryptionResult.Message}"));
+                Console.CursorVisible = true;
 
-            var result = _aes.DecryptString(encryptedString, password);
-
-            if (result.Success)
-                Console.WriteLine($"Decrypted string: {result.DecryptedDataString}");
+                return ExitCode.Sucess;
+            }
             else
-                Console.WriteLine(result.Message);
+            {
+                Console.WriteLine(aesDecryptionResult.Message);
 
-            Console.WriteLine("\nString decryption test done.");
+                return ExitCode.Error;
+            }
         }
 
-        private static void TestFileEncryption()
+        private static ExitCode RunHashOptionsAndReturnExitCode(HashOptions opts)
         {
-            Console.WriteLine("\nPress any key to start file encryption test...");
-            Console.ReadKey(true);
+            GenericHashResult hashResult = null;
 
-            Console.WriteLine("\nEnter the source file path: ");
-            var sourceFile = Console.ReadLine();
+            switch (opts.InputType.ToLower())
+            {
+                case "string":
+                    {
+                        switch (opts.Algorithm.ToLower())
+                        {
+                            case "md5":
+                                hashResult = new MD5().HashString(opts.InputToBeHashed);
+                                break;
+                            case "sha1":
+                                hashResult = new SHA1().HashString(opts.InputToBeHashed);
+                                break;
+                            case "sha256":
+                                hashResult = new SHA256().HashString(opts.InputToBeHashed);
+                                break;
+                            case "sha384":
+                                hashResult = new SHA384().HashString(opts.InputToBeHashed);
+                                break;
+                            case "sha512":
+                                hashResult = new SHA512().HashString(opts.InputToBeHashed);
+                                break;
+                            case "bcrypt":
+                                hashResult = new Hash.BCrypt().HashString(opts.InputToBeHashed);
+                                break;
+                            default:
+                                hashResult = new GenericHashResult() { Success = false, Message = $"Unknown algorithm \"{opts.Algorithm}\"." };
+                                break;
+                        }
+                    }
+                    break;
+                case "file":
+                    {
+                        switch (opts.Algorithm.ToLower())
+                        {
+                            case "md5":
+                                hashResult = new MD5().HashFile(opts.InputToBeHashed);
+                                break;
+                            case "sha1":
+                                hashResult = new SHA1().HashFile(opts.InputToBeHashed);
+                                break;
+                            case "sha256":
+                                hashResult = new SHA256().HashFile(opts.InputToBeHashed);
+                                break;
+                            case "sha384":
+                                hashResult = new SHA384().HashFile(opts.InputToBeHashed);
+                                break;
+                            case "sha512":
+                                hashResult = new SHA512().HashFile(opts.InputToBeHashed);
+                                break;
+                            case "bcrypt":
+                                hashResult = new GenericHashResult() { Success = false, Message = $"Algorithm \"{opts.Algorithm}\" currently not available for file hashing." };
+                                break;
+                            default:
+                                hashResult = new GenericHashResult() { Success = false, Message = $"Unknown algorithm \"{opts.Algorithm}\"." };
+                                break;
+                        }
+                    }
+                    break;
+                default:
+                    hashResult = new GenericHashResult() { Success = false, Message = $"Unknown input type \"{opts.InputType}\"." };
+                    break;
+            }
 
-            Console.WriteLine("Enter encryption password: ");
-            var password = Console.ReadLine();
+            if (hashResult.Success && !string.IsNullOrWhiteSpace(opts.CompareHash))
+            {
+                bool hashesMatch = (
+                    opts.Algorithm.ToLower() != "bcrypt"
+                        ? ((string)hashResult.Hash).Equals(opts.CompareHash, StringComparison.InvariantCultureIgnoreCase)
+                        : new Hash.BCrypt().Verify(opts.InputToBeHashed, opts.CompareHash).Success
+                );
+                var outputMessage = (
+                    hashesMatch
+                        ? $"Computed hash MATCH with given hash: {(opts.Algorithm.ToLower() != "bcrypt" ? (string)hashResult.Hash : opts.CompareHash)}"
+                        : $"Computed hash DOES NOT MATCH with given hash." +
+                        (
+                            opts.Algorithm.ToLower() != "bcrypt"
+                                ? $"\nComputed hash: {(string)hashResult.Hash}\nGiven hash: {opts.CompareHash}"
+                                : ""
+                        )
+                );
 
-            var result = _aes.EncryptFile(sourceFile, sourceFile, password);
+                Console.WriteLine(outputMessage);
 
-            Console.WriteLine(result.Message);
+                return (hashesMatch ? ExitCode.Sucess : ExitCode.Error);
+            }
+            else if (hashResult.Success && string.IsNullOrWhiteSpace(opts.CompareHash))
+            {
+                Console.WriteLine(hashResult.Hash);
 
-            Console.WriteLine("\nFile encryption test done.");
+                return ExitCode.Sucess;
+            }
+            else
+            {
+                Console.WriteLine(hashResult.Message);
+
+                return ExitCode.Error;
+            }
         }
 
-        private static void TestFileDecryption()
+        private static ExitCode HandleParseError(IEnumerable<Error> errors, ParserResult<object> parserResult)
         {
-            Console.WriteLine("\nPress any key to start file decryption test...");
-            Console.ReadKey(true);
+            HelpText.AutoBuild(parserResult, h =>
+            {
+                return HelpText.DefaultParsingErrorsHandler(parserResult, h);
+            },
+            e => { return e; });
 
-            Console.WriteLine("\nEnter the encrypted file path: ");
-            var encryptedFile = Console.ReadLine();
+            return ExitCode.Error;
+        }
 
-            Console.WriteLine("Enter decryption password: ");
-            var password = Console.ReadLine();
-
-            var result = _aes.DecryptFile(encryptedFile, encryptedFile, password);
-
-            Console.WriteLine(result.Message);
-
-            Console.WriteLine("\nFile decryption test done.");
+        private static void ShowErrorMessage(string errorMessage)
+        {
+            Console.WriteLine("An error has occured during processing:\n");
+            Console.WriteLine(errorMessage);
         }
     }
 }

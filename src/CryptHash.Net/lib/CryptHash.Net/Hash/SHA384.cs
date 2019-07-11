@@ -11,9 +11,9 @@ using System.Text;
 
 namespace CryptHash.Net.Hash
 {
-    public static class SHA384
+    public class SHA384
     {
-        public static GenericHashResult HashString(string stringToBeHashed)
+        public GenericHashResult HashString(string stringToBeHashed)
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
@@ -64,7 +64,7 @@ namespace CryptHash.Net.Hash
             return result;
         }
 
-        public static GenericHashResult HashFile(string sourceFilePath)
+        public GenericHashResult HashFile(string sourceFilePath)
         {
             if (!File.Exists(sourceFilePath))
             {

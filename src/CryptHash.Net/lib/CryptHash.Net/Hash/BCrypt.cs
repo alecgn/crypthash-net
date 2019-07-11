@@ -10,9 +10,9 @@ using BCryptNet = BCrypt.Net;
 
 namespace CryptHash.Net.Hash
 {
-    public static class BCrypt
+    public class BCrypt
     {
-        public static GenericHashResult HashString(string stringToBeHashed)
+        public GenericHashResult HashString(string stringToBeHashed)
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
@@ -41,7 +41,7 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public static GenericHashResult Verify(string stringToBeVerified, string hashedString)
+        public GenericHashResult Verify(string stringToBeVerified, string hashedString)
         {
             if (string.IsNullOrWhiteSpace(stringToBeVerified))
             {
