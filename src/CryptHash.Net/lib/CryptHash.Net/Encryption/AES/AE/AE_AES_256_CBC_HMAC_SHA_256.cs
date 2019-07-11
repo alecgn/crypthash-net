@@ -278,6 +278,11 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
         {
+            if (string.IsNullOrWhiteSpace(encryptedFilePath))
+            {
+                encryptedFilePath = sourceFilePath;
+            }
+
             if (passwordBytes == null || passwordBytes.Length == 0)
             {
                 return new AesEncryptionResult()
@@ -355,6 +360,11 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Success = false,
                     Message = $"Encrypted file \"{encryptedFilePath}\" not found."
                 };
+            }
+
+            if (string.IsNullOrWhiteSpace(decryptedFilePath))
+            {
+                decryptedFilePath = encryptedFilePath;
             }
 
             if (passwordBytes == null || passwordBytes.Length == 0)

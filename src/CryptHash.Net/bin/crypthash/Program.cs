@@ -4,8 +4,6 @@
  *      https://github.com/alecgn
  */
 
-using System;
-using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
 using CryptHash.Net.CLI.CommandLineParser;
@@ -14,29 +12,17 @@ using CryptHash.Net.Encryption.AES.AE;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Hash;
 using CryptHash.Net.Hash.HashResults;
+using System;
+using System.Collections.Generic;
 
 namespace CryptHash.Net.CLI
 {
     class Program
     {
-        private static ProgressBar _progressBar = null;
-        private static AE_AES_256_CBC_HMAC_SHA_256 _aes = null;
-        private static MD5 _md5 = null;
-        private static SHA1 _sha1 = null;
-        private static SHA256 _sha256 = null;
-        private static SHA384 _sha384 = null;
-        private static SHA512 _sha512 = null;
-        private static Hash.BCrypt _bcrypt = null;
-
         static void Main(string[] args)
         {
             try
             {
-                //_progressBar = new ProgressBar();
-                //_aes = new AE_AES_256_CBC_HMAC_SHA_256();
-                _aes.OnEncryptionMessage += (msg) => { Console.WriteLine(msg); };
-                _aes.OnEncryptionProgress += (percentageDone, message) => { _progressBar?.Report((double)percentageDone / 100); };
-
                 ProcessArgs(args);
             }
             catch (Exception ex)
@@ -44,10 +30,6 @@ namespace CryptHash.Net.CLI
                 ShowErrorMessage(ex.Message);
 
                 Environment.Exit((int)ExitCode.Error);
-            }
-            finally
-            {
-                _progressBar?.Dispose();
             }
         }
 
@@ -66,7 +48,6 @@ namespace CryptHash.Net.CLI
             );
 
             Environment.Exit((int)exitCode);
-
         }
 
         private static ExitCode RunCryptOptionsAndReturnExitCode(CryptOptions cryptOptions)
@@ -81,8 +62,7 @@ namespace CryptHash.Net.CLI
                         {
                             case "aes":
                                 {
-                                    _aes = _aes ?? new AE_AES_256_CBC_HMAC_SHA_256();
-                                    aesEncryptionResult = _aes.EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
+                                    aesEncryptionResult = new AE_AES_256_CBC_HMAC_SHA_256().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
                                 }
                                 break;
                             default:
@@ -97,8 +77,14 @@ namespace CryptHash.Net.CLI
                         {
                             case "aes":
                                 {
-                                    _aes = _aes ?? new AE_AES_256_CBC_HMAC_SHA_256();
-                                    aesEncryptionResult = _aes.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
+                                    using (var progressBar = new ProgressBar())
+                                    {
+                                        var aes = new AE_AES_256_CBC_HMAC_SHA_256();
+                                        //aes.OnEncryptionMessage += (msg) => { Console.WriteLine(msg); };
+                                        aes.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+
+                                        aesEncryptionResult = aes.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
+                                    }
                                 }
                                 break;
                             default:
@@ -114,7 +100,7 @@ namespace CryptHash.Net.CLI
 
             if (aesEncryptionResult.Success)
             {
-                Console.WriteLine((cryptOptions.InputType.ToLower().Equals("string") ? aesEncryptionResult.EncryptedDataBase64String : $"\n\n{aesEncryptionResult.Message}"));
+                Console.WriteLine((cryptOptions.InputType.ToLower().Equals("string") ? aesEncryptionResult.EncryptedDataBase64String : $"{aesEncryptionResult.Message}"));
 
                 return ExitCode.Sucess;
             }
@@ -138,8 +124,7 @@ namespace CryptHash.Net.CLI
                         {
                             case "aes":
                                 {
-                                    _aes = _aes ?? new AE_AES_256_CBC_HMAC_SHA_256();
-                                    aesDecryptionResult = _aes.DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
+                                    aesDecryptionResult = new AE_AES_256_CBC_HMAC_SHA_256().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 }
                                 break;
                             default:
@@ -154,8 +139,14 @@ namespace CryptHash.Net.CLI
                         {
                             case "aes":
                                 {
-                                    _aes = _aes ?? new AE_AES_256_CBC_HMAC_SHA_256();
-                                    aesDecryptionResult = _aes.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
+                                    using (var progressBar = new ProgressBar())
+                                    {
+                                        var aes = new AE_AES_256_CBC_HMAC_SHA_256();
+                                        aes.OnEncryptionMessage += (msg) => { Console.WriteLine(msg); };
+                                        aes.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+
+                                        aesDecryptionResult = aes.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
+                                    }
                                 }
                                 break;
                             default:
@@ -171,8 +162,7 @@ namespace CryptHash.Net.CLI
 
             if (aesDecryptionResult.Success)
             {
-                Console.WriteLine((decryptOptions.InputType.ToLower().Equals("string") ? aesDecryptionResult.DecryptedDataString : $"\n\n{aesDecryptionResult.Message}"));
-                Console.CursorVisible = true;
+                Console.WriteLine((decryptOptions.InputType.ToLower().Equals("string") ? aesDecryptionResult.DecryptedDataString : $"{aesDecryptionResult.Message}"));
 
                 return ExitCode.Sucess;
             }
@@ -255,16 +245,16 @@ namespace CryptHash.Net.CLI
             {
                 bool hashesMatch = (
                     opts.Algorithm.ToLower() != "bcrypt"
-                        ? ((string)hashResult.Hash).Equals(opts.CompareHash, StringComparison.InvariantCultureIgnoreCase)
+                        ? (hashResult.Hash).Equals(opts.CompareHash, StringComparison.InvariantCultureIgnoreCase)
                         : new Hash.BCrypt().Verify(opts.InputToBeHashed, opts.CompareHash).Success
                 );
                 var outputMessage = (
                     hashesMatch
-                        ? $"Computed hash MATCH with given hash: {(opts.Algorithm.ToLower() != "bcrypt" ? (string)hashResult.Hash : opts.CompareHash)}"
+                        ? $"Computed hash MATCH with given hash: {(opts.Algorithm.ToLower() != "bcrypt" ? hashResult.Hash : opts.CompareHash)}"
                         : $"Computed hash DOES NOT MATCH with given hash." +
                         (
                             opts.Algorithm.ToLower() != "bcrypt"
-                                ? $"\nComputed hash: {(string)hashResult.Hash}\nGiven hash: {opts.CompareHash}"
+                                ? $"\nComputed hash: {hashResult.Hash}\nGiven hash: {opts.CompareHash}"
                                 : ""
                         )
                 );
