@@ -23,6 +23,6 @@ namespace CryptHash.Net.Encryption.AES.EncryptionResults
         public byte[] CryptSalt { get; set; }
         public byte[] AuthSalt { get; set; }
         public byte[] Tag { get; set; }
-        
+
     }
 }

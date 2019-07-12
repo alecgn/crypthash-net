@@ -4,6 +4,8 @@
  *      https://github.com/alecgn
  */
 
+using System;
+using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
 using CryptHash.Net.CLI.CommandLineParser;
@@ -12,8 +14,6 @@ using CryptHash.Net.Encryption.AES.AE;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Hash;
 using CryptHash.Net.Hash.HashResults;
-using System;
-using System.Collections.Generic;
 
 namespace CryptHash.Net.CLI
 {

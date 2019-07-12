@@ -4,10 +4,10 @@
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Hash.HashResults;
 using System;
 using System.IO;
 using System.Text;
+using CryptHash.Net.Hash.HashResults;
 
 namespace CryptHash.Net.Hash
 {

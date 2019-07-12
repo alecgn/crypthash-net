@@ -4,8 +4,8 @@
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Hash.HashResults;
 using System;
+using CryptHash.Net.Hash.HashResults;
 using BCryptNet = BCrypt.Net;
 
 namespace CryptHash.Net.Hash

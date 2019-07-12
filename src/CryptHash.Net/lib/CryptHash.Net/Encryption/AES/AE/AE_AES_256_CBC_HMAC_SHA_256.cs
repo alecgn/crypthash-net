@@ -4,14 +4,13 @@
  *      https://github.com/alecgn
  */
 
+using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using CryptHash.Net.Encryption.AES.Base;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Encryption.Utils;
-using System;
-using System.IO;
-using System.Security;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace CryptHash.Net.Encryption.AES.AE
 {

@@ -4,7 +4,6 @@
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Encryption.Utils.EventHandlers;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;

@@ -4,11 +4,11 @@
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Encryption.AES.EncryptionResults;
-using CryptHash.Net.Encryption.Utils.EventHandlers;
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using CryptHash.Net.Encryption.AES.EncryptionResults;
+using CryptHash.Net.Encryption.Utils.EventHandlers;
 
 namespace CryptHash.Net.Encryption.AES.Base
 {
@@ -50,7 +50,7 @@ namespace CryptHash.Net.Encryption.AES.Base
 
         #region internal methods
 
-        internal AesEncryptionResult EncryptWithMemoryStream(byte[] sourceData, byte[] key = null, byte[] IV = null, CipherMode cipherMode = CipherMode.CBC, 
+        internal AesEncryptionResult EncryptWithMemoryStream(byte[] sourceData, byte[] key = null, byte[] IV = null, CipherMode cipherMode = CipherMode.CBC,
             PaddingMode paddingMode = PaddingMode.PKCS7)
         {
             if (sourceData == null || sourceData.Length == 0)
@@ -141,7 +141,7 @@ namespace CryptHash.Net.Encryption.AES.Base
             };
         }
 
-        internal AesEncryptionResult DecryptWithMemoryStream(byte[] encryptedData, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC, 
+        internal AesEncryptionResult DecryptWithMemoryStream(byte[] encryptedData, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC,
             PaddingMode paddingMode = PaddingMode.PKCS7)
         {
             if (encryptedData == null || encryptedData.Length == 0)
@@ -235,7 +235,7 @@ namespace CryptHash.Net.Encryption.AES.Base
             };
         }
 
-        internal AesEncryptionResult EncryptWithFileStream(string sourceFilePath, string encryptedFilePath, byte[] key = null, byte[] IV = null, CipherMode cipherMode = CipherMode.CBC, 
+        internal AesEncryptionResult EncryptWithFileStream(string sourceFilePath, string encryptedFilePath, byte[] key = null, byte[] IV = null, CipherMode cipherMode = CipherMode.CBC,
             PaddingMode paddingMode = PaddingMode.PKCS7, bool deleteSourceFile = false, int kBbufferSize = 4)
         {
             if (!File.Exists(sourceFilePath))
@@ -377,7 +377,7 @@ namespace CryptHash.Net.Encryption.AES.Base
             }
         }
 
-        internal AesEncryptionResult DecryptWithFileStream(string encryptedFilePath, string decryptedFilePath, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC, 
+        internal AesEncryptionResult DecryptWithFileStream(string encryptedFilePath, string decryptedFilePath, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC,
             PaddingMode paddingMode = PaddingMode.PKCS7, bool deleteEncryptedFile = false, int kBbufferSize = 4, long startPosition = 0, long endPosition = 0)
         {
             if (!File.Exists(encryptedFilePath))
@@ -518,7 +518,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Message = message,
                     Key = _key,
                     IV = _IV,
-                    CipherMode =_cipherMode,
+                    CipherMode = _cipherMode,
                     PaddingMode = _paddingMode
                 };
             }

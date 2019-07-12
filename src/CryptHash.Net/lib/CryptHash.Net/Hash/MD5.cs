@@ -4,10 +4,10 @@
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Hash.HashResults;
 using System;
 using System.IO;
 using System.Text;
+using CryptHash.Net.Hash.HashResults;
 
 namespace CryptHash.Net.Hash
 {
@@ -21,7 +21,7 @@ namespace CryptHash.Net.Hash
             {
                 throw new ArgumentException("String to be hashed required.", nameof(stringToBeHashed));
             }
-            
+
             StringBuilder sb = null;
             GenericHashResult result = null;
 
@@ -31,7 +31,7 @@ namespace CryptHash.Net.Hash
                 {
                     byte[] stringToBeHashedBytes = Encoding.UTF8.GetBytes(stringToBeHashed);
                     byte[] hashedBytes = md5.ComputeHash(stringToBeHashedBytes);
-                    
+
 
                     sb = new StringBuilder();
 
@@ -39,7 +39,7 @@ namespace CryptHash.Net.Hash
                     {
                         sb.Append(hashedBytes[i].ToString("X2"));
                     }
-                    
+
                     result = new GenericHashResult()
                     {
                         Success = true,
@@ -52,7 +52,7 @@ namespace CryptHash.Net.Hash
             {
                 return new GenericHashResult()
                 {
-                    Success = false, 
+                    Success = false,
                     Message = ex.ToString(),
                     Hash = null
                 };
@@ -72,7 +72,7 @@ namespace CryptHash.Net.Hash
             {
                 throw new FileNotFoundException($"File \"{sourceFilePath}\" not found.", nameof(sourceFilePath));
             }
-            
+
             StringBuilder sb = null;
             GenericHashResult result = null;
 
