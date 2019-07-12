@@ -18,7 +18,8 @@ namespace CryptHash.Net.CLI.ConsoleUtil
     /// </summary>
     public class ProgressBar : IDisposable, IProgress<double>
     {
-        private const int blockCount = 10;
+        //private const int blockCount = 10;
+        private int blockCount;
         private readonly TimeSpan animationInterval = TimeSpan.FromSeconds(1.0 / 8);
         private const string animation = @"|/-\";
 
@@ -29,8 +30,9 @@ namespace CryptHash.Net.CLI.ConsoleUtil
         private bool disposed = false;
         private int animationIndex = 0;
 
-        public ProgressBar()
+        public ProgressBar(int blockCount = 0)
         {
+            this.blockCount = (blockCount == 0 ? (Console.WindowWidth - 10) : blockCount);
             timer = new Timer(TimerHandler);
             //timer = new Timer(TimerHandler, new AutoResetEvent(false), TimeSpan.FromSeconds(1.0 / 8), TimeSpan.FromSeconds(1.0 / 8));
 
@@ -83,6 +85,7 @@ namespace CryptHash.Net.CLI.ConsoleUtil
             // Get length of common portion
             int commonPrefixLength = 0;
             int commonLength = Math.Min(currentText.Length, text.Length);
+
             while (commonPrefixLength < commonLength && text[commonPrefixLength] == currentText[commonPrefixLength])
             {
                 commonPrefixLength++;
@@ -97,6 +100,7 @@ namespace CryptHash.Net.CLI.ConsoleUtil
 
             // If the new text is shorter than the old one: delete overlapping characters
             int overlapCount = currentText.Length - text.Length;
+
             if (overlapCount > 0)
             {
                 outputBuilder.Append(' ', overlapCount);

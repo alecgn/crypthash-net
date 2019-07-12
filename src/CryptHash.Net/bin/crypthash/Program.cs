@@ -36,9 +36,7 @@ namespace CryptHash.Net.CLI
         private static void ProcessArgs(string[] args)
         {
 
-            var parserResult = Parser.Default.ParseArguments<CryptOptions,
-                                                             DecryptOptions,
-                                                             HashOptions>(args);
+            var parserResult = Parser.Default.ParseArguments<CryptOptions, DecryptOptions, HashOptions>(args);
 
             var exitCode = parserResult.MapResult(
                 (CryptOptions opts) => RunCryptOptionsAndReturnExitCode(opts),
@@ -60,7 +58,7 @@ namespace CryptHash.Net.CLI
                     {
                         switch (cryptOptions.Algorithm.ToLower())
                         {
-                            case "aes":
+                            case "aes256":
                                 {
                                     aesEncryptionResult = new AE_AES_256_CBC_HMAC_SHA_256().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
                                 }
@@ -75,13 +73,13 @@ namespace CryptHash.Net.CLI
                     {
                         switch (cryptOptions.Algorithm.ToLower())
                         {
-                            case "aes":
+                            case "aes256":
                                 {
                                     using (var progressBar = new ProgressBar())
                                     {
                                         var aes = new AE_AES_256_CBC_HMAC_SHA_256();
-                                        //aes.OnEncryptionMessage += (msg) => { Console.WriteLine(msg); };
                                         aes.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                        aes.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
 
                                         aesEncryptionResult = aes.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
                                     }
@@ -100,7 +98,7 @@ namespace CryptHash.Net.CLI
 
             if (aesEncryptionResult.Success)
             {
-                Console.WriteLine((cryptOptions.InputType.ToLower().Equals("string") ? aesEncryptionResult.EncryptedDataBase64String : $"{aesEncryptionResult.Message}"));
+                Console.WriteLine((cryptOptions.InputType.ToLower().Equals("string") ? aesEncryptionResult.EncryptedDataBase64String : aesEncryptionResult.Message));
 
                 return ExitCode.Sucess;
             }
@@ -122,7 +120,7 @@ namespace CryptHash.Net.CLI
                     {
                         switch (decryptOptions.Algorithm.ToLower())
                         {
-                            case "aes":
+                            case "aes256":
                                 {
                                     aesDecryptionResult = new AE_AES_256_CBC_HMAC_SHA_256().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 }
@@ -137,13 +135,13 @@ namespace CryptHash.Net.CLI
                     {
                         switch (decryptOptions.Algorithm.ToLower())
                         {
-                            case "aes":
+                            case "aes256":
                                 {
                                     using (var progressBar = new ProgressBar())
                                     {
                                         var aes = new AE_AES_256_CBC_HMAC_SHA_256();
-                                        aes.OnEncryptionMessage += (msg) => { Console.WriteLine(msg); };
                                         aes.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                        aes.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
 
                                         aesDecryptionResult = aes.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
                                     }
@@ -162,7 +160,7 @@ namespace CryptHash.Net.CLI
 
             if (aesDecryptionResult.Success)
             {
-                Console.WriteLine((decryptOptions.InputType.ToLower().Equals("string") ? aesDecryptionResult.DecryptedDataString : $"{aesDecryptionResult.Message}"));
+                Console.WriteLine((decryptOptions.InputType.ToLower().Equals("string") ? aesDecryptionResult.DecryptedDataString : aesDecryptionResult.Message));
 
                 return ExitCode.Sucess;
             }
@@ -174,87 +172,88 @@ namespace CryptHash.Net.CLI
             }
         }
 
-        private static ExitCode RunHashOptionsAndReturnExitCode(HashOptions opts)
+        private static ExitCode RunHashOptionsAndReturnExitCode(HashOptions hashOptions)
         {
             GenericHashResult hashResult = null;
 
-            switch (opts.InputType.ToLower())
+            switch (hashOptions.InputType.ToLower())
             {
                 case "string":
                     {
-                        switch (opts.Algorithm.ToLower())
+                        switch (hashOptions.Algorithm.ToLower())
                         {
                             case "md5":
-                                hashResult = new MD5().HashString(opts.InputToBeHashed);
+                                hashResult = new MD5().HashString(hashOptions.InputToBeHashed);
                                 break;
                             case "sha1":
-                                hashResult = new SHA1().HashString(opts.InputToBeHashed);
+                                hashResult = new SHA1().HashString(hashOptions.InputToBeHashed);
                                 break;
                             case "sha256":
-                                hashResult = new SHA256().HashString(opts.InputToBeHashed);
+                                hashResult = new SHA256().HashString(hashOptions.InputToBeHashed);
                                 break;
                             case "sha384":
-                                hashResult = new SHA384().HashString(opts.InputToBeHashed);
+                                hashResult = new SHA384().HashString(hashOptions.InputToBeHashed);
                                 break;
                             case "sha512":
-                                hashResult = new SHA512().HashString(opts.InputToBeHashed);
+                                hashResult = new SHA512().HashString(hashOptions.InputToBeHashed);
                                 break;
                             case "bcrypt":
-                                hashResult = new Hash.BCrypt().HashString(opts.InputToBeHashed);
+                                hashResult = new Hash.BCrypt().HashString(hashOptions.InputToBeHashed);
                                 break;
                             default:
-                                hashResult = new GenericHashResult() { Success = false, Message = $"Unknown algorithm \"{opts.Algorithm}\"." };
+                                hashResult = new GenericHashResult() { Success = false, Message = $"Unknown algorithm \"{hashOptions.Algorithm}\"." };
                                 break;
                         }
                     }
                     break;
                 case "file":
                     {
-                        switch (opts.Algorithm.ToLower())
+                        switch (hashOptions.Algorithm.ToLower())
                         {
                             case "md5":
-                                hashResult = new MD5().HashFile(opts.InputToBeHashed);
+                                hashResult = new MD5().HashFile(hashOptions.InputToBeHashed);
                                 break;
                             case "sha1":
-                                hashResult = new SHA1().HashFile(opts.InputToBeHashed);
+                                hashResult = new SHA1().HashFile(hashOptions.InputToBeHashed);
                                 break;
                             case "sha256":
-                                hashResult = new SHA256().HashFile(opts.InputToBeHashed);
+                                hashResult = new SHA256().HashFile(hashOptions.InputToBeHashed);
                                 break;
                             case "sha384":
-                                hashResult = new SHA384().HashFile(opts.InputToBeHashed);
+                                hashResult = new SHA384().HashFile(hashOptions.InputToBeHashed);
                                 break;
                             case "sha512":
-                                hashResult = new SHA512().HashFile(opts.InputToBeHashed);
+                                hashResult = new SHA512().HashFile(hashOptions.InputToBeHashed);
                                 break;
                             case "bcrypt":
-                                hashResult = new GenericHashResult() { Success = false, Message = $"Algorithm \"{opts.Algorithm}\" currently not available for file hashing." };
+                                hashResult = new GenericHashResult() { Success = false, Message = $"Algorithm \"{hashOptions.Algorithm}\" currently not available for file hashing." };
                                 break;
                             default:
-                                hashResult = new GenericHashResult() { Success = false, Message = $"Unknown algorithm \"{opts.Algorithm}\"." };
+                                hashResult = new GenericHashResult() { Success = false, Message = $"Unknown algorithm \"{hashOptions.Algorithm}\"." };
                                 break;
                         }
                     }
                     break;
                 default:
-                    hashResult = new GenericHashResult() { Success = false, Message = $"Unknown input type \"{opts.InputType}\"." };
+                    hashResult = new GenericHashResult() { Success = false, Message = $"Unknown input type \"{hashOptions.InputType}\"." };
                     break;
             }
 
-            if (hashResult.Success && !string.IsNullOrWhiteSpace(opts.CompareHash))
+            if (hashResult.Success && !string.IsNullOrWhiteSpace(hashOptions.CompareHash))
             {
                 bool hashesMatch = (
-                    opts.Algorithm.ToLower() != "bcrypt"
-                        ? (hashResult.Hash).Equals(opts.CompareHash, StringComparison.InvariantCultureIgnoreCase)
-                        : new Hash.BCrypt().Verify(opts.InputToBeHashed, opts.CompareHash).Success
+                    hashOptions.Algorithm.ToLower() != "bcrypt"
+                        ? (hashResult.Hash).Equals(hashOptions.CompareHash, StringComparison.InvariantCultureIgnoreCase)
+                        : new Hash.BCrypt().Verify(hashOptions.InputToBeHashed, hashOptions.CompareHash).Success
                 );
+
                 var outputMessage = (
                     hashesMatch
-                        ? $"Computed hash MATCH with given hash: {(opts.Algorithm.ToLower() != "bcrypt" ? hashResult.Hash : opts.CompareHash)}"
+                        ? $"Computed hash MATCH with given hash: {(hashOptions.Algorithm.ToLower() != "bcrypt" ? hashResult.Hash : hashOptions.CompareHash)}"
                         : $"Computed hash DOES NOT MATCH with given hash." +
                         (
-                            opts.Algorithm.ToLower() != "bcrypt"
-                                ? $"\nComputed hash: {hashResult.Hash}\nGiven hash: {opts.CompareHash}"
+                            hashOptions.Algorithm.ToLower() != "bcrypt"
+                                ? $"\nComputed hash: {hashResult.Hash}\nGiven hash: {hashOptions.CompareHash}"
                                 : ""
                         )
                 );
@@ -263,7 +262,7 @@ namespace CryptHash.Net.CLI
 
                 return (hashesMatch ? ExitCode.Sucess : ExitCode.Error);
             }
-            else if (hashResult.Success && string.IsNullOrWhiteSpace(opts.CompareHash))
+            else if (hashResult.Success && string.IsNullOrWhiteSpace(hashOptions.CompareHash))
             {
                 Console.WriteLine(hashResult.Hash);
 
@@ -290,8 +289,7 @@ namespace CryptHash.Net.CLI
 
         private static void ShowErrorMessage(string errorMessage)
         {
-            Console.WriteLine("An error has occured during processing:\n");
-            Console.WriteLine(errorMessage);
+            Console.WriteLine($"An error has occured during processing:\n{errorMessage}");
         }
     }
 }
