@@ -120,7 +120,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                         using (var bw = new BinaryWriter(ms))
                         {
                             bw.Write(aesEncryptionResult.EncryptedDataBytes);
-                            bw.Write(aesEncryptionResult.IVOrNonce);
+                            bw.Write(aesEncryptionResult.IV);
                             bw.Write(cryptSalt);
                             bw.Write(authSalt);
                             bw.Flush();
@@ -308,7 +308,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     RaiseOnEncryptionMessage("Writing additional data to file...");
                     byte[] additionalData = new byte[_IVBytesLength + (_saltBytesLength * 2)];
 
-                    Array.Copy(aesEncryptionResult.IVOrNonce, 0, additionalData, 0, _IVBytesLength);
+                    Array.Copy(aesEncryptionResult.IV, 0, additionalData, 0, _IVBytesLength);
                     Array.Copy(cryptSalt, 0, additionalData, _IVBytesLength, _saltBytesLength);
                     Array.Copy(authSalt, 0, additionalData, (_IVBytesLength + _saltBytesLength), _saltBytesLength);
 

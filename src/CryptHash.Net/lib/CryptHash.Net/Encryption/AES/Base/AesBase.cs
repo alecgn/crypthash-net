@@ -135,7 +135,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 Message = "Data succesfully encrypted.",
                 EncryptedDataBytes = encryptedData,
                 Key = _key,
-                IVOrNonce = _IV,
+                IV = _IV,
                 CipherMode = _cipherMode,
                 PaddingMode = _paddingMode
             };
@@ -229,7 +229,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 Message = "Data succesfully decrypted.",
                 DecryptedDataBytes = decryptedData,
                 Key = _key,
-                IVOrNonce = _IV,
+                IV = _IV,
                 CipherMode = _cipherMode,
                 PaddingMode = _paddingMode
             };
@@ -362,7 +362,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Success = true,
                     Message = message,
                     Key = _key,
-                    IVOrNonce = _IV,
+                    IV = _IV,
                     CipherMode = _cipherMode,
                     PaddingMode = _paddingMode
                 };
@@ -517,7 +517,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Success = true,
                     Message = message,
                     Key = _key,
-                    IVOrNonce = _IV,
+                    IV = _IV,
                     CipherMode =_cipherMode,
                     PaddingMode = _paddingMode
                 };
