@@ -3,7 +3,7 @@
 
 The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
 
-The .NET Standard libray can be used in projects with any .NET implementation like  **.NET Full**, **.NET Core**, and so on.  
+The .NET Standard libray can be used in projects with any .NET implementation like **.NET Framework**, **.NET Core**, **Mono**, **Xamarin**, etc.  
 Verify here the compatibility table: https://github.com/dotnet/standard/blob/master/docs/versions.md
 
 Currently symmetric encryption algorithms are:  
