@@ -6,9 +6,17 @@ The .NET Core console utility is designed to run in Windows, Linux and Mac, for 
 The .NET Standard libray can be used in projects with any .NET implementation like  **.NET Full**, **.NET Core**, and so on.  
 Verify here the compatibility table: https://github.com/dotnet/standard/blob/master/docs/versions.md
 
-Currently symmetric encryption algorithm is: **AES 256 bits** in **CBC Mode** with **HMACSHA256 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
+Currently symmetric encryption algorithms are:  
+* **AES 128 bits** in **CBC Mode** with **HMACSHA256 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.  
+* **AES 256 bits** in **CBC Mode** with **HMACSHA512 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
 
-Currently supported hash algorithms are: **MD5**, **SHA1**, **SHA256**, **SHA384**, **SHA512** and **BCrypt**.
+Currently supported hash algorithms are:  
+* **MD5**  
+* **SHA1**  
+* **SHA256**  
+* **SHA384**  
+* **SHA512**  
+* **BCrypt**
 
 Other encryption/hashing algorithms will be implemented in the future.
 
