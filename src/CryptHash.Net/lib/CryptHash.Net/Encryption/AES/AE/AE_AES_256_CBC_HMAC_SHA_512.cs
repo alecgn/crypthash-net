@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Encryption.AES.Base;
@@ -14,7 +15,7 @@ using CryptHash.Net.Encryption.Utils;
 
 namespace CryptHash.Net.Encryption.AES.AE
 {
-    public class AE_AES_256_CBC_HMAC_SHA_256 : AesBase
+    public class AE_AES_256_CBC_HMAC_SHA_512 : AesBase
     {
         #region fields
 
@@ -43,9 +44,9 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region constructors
 
-        public AE_AES_256_CBC_HMAC_SHA_256() : base() { }
+        public AE_AES_256_CBC_HMAC_SHA_512() : base() { }
 
-        public AE_AES_256_CBC_HMAC_SHA_256(byte[] key, byte[] IV)
+        public AE_AES_256_CBC_HMAC_SHA_512(byte[] key, byte[] IV)
             : base(key, IV, _cipherMode, _paddingMode) { }
 
         #endregion constructors
@@ -124,7 +125,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                             bw.Write(authSalt);
                             bw.Flush();
                             var encryptedData = ms.ToArray();
-                            tag = EncryptionUtils.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
+                            var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
+                            tag = hmacSha512.Take(_tagBytesLength).ToArray();
                             bw.Write(tag);
                         }
 
@@ -223,7 +225,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
                 byte[] authKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
-                var calcTag = EncryptionUtils.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedStringBytes, 0, (encryptedStringBytes.Length - _tagBytesLength));
+                var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedStringBytes, 0, (encryptedStringBytes.Length - _tagBytesLength));
+                var calcTag = hmacSha512.Take(_tagBytesLength).ToArray();
 
                 if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
                 {
@@ -313,7 +316,8 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                     EncryptionUtils.AppendDataToFile(encryptedFilePath, additionalData);
 
-                    var tag = EncryptionUtils.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey);
+                    var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromFile(encryptedFilePath, authKey);
+                    var tag = hmacSha512.Take(_tagBytesLength).ToArray();
                     EncryptionUtils.AppendDataToFile(encryptedFilePath, tag);
                     RaiseOnEncryptionMessage("Additional data written to file.");
 
@@ -404,7 +408,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 var cryptKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, cryptSalt, _keyBytesLength, _iterationsForPBKDF2);
                 var authKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, authSalt, _keyBytesLength, _iterationsForPBKDF2);
 
-                var calcTag = EncryptionUtils.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey, 0, (encryptedFileSize - _tagBytesLength));
+                var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromFile(encryptedFilePath, authKey, 0, (encryptedFileSize - _tagBytesLength));
+                var calcTag = hmacSha512.Take(_tagBytesLength).ToArray();
 
                 if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
                 {
