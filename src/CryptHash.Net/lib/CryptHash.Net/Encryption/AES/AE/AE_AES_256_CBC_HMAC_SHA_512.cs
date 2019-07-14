@@ -106,8 +106,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
 
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] cryptKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
-                byte[] authKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 var aesEncryptionResult = base.EncryptWithMemoryStream(plainStringBytes, cryptKey, null, _cipherMode, _paddingMode);
 
@@ -220,10 +220,10 @@ namespace CryptHash.Net.Encryption.AES.AE
                 Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - (_saltBytesLength * 2) - _IVBytesLength), IV, 0, IV.Length);
 
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] cryptKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] authKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedStringBytes, 0, (encryptedStringBytes.Length - _tagBytesLength));
                 var calcTag = hmacSha512.Take(_tagBytesLength).ToArray();
@@ -300,8 +300,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
 
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] cryptKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
-                byte[] authKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 var aesEncryptionResult = base.EncryptWithFileStream(sourceFilePath, encryptedFilePath, cryptKey, null, _cipherMode, _paddingMode, deleteSourceFile);
 
@@ -314,11 +314,11 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Array.Copy(cryptSalt, 0, additionalData, _IVBytesLength, _saltBytesLength);
                     Array.Copy(authSalt, 0, additionalData, (_IVBytesLength + _saltBytesLength), _saltBytesLength);
 
-                    EncryptionUtils.AppendDataToFile(encryptedFilePath, additionalData);
+                    EncryptionUtils.AppendDataBytesToFile(encryptedFilePath, additionalData);
 
                     var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromFile(encryptedFilePath, authKey);
                     var tag = hmacSha512.Take(_tagBytesLength).ToArray();
-                    EncryptionUtils.AppendDataToFile(encryptedFilePath, tag);
+                    EncryptionUtils.AppendDataBytesToFile(encryptedFilePath, tag);
                     RaiseOnEncryptionMessage("Additional data written to file.");
 
                     aesEncryptionResult.CryptSalt = cryptSalt;
@@ -405,8 +405,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 Array.Copy(additionalData, (_IVBytesLength + _saltBytesLength), authSalt, 0, _saltBytesLength);
                 Array.Copy(additionalData, (_IVBytesLength + (_saltBytesLength * 2)), sentTag, 0, _tagBytesLength);
 
-                var cryptKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, cryptSalt, _keyBytesLength, _iterationsForPBKDF2);
-                var authKey = EncryptionUtils.GetBytesFromPBKDF2(passwordBytes, authSalt, _keyBytesLength, _iterationsForPBKDF2);
+                var cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _keyBytesLength, _iterationsForPBKDF2);
+                var authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _keyBytesLength, _iterationsForPBKDF2);
 
                 var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromFile(encryptedFilePath, authKey, 0, (encryptedFileSize - _tagBytesLength));
                 var calcTag = hmacSha512.Take(_tagBytesLength).ToArray();

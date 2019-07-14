@@ -3,16 +3,16 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>2.0.0</Version>
-    <AssemblyVersion>2.0.0</AssemblyVersion>
-    <FileVersion>2.0.0</FileVersion>
+    <Version>2.1.0</Version>
+    <AssemblyVersion>2.1.0</AssemblyVersion>
+    <FileVersion>2.1.0</FileVersion>
     <Authors>Alessandro Cagliostro Goncalves Neves</Authors>
-    <Description>crypthash is a .NET Core 2.2 multiplatform console utility (designed to run in Windows, Linux and Mac) for text and files symmetric (AES_128_CBC / AES_256_CBC) authenticated (HMAC_SHA_256 / HMAC_SHA_512) encryption/decryption with salt, and text/files hashing (MD5, SHA1, SHA256, SHA384, SHA512, and BCrypt).</Description>
+    <Description>crypthash is a .NET Core 2.2 multiplatform console utility (designed to run in Windows, Linux and Mac) for text and files symmetric (AES_128_CBC / AES_192_CBC / AES_256_CBC) authenticated (HMAC_SHA_256 / HMAC_SHA_384 / HMAC_SHA_512) encryption/decryption with salt, and text/files hashing (MD5, SHA1, SHA256, SHA384, SHA512, and BCrypt).</Description>
     <Copyright>Alessandro Cagliostro Goncalves Neves, 2019</Copyright>
     <PackageProjectUrl>https://github.com/alecgn/crypthash-net</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/alecgn/crypthash-net/master/src/CryptHash.Net/lib/CryptHash.Net/Icon/crypthash-icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/alecgn/crypthash-net</RepositoryUrl>
-    <PackageTags>encryption decryption cryptography aes aes128 aes256 aes128cbc aes256cbc aescbc aescbc128 aescbc256 cbc hash md5 sha1 sha256 sha384 sha512 bcrypt c# c-sharp security password authentication authenticated</PackageTags>
+    <PackageTags>encryption decryption cryptography aes aes128 aes256 aes192 aes128cbc aes256cbc aes192cbc aescbc aescbc128 aescbc256 aescbc192 cbc hash md5 sha1 sha256 sha384 sha512 bcrypt c# c-sharp security password authentication authenticated</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

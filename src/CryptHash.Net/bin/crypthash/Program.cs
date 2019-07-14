@@ -63,6 +63,11 @@ namespace CryptHash.Net.CLI
                                     aesEncryptionResult = new AE_AES_128_CBC_HMAC_SHA_256().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
                                 }
                                 break;
+                            case "aes192":
+                                {
+                                    aesEncryptionResult = new AE_AES_192_CBC_HMAC_SHA_384().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
+                                }
+                                break;
                             case "aes256":
                                 {
                                     aesEncryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
@@ -87,6 +92,18 @@ namespace CryptHash.Net.CLI
                                         aes128.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
 
                                         aesEncryptionResult = aes128.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
+                                    }
+                                }
+                                break;
+                            case "aes192":
+                                {
+                                    using (var progressBar = new ProgressBar())
+                                    {
+                                        var aes192 = new AE_AES_192_CBC_HMAC_SHA_384();
+                                        aes192.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                        aes192.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+
+                                        aesEncryptionResult = aes192.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
                                     }
                                 }
                                 break;
@@ -142,6 +159,11 @@ namespace CryptHash.Net.CLI
                                     aesDecryptionResult = new AE_AES_128_CBC_HMAC_SHA_256().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 }
                                 break;
+                            case "aes192":
+                                {
+                                    aesDecryptionResult = new AE_AES_192_CBC_HMAC_SHA_384().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
+                                }
+                                break;
                             case "aes256":
                                 {
                                     aesDecryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
@@ -166,6 +188,18 @@ namespace CryptHash.Net.CLI
                                         aes128.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
 
                                         aesDecryptionResult = aes128.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
+                                    }
+                                }
+                                break;
+                            case "aes192":
+                                {
+                                    using (var progressBar = new ProgressBar())
+                                    {
+                                        var aes192 = new AE_AES_192_CBC_HMAC_SHA_384();
+                                        aes192.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                        aes192.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+
+                                        aesDecryptionResult = aes192.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
                                     }
                                 }
                                 break;

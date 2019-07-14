@@ -8,13 +8,13 @@ using CommandLine;
 
 namespace CryptHash.Net.CLI.CommandLineParser
 {
-    [Verb("crypt", HelpText = "String and file encryption (Authenticated AES 128/256 CBC).")]
+    [Verb("crypt", HelpText = "String and file encryption (Authenticated AES 128/192/256 CBC).")]
     public class CryptOptions
     {
         [Option('t', "input-type", Required = true, HelpText = "Input type (\"string\" or \"file\").")]
         public string InputType { get; set; }
 
-        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (AES128 and AES256).")]
+        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (AES128, AES192 and AES256).")]
         public string Algorithm { get; set; }
 
         [Option('i', "input", Required = true, HelpText = "Input to be encrypted (string or file path).")]
@@ -30,13 +30,13 @@ namespace CryptHash.Net.CLI.CommandLineParser
         public bool DeleteSourceFile { get; set; }
     }
 
-    [Verb("decrypt", HelpText = "String and file decryption (Authenticated AES 128/256 CBC).")]
+    [Verb("decrypt", HelpText = "String and file decryption (Authenticated AES 128/192/256 CBC).")]
     public class DecryptOptions
     {
         [Option('t', "input-type", Required = true, HelpText = "Input type (\"string\" or \"file\").")]
         public string InputType { get; set; }
 
-        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (AES128 and AES256).")]
+        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (AES128, AES192 and AES256).")]
         public string Algorithm { get; set; }
 
         [Option('i', "input", Required = true, HelpText = "Input to be decrypted (string or file path).")]
