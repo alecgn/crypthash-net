@@ -3,18 +3,25 @@
 
 The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
 
-The .NET Standard libray can be used in projects with any .NET implementation like  **.NET Full**, **.NET Core**, and so on.  
-Verify here the compatibility table: https://github.com/dotnet/standard/blob/master/docs/versions.md
+The .NET Standard libray can be used in projects with any .NET implementation like **.NET Framework**, **.NET Core**, **Mono**, **Xamarin**, etc. Verify the compatibility table here: https://github.com/dotnet/standard/blob/master/docs/versions.md
 
-Currently symmetric encryption algorithm is: **AES 256 bits** in **CBC Mode** with **HMACSHA256 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
+Currently symmetric encryption algorithms are:  
+* **AES 128 bits** in **CBC Mode** with **HMACSHA256 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.  
+* **AES 256 bits** in **CBC Mode** with **HMACSHA512 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
 
-Currently supported hash algorithms are: **MD5**, **SHA1**, **SHA256**, **SHA384**, **SHA512** and **BCrypt**.
+Currently supported hash algorithms are:  
+* **MD5**  
+* **SHA1**  
+* **SHA256**  
+* **SHA384**  
+* **SHA512**  
+* **BCrypt**
 
 Other encryption/hashing algorithms will be implemented in the future.
 
 NuGet package: https://www.nuget.org/packages/CryptHash.Net
 
-Compiled console utility and library binaries (self-contained / no framework dependent) for Windows (x86/x64), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v1.1.2. When running on Linux or Mac, don't forget to navigate to the folder and "**chmod +x crypthash**".
+Compiled console utility and library binaries (self-contained / no framework dependent) for Windows (x86/x64), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v1.1.2. When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".
 
 Additionally in the above release link there's a Windows x64 compiled version for native code using CoreRT (runs much faster than the other versions, just one single executable).
 
