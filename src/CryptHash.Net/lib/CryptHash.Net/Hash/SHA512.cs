@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Hash.HashResults;
 
@@ -17,7 +18,11 @@ namespace CryptHash.Net.Hash
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
-                throw new ArgumentException("String to be hashed required.", nameof(stringToBeHashed));
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = "String to be hashed required."
+                };
             }
 
             StringBuilder sb = null;
@@ -25,7 +30,7 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                using (var sha512 = System.Security.Cryptography.SHA512Managed.Create())
+                using (var sha512 = SHA512Managed.Create())
                 {
                     byte[] stringToBeHashedBytes = Encoding.UTF8.GetBytes(stringToBeHashed);
                     byte[] hashedBytes = sha512.ComputeHash(stringToBeHashedBytes);
@@ -51,8 +56,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = ex.ToString(),
-                    Hash = null
+                    Message = ex.ToString()
                 };
             }
             finally
@@ -68,7 +72,11 @@ namespace CryptHash.Net.Hash
         {
             if (!File.Exists(sourceFilePath))
             {
-                throw new FileNotFoundException($"File \"{sourceFilePath}\" not found.", nameof(sourceFilePath));
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = $"File \"{sourceFilePath}\" not found."
+                };
             }
 
             StringBuilder sb = null;
@@ -76,7 +84,7 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                using (var sha512 = System.Security.Cryptography.SHA512Managed.Create())
+                using (var sha512 = SHA512Managed.Create())
                 {
                     using (var fs = File.OpenRead(sourceFilePath))
                     {
@@ -102,8 +110,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = ex.ToString(),
-                    Hash = null
+                    Message = ex.ToString()
                 };
             }
             finally

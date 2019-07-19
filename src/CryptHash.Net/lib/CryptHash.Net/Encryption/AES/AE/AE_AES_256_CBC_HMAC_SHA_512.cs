@@ -5,11 +5,13 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using CryptHash.Net.Encryption.AES.Base;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Encryption.Utils;
@@ -217,7 +219,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "String to encrypt required."
+                    Message = "String to decrypt required."
                 };
             }
 
@@ -238,12 +240,12 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword)
         {
-            if (string.IsNullOrWhiteSpace(base64EncryptedStringBytes))
+            if (string.IsNullOrWhiteSpace(base64EncryptedString))
             {
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "String to encrypt required."
+                    Message = "String to decrypt required."
                 };
             }
 
@@ -256,7 +258,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            var encryptedStringBytes = Convert.FromBase64String(base64EncryptedStringBytes);
+            var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
             return DecryptString(encryptedStringBytes, passwordBytes);
@@ -269,7 +271,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "String to encrypt required."
+                    Message = "String to decrypt required."
                 };
             }
 
@@ -394,6 +396,22 @@ namespace CryptHash.Net.Encryption.AES.AE
             return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false)
+        {
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+
+            return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
+        }
+
         public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
         {
             if (string.IsNullOrWhiteSpace(encryptedFilePath))
@@ -457,6 +475,89 @@ namespace CryptHash.Net.Encryption.AES.AE
         #endregion file encryption
 
 
+        #region directory's files encryption
+
+        public AesMultipleEncryptionResult EncryptDirectoryFiles(string directoryPath, byte[] passwordBytes, bool recursive, bool deleteSourceFiles = false)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                return new AesMultipleEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Directory \"{directoryPath}\" not found."
+                };
+            }
+
+            if (passwordBytes == null || passwordBytes.Length <= 0)
+            {
+                return new AesMultipleEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            try
+            {
+                var aesMultipleEncryptionResult = new AesMultipleEncryptionResult();
+
+                var dirInfo = new DirectoryInfo(directoryPath);
+                var arrFiles = dirInfo.GetFiles("*", (recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
+
+                Parallel.ForEach(arrFiles, file => {
+
+                    byte[] cryptSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                    byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+
+                    // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
+                    byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                    byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+
+                    var aesEncryptionResult = base.EncryptWithFileStream(file.FullName, file.FullName, cryptKey, null, _cipherMode, _paddingMode, deleteSourceFiles);
+
+                    if (aesEncryptionResult.Success)
+                    {
+                        RaiseOnEncryptionMessage("Writing additional data to file...");
+                        byte[] additionalData = new byte[_IVBytesLength + (_saltBytesLength * 2)];
+
+                        Array.Copy(aesEncryptionResult.IV, 0, additionalData, 0, _IVBytesLength);
+                        Array.Copy(cryptSalt, 0, additionalData, _IVBytesLength, _saltBytesLength);
+                        Array.Copy(authSalt, 0, additionalData, (_IVBytesLength + _saltBytesLength), _saltBytesLength);
+
+                        EncryptionUtils.AppendDataBytesToFile(file.FullName, additionalData);
+
+                        var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromFile(file.FullName, authKey);
+                        var tag = hmacSha512.Take(_tagBytesLength).ToArray();
+                        EncryptionUtils.AppendDataBytesToFile(file.FullName, tag);
+                        RaiseOnEncryptionMessage("Additional data written to file.");
+
+                        aesEncryptionResult.CryptSalt = cryptSalt;
+                        aesEncryptionResult.AuthSalt = authSalt;
+                        aesEncryptionResult.Tag = tag;
+                    }
+
+                    aesMultipleEncryptionResult.AesEncryptionResults = aesMultipleEncryptionResult.AesEncryptionResults ?? new List<AesEncryptionResult>();
+                    aesMultipleEncryptionResult.AesEncryptionResults.Add(aesEncryptionResult);
+                });
+
+                aesMultipleEncryptionResult.Success = true;
+                aesMultipleEncryptionResult.Message = $"Files from directory \"{directoryPath}\" successfully{(recursive ? " recursively " : " ")}encrypted.";
+
+                return aesMultipleEncryptionResult;
+            }
+            catch (Exception ex)
+            {
+                return new AesMultipleEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Error while trying to encrypt file:\n{ex.ToString()}"
+                };
+            }
+        }
+
+        #endregion directory's files encryption
+
+
         #region file decryption
 
         public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
@@ -471,6 +572,22 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
 
             var passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
+        }
+
+        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false)
+        {
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
             return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }

@@ -19,7 +19,11 @@ namespace CryptHash.Net.Hash
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
-                throw new ArgumentException("String to be hashed required.", nameof(stringToBeHashed));
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = "String to be hashed required."
+                };
             }
 
             StringBuilder sb = null;
@@ -53,8 +57,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = ex.ToString(),
-                    Hash = null
+                    Message = ex.ToString()
                 };
             }
             finally
@@ -70,7 +73,11 @@ namespace CryptHash.Net.Hash
         {
             if (!File.Exists(sourceFilePath))
             {
-                throw new FileNotFoundException($"File \"{sourceFilePath}\" not found.", nameof(sourceFilePath));
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = $"File \"{sourceFilePath}\" not found."
+                };
             }
 
             StringBuilder sb = null;
@@ -104,8 +111,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = ex.ToString(),
-                    Hash = null
+                    Message = ex.ToString()
                 };
             }
             finally

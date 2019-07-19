@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Encryption.AES.Base;
@@ -54,6 +55,9 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region public methods
 
+
+        #region string encryption
+
         public AesEncryptionResult EncryptString(string plainString, string password)
         {
             if (string.IsNullOrWhiteSpace(plainString))
@@ -76,6 +80,57 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
             var passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            return EncryptString(plainStringBytes, passwordBytes);
+        }
+
+        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword)
+        {
+            if (string.IsNullOrWhiteSpace(plainString))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to encrypt required."
+                };
+            }
+
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+
+            return EncryptString(plainStringBytes, passwordBytes);
+        }
+
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword)
+        {
+            if (plainStringBytes == null || plainStringBytes.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to encrypt required."
+                };
+            }
+
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
             return EncryptString(plainStringBytes, passwordBytes);
         }
@@ -150,6 +205,11 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
+        #endregion string encryption
+
+
+        #region string decryption
+
         public AesEncryptionResult DecryptString(string base64EncryptedString, string password)
         {
             if (string.IsNullOrWhiteSpace(base64EncryptedString))
@@ -157,7 +217,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "String to encrypt required."
+                    Message = "String to decrypt required."
                 };
             }
 
@@ -172,6 +232,57 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
             var passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            return DecryptString(encryptedStringBytes, passwordBytes);
+        }
+
+        public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword)
+        {
+            if (string.IsNullOrWhiteSpace(base64EncryptedString))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to decrypt required."
+                };
+            }
+
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+
+            return DecryptString(encryptedStringBytes, passwordBytes);
+        }
+
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword)
+        {
+            if (encryptedStringBytes == null || encryptedStringBytes.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to decrypt required."
+                };
+            }
+
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
             return DecryptString(encryptedStringBytes, passwordBytes);
         }
@@ -262,6 +373,11 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
+        #endregion string decryption
+
+
+        #region file encryption
+
         public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
         {
             if (string.IsNullOrWhiteSpace(password))
@@ -274,6 +390,22 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
 
             var passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
+        }
+
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false)
+        {
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
             return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
@@ -338,6 +470,11 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
+        #endregion file encryption
+
+
+        #region file decryption
+
         public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
         {
             if (string.IsNullOrWhiteSpace(password))
@@ -350,6 +487,22 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
 
             var passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
+        }
+
+        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false)
+        {
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
             return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
@@ -442,6 +595,9 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
         }
+
+        #endregion file decryption
+
 
         #endregion public methods
     }

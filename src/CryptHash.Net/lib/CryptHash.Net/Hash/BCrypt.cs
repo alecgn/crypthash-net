@@ -16,7 +16,11 @@ namespace CryptHash.Net.Hash
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
-                throw new ArgumentException("String to be hashed required.", nameof(stringToBeHashed));
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = "String to be hashed required."
+                };
             }
 
             try
@@ -35,8 +39,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = ex.ToString(),
-                    Hash = null
+                    Message = ex.ToString()
                 };
             }
         }
@@ -45,7 +48,11 @@ namespace CryptHash.Net.Hash
         {
             if (string.IsNullOrWhiteSpace(stringToBeVerified))
             {
-                throw new ArgumentException("String to be verified required.", nameof(stringToBeVerified));
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = "String to be verified required."
+                };
             }
 
             try
@@ -66,8 +73,7 @@ namespace CryptHash.Net.Hash
                     return new GenericHashResult()
                     {
                         Success = false,
-                        Message = "String and hash does not match.",
-                        Hash = null
+                        Message = "String and hash does not match."
                     };
                 }
             }
@@ -76,8 +82,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = ex.ToString(),
-                    Hash = null
+                    Message = ex.ToString()
                 };
             }
         }
