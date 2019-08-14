@@ -40,6 +40,20 @@ namespace CryptHash.Net.Encryption.Utils
             return pbkdf2HashedBytes;
         }
 
+#if (NETCOREAPP3_0)
+        public static byte[] GetHashedBytesFromPBKDF2(byte[] passwordBytes, byte[] saltBytes, int keyBytesLength, int iterations, HashAlgorithmName hashAlgorithmName)
+        {
+            byte[] pbkdf2HashedBytes;
+
+            using (var pbkdf2 = new Rfc2898DeriveBytes(passwordBytes, saltBytes, iterations, hashAlgorithmName))
+            {
+                pbkdf2HashedBytes = pbkdf2.GetBytes(keyBytesLength);
+            }
+
+            return pbkdf2HashedBytes;
+        }
+#endif
+
         public static byte[] ConvertSecureStringToByteArray(SecureString secString)
         {
             byte[] byteArray = new byte[secString.Length];
@@ -79,7 +93,7 @@ namespace CryptHash.Net.Encryption.Utils
         }
 
 
-        #region SHA256 methods
+#region SHA256 methods
 
         public static byte[] ComputeHMACSHA256HashFromFile(string filePath, byte[] authKey, int offset = 0)
         {
@@ -166,10 +180,10 @@ namespace CryptHash.Net.Encryption.Utils
             return tag;
         }
 
-        #endregion SHA256 methods
+#endregion SHA256 methods
 
 
-        #region SHA384 methods
+#region SHA384 methods
 
         public static byte[] ComputeHMACSHA384HashFromFile(string filePath, byte[] authKey, int offset = 0)
         {
@@ -256,10 +270,10 @@ namespace CryptHash.Net.Encryption.Utils
             return tag;
         }
 
-        #endregion SHA384 methods
+#endregion SHA384 methods
 
 
-        #region SHA512 methods
+#region SHA512 methods
 
         public static byte[] ComputeHMACSHA512HashFromFile(string filePath, byte[] authKey, int offset = 0)
         {
@@ -346,7 +360,7 @@ namespace CryptHash.Net.Encryption.Utils
             return tag;
         }
 
-        #endregion SHA512 methods
+#endregion SHA512 methods
 
 
         public static void AppendDataBytesToFile(string filePath, byte[] dataBytes)

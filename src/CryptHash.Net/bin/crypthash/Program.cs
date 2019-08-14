@@ -11,6 +11,7 @@ using CommandLine.Text;
 using CryptHash.Net.CLI.CommandLineParser;
 using CryptHash.Net.CLI.ConsoleUtil;
 using CryptHash.Net.Encryption.AES.AE;
+using CryptHash.Net.Encryption.AES.AEAD;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Hash;
 using CryptHash.Net.Hash.HashResults;
@@ -58,20 +59,17 @@ namespace CryptHash.Net.CLI
                     {
                         switch (cryptOptions.Algorithm.ToLower())
                         {
-                            case "aes128":
-                                {
+                            case "aes128cbc":
                                     aesEncryptionResult = new AE_AES_128_CBC_HMAC_SHA_256().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
-                                }
                                 break;
-                            case "aes192":
-                                {
+                            case "aes192cbc":
                                     aesEncryptionResult = new AE_AES_192_CBC_HMAC_SHA_384().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
-                                }
                                 break;
-                            case "aes256":
-                                {
+                            case "aes256cbc":
                                     aesEncryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
-                                }
+                                break;
+                            case "aes256gcm":
+                                    aesEncryptionResult = new AEAD_AES_256_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
                                 break;
                             default:
                                 aesEncryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{cryptOptions.Algorithm}\"." };
@@ -83,7 +81,7 @@ namespace CryptHash.Net.CLI
                     {
                         switch (cryptOptions.Algorithm.ToLower())
                         {
-                            case "aes128":
+                            case "aes128cbc":
                                 {
                                     using (var progressBar = new ProgressBar())
                                     {
@@ -95,7 +93,7 @@ namespace CryptHash.Net.CLI
                                     }
                                 }
                                 break;
-                            case "aes192":
+                            case "aes192cbc":
                                 {
                                     using (var progressBar = new ProgressBar())
                                     {
@@ -107,7 +105,7 @@ namespace CryptHash.Net.CLI
                                     }
                                 }
                                 break;
-                            case "aes256":
+                            case "aes256cbc":
                                 {
                                     using (var progressBar = new ProgressBar())
                                     {
@@ -118,6 +116,9 @@ namespace CryptHash.Net.CLI
                                         aesEncryptionResult = aes256.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
                                     }
                                 }
+                                break;
+                            case "aes256gcm":
+                                aesEncryptionResult = new AesEncryptionResult() { Success = false, Message = $"Algorithm \"{cryptOptions.Algorithm}\" currently not available for file encryption." };
                                 break;
                             default:
                                 aesEncryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{cryptOptions.Algorithm}\"." };
@@ -154,20 +155,17 @@ namespace CryptHash.Net.CLI
                     {
                         switch (decryptOptions.Algorithm.ToLower())
                         {
-                            case "aes128":
-                                {
-                                    aesDecryptionResult = new AE_AES_128_CBC_HMAC_SHA_256().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
-                                }
+                            case "aes128cbc":
+                                aesDecryptionResult = new AE_AES_128_CBC_HMAC_SHA_256().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 break;
                             case "aes192":
-                                {
-                                    aesDecryptionResult = new AE_AES_192_CBC_HMAC_SHA_384().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
-                                }
+                                aesDecryptionResult = new AE_AES_192_CBC_HMAC_SHA_384().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 break;
                             case "aes256":
-                                {
-                                    aesDecryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
-                                }
+                                aesDecryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
+                                break;
+                            case "aes256gcm":
+                                aesDecryptionResult = new AEAD_AES_256_GCM().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 break;
                             default:
                                 aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
@@ -179,7 +177,7 @@ namespace CryptHash.Net.CLI
                     {
                         switch (decryptOptions.Algorithm.ToLower())
                         {
-                            case "aes128":
+                            case "aes128cbc":
                                 {
                                     using (var progressBar = new ProgressBar())
                                     {
@@ -191,7 +189,7 @@ namespace CryptHash.Net.CLI
                                     }
                                 }
                                 break;
-                            case "aes192":
+                            case "aes192cbc":
                                 {
                                     using (var progressBar = new ProgressBar())
                                     {
@@ -203,7 +201,7 @@ namespace CryptHash.Net.CLI
                                     }
                                 }
                                 break;
-                            case "aes256":
+                            case "aes256cbc":
                                 {
                                     using (var progressBar = new ProgressBar())
                                     {
@@ -214,6 +212,9 @@ namespace CryptHash.Net.CLI
                                         aesDecryptionResult = aes256.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
                                     }
                                 }
+                                break;
+                            case "aes256gcm":
+                                aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Algorithm \"{decryptOptions.Algorithm}\" currently not available for file decryption." };
                                 break;
                             default:
                                 aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
