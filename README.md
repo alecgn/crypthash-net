@@ -1,14 +1,15 @@
 # CryptHash.NET
-### A .NET Standard 2.0 Library and .NET Core 2.2 Console Application utility for encryption/decryption and hashing.
+### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption and hashing.
 
 The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
 
-The .NET Standard libray can be used in projects with any .NET implementation like **.NET Framework**, **.NET Core**, **Mono**, **Xamarin**, etc. Verify the compatibility table here: https://github.com/dotnet/standard/blob/master/docs/versions.md
+The multi-target libray can be used in projects with any .NET implementation like **.NET Framework**, **.NET Core**, **Mono**, **Xamarin**, etc. Verify the .NET Standard compatibility table here: https://github.com/dotnet/standard/blob/master/docs/versions.md
 
 Currently symmetric encryption algorithms are:  
 * **AES 128 bits** in **CBC Mode** with **HMACSHA256 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.  
 * **AES 192 bits** in **CBC Mode** with **HMACSHA384 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
 * **AES 256 bits** in **CBC Mode** with **HMACSHA512 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
+* **AES 256 bits** in **GCM Mode** with **Authentication** and **Associated Data** (**AEAD**).
 
 Currently supported hash algorithms are:  
 * **MD5**  
@@ -25,8 +26,6 @@ NuGet package: https://www.nuget.org/packages/CryptHash.Net
 Compiled console utility and library binaries (self-contained / no framework dependent) for Windows (x86/x64), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v2.1.0. When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".
 
 Additionally in the above release link there's a Windows x64 compiled version for native code using CoreRT (runs much faster than the other versions, just one single executable).
-
-Video reference for basic usage: https://www.youtube.com/watch?v=ScX_dOnVwEU (video out-of-date, main functionalities remain the same, but the most updated release has progressbars for file encryption/decryption operations).
 
 Publish it yourself using the following dotnet client command-line:
 
