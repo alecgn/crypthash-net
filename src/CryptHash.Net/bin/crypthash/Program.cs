@@ -69,7 +69,7 @@ namespace CryptHash.Net.CLI
                                     aesEncryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
                                 break;
                             case "aes256gcm":
-                                    aesEncryptionResult = new AEAD_AES_256_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
+                                    aesEncryptionResult = new AEAD_AES_256_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password, cryptOptions.AssociatedData);
                                 break;
                             default:
                                 aesEncryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{cryptOptions.Algorithm}\"." };
@@ -165,7 +165,7 @@ namespace CryptHash.Net.CLI
                                 aesDecryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 break;
                             case "aes256gcm":
-                                aesDecryptionResult = new AEAD_AES_256_GCM().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
+                                aesDecryptionResult = new AEAD_AES_256_GCM().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password, decryptOptions.AssociatedData);
                                 break;
                             default:
                                 aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
@@ -280,19 +280,19 @@ namespace CryptHash.Net.CLI
                         switch (hashOptions.Algorithm.ToLower())
                         {
                             case "md5":
-                                hashResult = new MD5().HashFile(hashOptions.InputToBeHashed);
+                                hashResult = new MD5().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
                                 break;
                             case "sha1":
-                                hashResult = new SHA1().HashFile(hashOptions.InputToBeHashed);
+                                hashResult = new SHA1().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
                                 break;
                             case "sha256":
-                                hashResult = new SHA256().HashFile(hashOptions.InputToBeHashed);
+                                hashResult = new SHA256().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
                                 break;
                             case "sha384":
-                                hashResult = new SHA384().HashFile(hashOptions.InputToBeHashed);
+                                hashResult = new SHA384().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
                                 break;
                             case "sha512":
-                                hashResult = new SHA512().HashFile(hashOptions.InputToBeHashed);
+                                hashResult = new SHA512().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
                                 break;
                             case "bcrypt":
                                 hashResult = new GenericHashResult() { Success = false, Message = $"Algorithm \"{hashOptions.Algorithm}\" currently not available for file hashing." };

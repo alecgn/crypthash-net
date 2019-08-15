@@ -28,6 +28,9 @@ namespace CryptHash.Net.CLI.CommandLineParser
 
         [Option('d', "delete-source-file", Default = false, HelpText = "Delete source file after encryption (only for \"file\" input type).")]
         public bool DeleteSourceFile { get; set; }
+
+        [Option("associated-data", Default = null, HelpText = "Associated Data (only for \"AES256GCM\" AEAD encryption algorithm).")]
+        public string AssociatedData { get; set; }
     }
 
     [Verb("decrypt", HelpText = "String and file decryption (Authenticated AES 128/192/256 CBC and AES 256 GCM).")]
@@ -50,6 +53,9 @@ namespace CryptHash.Net.CLI.CommandLineParser
 
         [Option('d', "delete-encrypted-file", Default = false, HelpText = "Delete encrypted file after decryption (only for \"file\" input type).")]
         public bool DeleteEncryptedFile { get; set; }
+
+        [Option("associated-data", Default = null, HelpText = "Associated Data (only for \"AES256GCM\" AEAD encryption algorithm).")]
+        public string AssociatedData { get; set; }
     }
 
     [Verb("hash", HelpText = "String and file hashing (MD5, SHA1, SHA256, SHA384, SHA512 and BCrypt).")]
@@ -63,6 +69,9 @@ namespace CryptHash.Net.CLI.CommandLineParser
 
         [Option('i', "input", Required = true, HelpText = "Input to be hashed (string or file path).")]
         public string InputToBeHashed { get; set; }
+
+        [Option('v', "verbose", Default = false, HelpText = "Show status/progress bar while calculating file hash.")]
+        public bool Verbose { get; set; }
 
         [Option('c', "compare-hash", Default = null, HelpText = "Previously generated hash for comparation with computed hash.")]
         public string CompareHash { get; set; }

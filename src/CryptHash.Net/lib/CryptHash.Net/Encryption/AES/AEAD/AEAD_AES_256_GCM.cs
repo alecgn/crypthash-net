@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
@@ -67,6 +68,59 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
             var passwordBytes = Encoding.UTF8.GetBytes(password);
+            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+
+            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes);
+        }
+
+        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword, string associatedDataString = null)
+        {
+            if (string.IsNullOrWhiteSpace(plainString))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to encrypt required."
+                };
+            }
+
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+
+            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes);
+        }
+
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword, string associatedDataString = null)
+        {
+            if (plainStringBytes == null || plainStringBytes.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to encrypt required."
+                };
+            }
+
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
             return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes);
@@ -270,6 +324,59 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
             return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes);
+        }
+
+        public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, string associatedDataString = null)
+        {
+            if (string.IsNullOrWhiteSpace(base64EncryptedString))
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to decrypt required."
+                };
+            }
+
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var plainStringBytes = Encoding.UTF8.GetBytes(base64EncryptedString);
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+
+            return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes);
+        }
+
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, string associatedDataString = null)
+        {
+            if (encryptedStringBytes == null || encryptedStringBytes.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to encrypt required."
+                };
+            }
+
+            if (secStrPassword == null || secStrPassword.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
+            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+
+            return EncryptString(encryptedStringBytes, passwordBytes, associatedDataBytes);
         }
 
         public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null)

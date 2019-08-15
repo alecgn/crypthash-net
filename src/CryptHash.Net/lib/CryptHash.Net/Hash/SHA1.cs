@@ -67,7 +67,7 @@ namespace CryptHash.Net.Hash
             return result;
         }
 
-        public GenericHashResult HashFile(string sourceFilePath)
+        public GenericHashResult HashFile(string sourceFilePath, bool verbose = false)
         {
             if (!File.Exists(sourceFilePath))
             {
