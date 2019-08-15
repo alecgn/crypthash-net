@@ -44,7 +44,103 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult Verify(string stringToBeVerified, string hashedString)
+        public GenericHashResult HashString(string stringToBeHashed, string salt)
+        {
+            if (string.IsNullOrWhiteSpace(stringToBeHashed))
+            {
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = "String to be hashed required."
+                };
+            }
+
+            try
+            {
+                var hashedString = BCryptNet.BCrypt.HashPassword(stringToBeHashed, salt);
+
+                return new GenericHashResult()
+                {
+                    Success = true,
+                    Message = "String succesfully hashed.",
+                    Hash = hashedString
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = ex.ToString()
+                };
+            }
+        }
+
+        public GenericHashResult HashString(string stringToBeHashed, string salt, bool enhancedEntropy, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
+        {
+            if (string.IsNullOrWhiteSpace(stringToBeHashed))
+            {
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = "String to be hashed required."
+                };
+            }
+
+            try
+            {
+                var hashedString = BCryptNet.BCrypt.HashPassword(stringToBeHashed, salt, enhancedEntropy, hashType);
+
+                return new GenericHashResult()
+                {
+                    Success = true,
+                    Message = "String succesfully hashed.",
+                    Hash = hashedString
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = ex.ToString()
+                };
+            }
+        }
+
+        public GenericHashResult HashString(string stringToBeHashed, int workFactor, bool enhancedEntropy = false)
+        {
+            if (string.IsNullOrWhiteSpace(stringToBeHashed))
+            {
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = "String to be hashed required."
+                };
+            }
+
+            try
+            {
+                var hashedString = BCryptNet.BCrypt.HashPassword(stringToBeHashed, workFactor, enhancedEntropy);
+
+                return new GenericHashResult()
+                {
+                    Success = true,
+                    Message = "String succesfully hashed.",
+                    Hash = hashedString
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = ex.ToString()
+                };
+            }
+        }
+
+        public GenericHashResult Verify(string stringToBeVerified, string hashedString, bool enhancedEntropy = false, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
         {
             if (string.IsNullOrWhiteSpace(stringToBeVerified))
             {
@@ -57,7 +153,7 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                var match = BCryptNet.BCrypt.Verify(stringToBeVerified, hashedString);
+                var match = BCryptNet.BCrypt.Verify(stringToBeVerified, hashedString, enhancedEntropy, hashType);
 
                 if (match)
                 {

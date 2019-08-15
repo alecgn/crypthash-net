@@ -148,7 +148,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            if (passwordBytes == null || passwordBytes.Length == 0)
+            if (key == null || key.Length == 0)
             {
                 return new AesEncryptionResult()
                 {
@@ -163,8 +163,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
 
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
-                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(key, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(key, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 var aesEncryptionResult = base.EncryptWithMemoryStream(plainStringBytes, cryptKey, null, _cipherMode, _paddingMode);
 
@@ -205,6 +205,44 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Message = $"Error while trying to encrypt string:\n{ex.ToString()}"
                 };
             }
+        }
+
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] key, byte[] IV)
+        {
+            if (plainStringBytes == null || plainStringBytes.Length == 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to encrypt required."
+                };
+            }
+
+            if (key == null)
+                key = EncryptionUtils.GenerateRandomBytes(_keyBytesLength);
+
+            if (key.Length != _keyBytesLength)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
+                };
+            }
+
+            if (IV == null)
+                IV = EncryptionUtils.GenerateRandomBytes(_IVBytesLength);
+
+            if (IV.Length != _IVBytesLength)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Invalid IV bit size: ({(IV.Length * 8)}). Must be ({_IVBitSize}) bits / ({_IVBytesLength}) bytes."
+                };
+            }
+
+            return base.EncryptWithMemoryStream(plainStringBytes, key, IV, _cipherMode, _paddingMode);
         }
 
         #endregion string encryption
@@ -375,6 +413,56 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] key, byte[] IV)
+        {
+            if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "String to decrypt required."
+                };
+            }
+
+            if (key == null)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Encryption key required."
+                };
+            }
+
+            if (key.Length != _keyBytesLength)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
+                };
+            }
+
+            if (IV == null)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"IV required."
+                };
+            }
+
+            if (IV.Length != _IVBytesLength)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = $"Invalid IV bit size: ({(IV.Length * 8)}). Must be: ({_IVBitSize}) bits / ({_IVBytesLength}) bytes."
+                };
+            }
+
+            return base.DecryptWithMemoryStream(encryptedStringBytes, key, IV, _cipherMode, _paddingMode);
+        }
+
         #endregion string decryption
 
 
@@ -419,7 +507,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 encryptedFilePath = sourceFilePath;
             }
 
-            if (passwordBytes == null || passwordBytes.Length == 0)
+            if (key == null || key.Length == 0)
             {
                 return new AesEncryptionResult()
                 {
@@ -434,8 +522,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
 
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
-                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(key, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(key, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 var aesEncryptionResult = base.EncryptWithFileStream(sourceFilePath, encryptedFilePath, cryptKey, null, _cipherMode, _paddingMode, deleteSourceFile);
 
