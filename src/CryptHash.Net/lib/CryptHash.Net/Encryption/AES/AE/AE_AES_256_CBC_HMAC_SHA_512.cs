@@ -60,7 +60,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region string encryption
 
-        public AesEncryptionResult EncryptString(string plainString, string password)
+        public AesEncryptionResult EncryptString(string plainString, string password, bool appendEncryptionDataToOutputString = true)
         {
             if (string.IsNullOrWhiteSpace(plainString))
             {
@@ -83,10 +83,10 @@ namespace CryptHash.Net.Encryption.AES.AE
             var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
             var passwordBytes = Encoding.UTF8.GetBytes(password);
 
-            return EncryptString(plainStringBytes, passwordBytes);
+            return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutputString);
         }
 
-        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword)
+        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword, bool appendEncryptionDataToOutputString = true)
         {
             if (string.IsNullOrWhiteSpace(plainString))
             {
@@ -109,10 +109,10 @@ namespace CryptHash.Net.Encryption.AES.AE
             var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
-            return EncryptString(plainStringBytes, passwordBytes);
+            return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutputString);
         }
 
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword)
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword, bool appendEncryptionDataToOutputString = true)
         {
             if (plainStringBytes == null || plainStringBytes.Length <= 0)
             {
@@ -134,10 +134,10 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
-            return EncryptString(plainStringBytes, passwordBytes);
+            return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutputString);
         }
 
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes)
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes, bool appendEncryptionDataToOutputString = true)
         {
             if (plainStringBytes == null || plainStringBytes.Length == 0)
             {
@@ -148,7 +148,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            if (key == null || key.Length == 0)
+            if (passwordBytes == null || passwordBytes.Length == 0)
             {
                 return new AesEncryptionResult()
                 {
@@ -163,32 +163,45 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
 
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(key, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
-                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(key, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 var aesEncryptionResult = base.EncryptWithMemoryStream(plainStringBytes, cryptKey, null, _cipherMode, _paddingMode);
 
                 if (aesEncryptionResult.Success)
                 {
-                    using (var ms = new MemoryStream())
+                    byte[] tag;
+                    byte[] hmacSha512bytes;
+
+                    if (appendEncryptionDataToOutputString)
                     {
-                        byte[] tag;
-
-                        using (var bw = new BinaryWriter(ms))
+                        using (var ms = new MemoryStream())
                         {
-                            bw.Write(aesEncryptionResult.EncryptedDataBytes);
-                            bw.Write(aesEncryptionResult.IV);
-                            bw.Write(cryptSalt);
-                            bw.Write(authSalt);
-                            bw.Flush();
-                            var encryptedData = ms.ToArray();
-                            var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
-                            tag = hmacSha512.Take(_tagBytesLength).ToArray();
-                            bw.Write(tag);
-                        }
+                            using (var bw = new BinaryWriter(ms))
+                            {
+                                bw.Write(aesEncryptionResult.EncryptedDataBytes);
+                                bw.Write(aesEncryptionResult.IV);
+                                bw.Write(cryptSalt);
+                                bw.Write(authSalt);
+                                bw.Flush();
+                                var encryptedData = ms.ToArray();
+                                hmacSha512bytes = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
+                                tag = hmacSha512bytes.Take(_tagBytesLength).ToArray();
+                                bw.Write(tag);
+                            }
 
-                        aesEncryptionResult.EncryptedDataBytes = ms.ToArray();
-                        aesEncryptionResult.EncryptedDataBase64String = Convert.ToBase64String(aesEncryptionResult.EncryptedDataBytes);
+                            aesEncryptionResult.EncryptedDataBytes = ms.ToArray();
+                            aesEncryptionResult.EncryptedDataBase64String = Convert.ToBase64String(aesEncryptionResult.EncryptedDataBytes);
+                            aesEncryptionResult.CryptSalt = cryptSalt;
+                            aesEncryptionResult.AuthSalt = authSalt;
+                            aesEncryptionResult.Tag = tag;
+                        }
+                    }
+                    else
+                    {
+                        hmacSha512bytes = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, aesEncryptionResult.EncryptedDataBytes, 0, aesEncryptionResult.EncryptedDataBytes.Length);
+                        tag = hmacSha512bytes.Take(_tagBytesLength).ToArray();
+
                         aesEncryptionResult.CryptSalt = cryptSalt;
                         aesEncryptionResult.AuthSalt = authSalt;
                         aesEncryptionResult.Tag = tag;
@@ -207,43 +220,51 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] key, byte[] IV)
-        {
-            if (plainStringBytes == null || plainStringBytes.Length == 0)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = "String to encrypt required."
-                };
-            }
+        //public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] key, byte[] IV)
+        //{
+        //    if (plainStringBytes == null || plainStringBytes.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to encrypt required."
+        //        };
+        //    }
 
-            if (key == null)
-                key = EncryptionUtils.GenerateRandomBytes(_keyBytesLength);
+        //    if (key == null)
+        //        key = EncryptionUtils.GenerateRandomBytes(_keyBytesLength);
 
-            if (key.Length != _keyBytesLength)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
-                };
-            }
+        //    if (key.Length != _keyBytesLength)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
+        //        };
+        //    }
 
-            if (IV == null)
-                IV = EncryptionUtils.GenerateRandomBytes(_IVBytesLength);
+        //    if (IV == null)
+        //        IV = EncryptionUtils.GenerateRandomBytes(_IVBytesLength);
 
-            if (IV.Length != _IVBytesLength)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Invalid IV bit size: ({(IV.Length * 8)}). Must be ({_IVBitSize}) bits / ({_IVBytesLength}) bytes."
-                };
-            }
+        //    if (IV.Length != _IVBytesLength)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Invalid IV bit size: ({(IV.Length * 8)}). Must be ({_IVBitSize}) bits / ({_IVBytesLength}) bytes."
+        //        };
+        //    }
 
-            return base.EncryptWithMemoryStream(plainStringBytes, key, IV, _cipherMode, _paddingMode);
-        }
+        //    var aesEncryptionResult = base.EncryptWithMemoryStream(plainStringBytes, key, IV, _cipherMode, _paddingMode);
+
+        //    if (aesEncryptionResult.Success)
+        //    {
+        //        var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
+        //        tag = hmacSha512.Take(_tagBytesLength).ToArray();
+        //    }
+
+        //    return aesEncryptionResult;
+        //}
 
         #endregion string encryption
 
@@ -327,7 +348,9 @@ namespace CryptHash.Net.Encryption.AES.AE
             return DecryptString(encryptedStringBytes, passwordBytes);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes)
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, 
+            bool hasEncryptionDataAppendedInIntputString = true, byte[] sentTag = null, byte[] authSalt = null, 
+            byte[] cryptSalt = null, byte[] IV = null, byte[] cryptKey = null, byte[] authKey = null)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length <= 0)
             {
@@ -358,23 +381,23 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             try
             {
-                var sentTag = new byte[_tagBytesLength];
+                sentTag = new byte[_tagBytesLength];
                 Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength), sentTag, 0, sentTag.Length);
 
-                byte[] authSalt = new byte[_saltBytesLength];
+                authSalt = new byte[_saltBytesLength];
                 Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength), authSalt, 0, authSalt.Length);
 
-                byte[] cryptSalt = new byte[_saltBytesLength];
+                cryptSalt = new byte[_saltBytesLength];
                 Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - (_saltBytesLength * 2)), cryptSalt, 0, cryptSalt.Length);
 
-                byte[] IV = new byte[_IVBytesLength];
+                IV = new byte[_IVBytesLength];
                 Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - (_saltBytesLength * 2) - _IVBytesLength), IV, 0, IV.Length);
 
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedStringBytes, 0, (encryptedStringBytes.Length - _tagBytesLength));
                 var calcTag = hmacSha512.Take(_tagBytesLength).ToArray();
@@ -413,55 +436,55 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] key, byte[] IV)
-        {
-            if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = "String to decrypt required."
-                };
-            }
+        //public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] key, byte[] IV)
+        //{
+        //    if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to decrypt required."
+        //        };
+        //    }
 
-            if (key == null)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Encryption key required."
-                };
-            }
+        //    if (key == null)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Encryption key required."
+        //        };
+        //    }
 
-            if (key.Length != _keyBytesLength)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
-                };
-            }
+        //    if (key.Length != _keyBytesLength)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
+        //        };
+        //    }
 
-            if (IV == null)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"IV required."
-                };
-            }
+        //    if (IV == null)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"IV required."
+        //        };
+        //    }
 
-            if (IV.Length != _IVBytesLength)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Invalid IV bit size: ({(IV.Length * 8)}). Must be: ({_IVBitSize}) bits / ({_IVBytesLength}) bytes."
-                };
-            }
+        //    if (IV.Length != _IVBytesLength)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Invalid IV bit size: ({(IV.Length * 8)}). Must be: ({_IVBitSize}) bits / ({_IVBytesLength}) bytes."
+        //        };
+        //    }
 
-            return base.DecryptWithMemoryStream(encryptedStringBytes, key, IV, _cipherMode, _paddingMode);
-        }
+        //    return base.DecryptWithMemoryStream(encryptedStringBytes, key, IV, _cipherMode, _paddingMode);
+        //}
 
         #endregion string decryption
 

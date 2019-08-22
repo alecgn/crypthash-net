@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Encryption.Utils.EventHandlers;
 
@@ -134,6 +135,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 Success = true,
                 Message = "Data succesfully encrypted.",
                 EncryptedDataBytes = encryptedData,
+                EncryptedDataBase64String = Convert.ToBase64String(encryptedData),
                 Key = _key,
                 IV = _IV,
                 CipherMode = _cipherMode,
@@ -228,6 +230,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 Success = true,
                 Message = "Data succesfully decrypted.",
                 DecryptedDataBytes = decryptedData,
+                DecryptedDataString = Encoding.UTF8.GetString(decryptedData),
                 Key = _key,
                 IV = _IV,
                 CipherMode = _cipherMode,
