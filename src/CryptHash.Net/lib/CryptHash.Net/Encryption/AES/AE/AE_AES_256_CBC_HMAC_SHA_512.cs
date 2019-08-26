@@ -269,7 +269,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region string decryption
 
-        public AesEncryptionResult DecryptString(string base64EncryptedString, string password)
+        public AesEncryptionResult DecryptString(string base64EncryptedString, string password, bool hasEncryptionDataAppendedInIntputString = true)
         {
             if (string.IsNullOrWhiteSpace(base64EncryptedString))
             {
@@ -292,10 +292,10 @@ namespace CryptHash.Net.Encryption.AES.AE
             var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
             var passwordBytes = Encoding.UTF8.GetBytes(password);
 
-            return DecryptString(encryptedStringBytes, passwordBytes);
+            return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInIntputString);
         }
 
-        public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword)
+        public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, bool hasEncryptionDataAppendedInIntputString = true)
         {
             if (string.IsNullOrWhiteSpace(base64EncryptedString))
             {
@@ -318,10 +318,10 @@ namespace CryptHash.Net.Encryption.AES.AE
             var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
-            return DecryptString(encryptedStringBytes, passwordBytes);
+            return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInIntputString);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword)
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, bool hasEncryptionDataAppendedInIntputString = true)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length <= 0)
             {
@@ -343,7 +343,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
-            return DecryptString(encryptedStringBytes, passwordBytes);
+            return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInIntputString);
         }
 
         public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, 
@@ -359,6 +359,15 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
+            if (passwordBytes == null || passwordBytes.Length <= 0)
+            {
+                return new AesEncryptionResult()
+                {
+                    Success = false,
+                    Message = "Password required."
+                };
+            }
+
             if (hasEncryptionDataAppendedInIntputString)
             {
                 if (encryptedStringBytes.Length < (_tagBytesLength + (_saltBytesLength * 2) + _IVBytesLength))
@@ -369,15 +378,6 @@ namespace CryptHash.Net.Encryption.AES.AE
                         Message = "Incorrect data length, string data tampered."
                     };
                 }
-            }
-
-            if (passwordBytes == null || passwordBytes.Length <= 0)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = "Password required."
-                };
             }
 
             try
