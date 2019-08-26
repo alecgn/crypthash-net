@@ -58,7 +58,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region string encryption
 
-        public AesEncryptionResult EncryptString(string plainString, string password)
+        public AesEncryptionResult EncryptString(string plainString, string password, bool appendEncryptionDataToOutputString = true)
         {
             if (string.IsNullOrWhiteSpace(plainString))
             {
@@ -81,10 +81,10 @@ namespace CryptHash.Net.Encryption.AES.AE
             var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
             var passwordBytes = Encoding.UTF8.GetBytes(password);
 
-            return EncryptString(plainStringBytes, passwordBytes);
+            return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutputString);
         }
 
-        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword)
+        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword, bool appendEncryptionDataToOutputString = true)
         {
             if (string.IsNullOrWhiteSpace(plainString))
             {
@@ -107,10 +107,10 @@ namespace CryptHash.Net.Encryption.AES.AE
             var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
-            return EncryptString(plainStringBytes, passwordBytes);
+            return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutputString);
         }
 
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword)
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword, bool appendEncryptionDataToOutputString = true)
         {
             if (plainStringBytes == null || plainStringBytes.Length <= 0)
             {
@@ -132,10 +132,10 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
-            return EncryptString(plainStringBytes, passwordBytes);
+            return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutputString);
         }
 
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes)
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes, bool appendEncryptionDataToOutputString = true)
         {
             if (plainStringBytes == null || plainStringBytes.Length == 0)
             {
@@ -159,8 +159,6 @@ namespace CryptHash.Net.Encryption.AES.AE
             {
                 byte[] cryptSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
                 byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
-
-                // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
                 byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
                 byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
@@ -168,25 +166,38 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                 if (aesEncryptionResult.Success)
                 {
-                    using (var ms = new MemoryStream())
+                    byte[] tag;
+                    byte[] hmacSha384bytes;
+
+                    if (appendEncryptionDataToOutputString)
                     {
-                        byte[] tag;
-
-                        using (var bw = new BinaryWriter(ms))
+                        using (var ms = new MemoryStream())
                         {
-                            bw.Write(aesEncryptionResult.EncryptedDataBytes);
-                            bw.Write(aesEncryptionResult.IV);
-                            bw.Write(cryptSalt);
-                            bw.Write(authSalt);
-                            bw.Flush();
-                            var encryptedData = ms.ToArray();
-                            var hmacSha384 = EncryptionUtils.ComputeHMACSHA384HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
-                            tag = hmacSha384.Take(_tagBytesLength).ToArray();
-                            bw.Write(tag);
-                        }
+                            using (var bw = new BinaryWriter(ms))
+                            {
+                                bw.Write(aesEncryptionResult.EncryptedDataBytes);
+                                bw.Write(aesEncryptionResult.IV);
+                                bw.Write(cryptSalt);
+                                bw.Write(authSalt);
+                                bw.Flush();
+                                var encryptedData = ms.ToArray();
+                                hmacSha384bytes = EncryptionUtils.ComputeHMACSHA384HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
+                                tag = hmacSha384bytes.Take(_tagBytesLength).ToArray();
+                                bw.Write(tag);
+                            }
 
-                        aesEncryptionResult.EncryptedDataBytes = ms.ToArray();
-                        aesEncryptionResult.EncryptedDataBase64String = Convert.ToBase64String(aesEncryptionResult.EncryptedDataBytes);
+                            aesEncryptionResult.EncryptedDataBytes = ms.ToArray();
+                            aesEncryptionResult.EncryptedDataBase64String = Convert.ToBase64String(aesEncryptionResult.EncryptedDataBytes);
+                            aesEncryptionResult.CryptSalt = cryptSalt;
+                            aesEncryptionResult.AuthSalt = authSalt;
+                            aesEncryptionResult.Tag = tag;
+                        }
+                    }
+                    else
+                    {
+                        hmacSha384bytes = EncryptionUtils.ComputeHMACSHA384HashFromDataBytes(authKey, aesEncryptionResult.EncryptedDataBytes, 0, aesEncryptionResult.EncryptedDataBytes.Length);
+                        tag = hmacSha384bytes.Take(_tagBytesLength).ToArray();
+
                         aesEncryptionResult.CryptSalt = cryptSalt;
                         aesEncryptionResult.AuthSalt = authSalt;
                         aesEncryptionResult.Tag = tag;

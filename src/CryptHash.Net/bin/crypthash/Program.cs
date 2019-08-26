@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using CommandLine;
 using CommandLine.Text;
 using CryptHash.Net.CLI.CommandLineParser;
@@ -24,13 +25,32 @@ namespace CryptHash.Net.CLI
         {
             try
             {
-                ProcessArgs(args);
+                Test();
+                //ProcessArgs(args);
             }
             catch (Exception ex)
             {
                 ShowErrorMessage(ex.Message);
 
                 Environment.Exit((int)ExitCode.Error);
+            }
+        }
+
+        private static void Test()
+        {
+            var aes256cbc = new AE_AES_256_CBC_HMAC_SHA_512();
+
+            var encryptResult = aes256cbc.EncryptString("test string =D", "password", false);
+
+            if (encryptResult.Success)
+            {
+                var decryptionResult = aes256cbc.DecryptString(encryptResult.EncryptedDataBytes, Encoding.UTF8.GetBytes("senha"), false, encryptResult.Tag,
+                    encryptResult.AuthSalt, encryptResult.CryptSalt, encryptResult.IV);
+
+                if (decryptionResult.Success)
+                {
+
+                }
             }
         }
 
