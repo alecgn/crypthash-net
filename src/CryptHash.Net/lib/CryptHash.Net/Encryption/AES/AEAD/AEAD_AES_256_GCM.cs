@@ -12,7 +12,7 @@ using System.Text;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Encryption.Utils;
 
-#if (NETCOREAPP3_0)
+#if (NETSTANDARD2_1 || NETCOREAPP3_0)
 namespace CryptHash.Net.Encryption.AES.AEAD
 {
     public class AEAD_AES_256_GCM

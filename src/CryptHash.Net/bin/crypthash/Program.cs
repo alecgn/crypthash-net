@@ -25,8 +25,8 @@ namespace CryptHash.Net.CLI
         {
             try
             {
-                Test();
-                //ProcessArgs(args);
+                //Test();
+                ProcessArgs(args);
             }
             catch (Exception ex)
             {
@@ -36,23 +36,33 @@ namespace CryptHash.Net.CLI
             }
         }
 
-        private static void Test()
-        {
-            var aes256cbc = new AE_AES_256_CBC_HMAC_SHA_512();
+        //private static void Test()
+        //{
+        //    var testString = "This is a test string! =D";
+        //    var password = "p4$$w0rd123";
+        //    var aes128cbc = new AE_AES_128_CBC_HMAC_SHA_256();
 
-            var encryptResult = aes256cbc.EncryptString("test string =D", "password", false);
+        //    var encryptResult = aes128cbc.EncryptString(testString, password, true);
 
-            if (encryptResult.Success)
-            {
-                var decryptionResult = aes256cbc.DecryptString(encryptResult.EncryptedDataBytes, Encoding.UTF8.GetBytes("senha"), false, encryptResult.Tag,
-                    encryptResult.AuthSalt, encryptResult.CryptSalt, encryptResult.IV);
+        //    if (encryptResult.Success)
+        //    {
+        //        Console.WriteLine($"String encrypted successfully: \"{encryptResult.EncryptedDataBase64String}\"");
 
-                if (decryptionResult.Success)
-                {
+        //        var decryptResult = aes128cbc.DecryptString(encryptResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(password), true, encryptResult.Tag,
+        //            encryptResult.AuthSalt, encryptResult.CryptSalt, encryptResult.IV);
 
-                }
-            }
-        }
+        //        if (decryptResult.Success)
+        //        {
+        //            Console.WriteLine($"String decrypted successfully: \"{decryptResult.DecryptedDataString}\"");
+        //        }
+        //        else
+        //            Console.WriteLine(decryptResult.Message);
+        //    }
+        //    else
+        //        Console.WriteLine(encryptResult.Message);
+
+        //    Console.ReadKey();
+        //}
 
         private static void ProcessArgs(string[] args)
         {

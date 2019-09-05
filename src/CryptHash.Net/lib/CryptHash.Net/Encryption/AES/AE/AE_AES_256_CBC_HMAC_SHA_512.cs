@@ -218,52 +218,6 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
         }
 
-        //public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] key, byte[] IV)
-        //{
-        //    if (plainStringBytes == null || plainStringBytes.Length == 0)
-        //    {
-        //        return new AesEncryptionResult()
-        //        {
-        //            Success = false,
-        //            Message = "String to encrypt required."
-        //        };
-        //    }
-
-        //    if (key == null)
-        //        key = EncryptionUtils.GenerateRandomBytes(_keyBytesLength);
-
-        //    if (key.Length != _keyBytesLength)
-        //    {
-        //        return new AesEncryptionResult()
-        //        {
-        //            Success = false,
-        //            Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
-        //        };
-        //    }
-
-        //    if (IV == null)
-        //        IV = EncryptionUtils.GenerateRandomBytes(_IVBytesLength);
-
-        //    if (IV.Length != _IVBytesLength)
-        //    {
-        //        return new AesEncryptionResult()
-        //        {
-        //            Success = false,
-        //            Message = $"Invalid IV bit size: ({(IV.Length * 8)}). Must be ({_IVBitSize}) bits / ({_IVBytesLength}) bytes."
-        //        };
-        //    }
-
-        //    var aesEncryptionResult = base.EncryptWithMemoryStream(plainStringBytes, key, IV, _cipherMode, _paddingMode);
-
-        //    if (aesEncryptionResult.Success)
-        //    {
-        //        var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
-        //        tag = hmacSha512.Take(_tagBytesLength).ToArray();
-        //    }
-
-        //    return aesEncryptionResult;
-        //}
-
         #endregion string encryption
 
 
@@ -441,56 +395,6 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
         }
-
-        //public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] key, byte[] IV)
-        //{
-        //    if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
-        //    {
-        //        return new AesEncryptionResult()
-        //        {
-        //            Success = false,
-        //            Message = "String to decrypt required."
-        //        };
-        //    }
-
-        //    if (key == null)
-        //    {
-        //        return new AesEncryptionResult()
-        //        {
-        //            Success = false,
-        //            Message = $"Encryption key required."
-        //        };
-        //    }
-
-        //    if (key.Length != _keyBytesLength)
-        //    {
-        //        return new AesEncryptionResult()
-        //        {
-        //            Success = false,
-        //            Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
-        //        };
-        //    }
-
-        //    if (IV == null)
-        //    {
-        //        return new AesEncryptionResult()
-        //        {
-        //            Success = false,
-        //            Message = $"IV required."
-        //        };
-        //    }
-
-        //    if (IV.Length != _IVBytesLength)
-        //    {
-        //        return new AesEncryptionResult()
-        //        {
-        //            Success = false,
-        //            Message = $"Invalid IV bit size: ({(IV.Length * 8)}). Must be: ({_IVBitSize}) bits / ({_IVBytesLength}) bytes."
-        //        };
-        //    }
-
-        //    return base.DecryptWithMemoryStream(encryptedStringBytes, key, IV, _cipherMode, _paddingMode);
-        //}
 
         #endregion string decryption
 

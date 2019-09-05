@@ -351,7 +351,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                 var cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
                 var authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
-                var hmacSha384 = EncryptionUtils.ComputeHMACSHA384HashFromDataBytes(authKey, encryptedStringBytes, 0, (encryptedStringBytes.Length - _tagBytesLength));
+                var hmacSha384 = EncryptionUtils.ComputeHMACSHA384HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInIntputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
                 var calcTag = hmacSha384.Take(_tagBytesLength).ToArray();
 
                 if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
