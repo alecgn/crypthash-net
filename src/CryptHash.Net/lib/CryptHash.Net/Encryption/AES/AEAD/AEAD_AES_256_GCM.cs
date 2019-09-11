@@ -159,13 +159,13 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             try
             {
-                byte[] cryptSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
-                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
+                byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
                 byte[] nonce = EncryptionUtils.GenerateRandomBytes(_nonceBytesLength);
                 byte[] tag = new byte[_tagBytesLength];
                 byte[] encryptedData = new byte[plainStringBytes.Length];
 
-                using (var aesGcm = new AesGcm(cryptKey))
+                using (var aesGcm = new AesGcm(derivedKey))
                 {
                     aesGcm.Encrypt(nonce, plainStringBytes, encryptedData, tag, associatedData);
                 }
@@ -178,7 +178,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     {
                         bw.Write(encryptedData);
                         bw.Write(nonce);
-                        bw.Write(cryptSalt);
+                        bw.Write(salt);
                         bw.Write(tag);
                     }
 
@@ -192,9 +192,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     EncryptedDataBytes = encryptedDataWithInfo,
                     EncryptedDataBase64String = Convert.ToBase64String(encryptedDataWithInfo),
                     Tag = tag,
-                    Key = cryptKey,
+                    Key = derivedKey,
                     Nonce = nonce,
-                    CryptSalt = cryptSalt
+                    Salt = salt
                 };
             }
             catch (Exception ex)
@@ -427,8 +427,8 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                 var tag = new byte[_tagBytesLength];
                 Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength), tag, 0, tag.Length);
 
-                var cryptSalt = new byte[_saltBytesLength];
-                Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength- _saltBytesLength), cryptSalt, 0, cryptSalt.Length);
+                var salt = new byte[_saltBytesLength];
+                Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength- _saltBytesLength), salt, 0, salt.Length);
 
                 byte[] nonce = new byte[_nonceBytesLength];
                 Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _nonceBytesLength), nonce, 0, nonce.Length);
@@ -436,10 +436,10 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                 byte[] encryptedSourceDataStringBytes = new byte[(encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _nonceBytesLength)];
                 Array.Copy(encryptedStringBytes, 0, encryptedSourceDataStringBytes, 0, encryptedSourceDataStringBytes.Length);
 
-                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
+                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
                 byte[] decryptedData = new byte[encryptedSourceDataStringBytes.Length];
 
-                using (var aesGcm = new AesGcm(cryptKey))
+                using (var aesGcm = new AesGcm(derivedKey))
                 {
                     aesGcm.Decrypt(nonce, encryptedSourceDataStringBytes, tag, decryptedData, associatedData);
                 }
@@ -451,9 +451,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     DecryptedDataBytes = decryptedData,
                     DecryptedDataString = Encoding.UTF8.GetString(decryptedData),
                     Tag = tag,
-                    Key = cryptKey,
+                    Key = derivedKey,
                     Nonce = nonce,
-                    CryptSalt = cryptSalt
+                    Salt = salt
                 };
             }
             catch (Exception ex)

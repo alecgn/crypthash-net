@@ -21,8 +21,9 @@ namespace CryptHash.Net.Encryption.AES.EncryptionResults
         public byte[] Nonce { get; set; }
         public CipherMode CipherMode { get; set; }
         public PaddingMode PaddingMode { get; set; }
-        public byte[] CryptSalt { get; set; }
-        public byte[] AuthSalt { get; set; }
+        //public byte[] CryptSalt { get; set; }
+        //public byte[] AuthSalt { get; set; }
+        public byte[] Salt { get; set; }
         public byte[] Tag { get; set; }
 
     }

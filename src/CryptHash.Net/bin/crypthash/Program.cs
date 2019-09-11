@@ -25,8 +25,9 @@ namespace CryptHash.Net.CLI
         {
             try
             {
-                //Test();
-                ProcessArgs(args);
+                //TestString();
+                TestFile();
+                //ProcessArgs(args);
             }
             catch (Exception ex)
             {
@@ -36,20 +37,21 @@ namespace CryptHash.Net.CLI
             }
         }
 
-        //private static void Test()
+        //private static void TestString()
         //{
         //    var testString = "This is a test string! =D";
         //    var password = "p4$$w0rd123";
-        //    var aes128cbc = new AE_AES_128_CBC_HMAC_SHA_256();
+        //    var appendEncryptionData = false;
+        //    var aes = new AE_AES_128_CBC_HMAC_SHA_256();
 
-        //    var encryptResult = aes128cbc.EncryptString(testString, password, true);
+        //    var encryptResult = aes.EncryptString(testString, password, appendEncryptionData);
 
         //    if (encryptResult.Success)
         //    {
         //        Console.WriteLine($"String encrypted successfully: \"{encryptResult.EncryptedDataBase64String}\"");
 
-        //        var decryptResult = aes128cbc.DecryptString(encryptResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(password), true, encryptResult.Tag,
-        //            encryptResult.AuthSalt, encryptResult.CryptSalt, encryptResult.IV);
+        //        var decryptResult = aes.DecryptString(encryptResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(password), appendEncryptionData, encryptResult.Tag,
+        //            encryptResult.Salt, encryptResult.IV);
 
         //        if (decryptResult.Success)
         //        {
@@ -63,6 +65,33 @@ namespace CryptHash.Net.CLI
 
         //    Console.ReadKey();
         //}
+
+        private static void TestFile()
+        {
+            var filePath = @"C:\Temp\test.txt";
+            var password = "p4$$w0rd123";
+            var aes = new AE_AES_128_CBC_HMAC_SHA_256();
+
+            var encryptResult = aes.EncryptFile(filePath, filePath, password);
+
+            if (encryptResult.Success)
+            {
+                Console.WriteLine($"File encrypted successfully: \"{encryptResult.EncryptedDataBase64String}\"");
+
+                var decryptResult = aes.DecryptFile(filePath, filePath, password);
+
+                if (decryptResult.Success)
+                {
+                    Console.WriteLine(decryptResult.Message);
+                }
+                else
+                    Console.WriteLine(decryptResult.Message);
+            }
+            else
+                Console.WriteLine(encryptResult.Message);
+
+            Console.ReadKey();
+        }
 
         private static void ProcessArgs(string[] args)
         {
