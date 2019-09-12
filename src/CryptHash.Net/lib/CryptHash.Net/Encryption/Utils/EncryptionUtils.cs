@@ -107,19 +107,19 @@ namespace CryptHash.Net.Encryption.Utils
                 throw new ArgumentException("Invalid auth key.", nameof(authKey));
             }
 
-            byte[] tag = null;
+            byte[] hash = null;
 
             using (var hmacSha256 = new HMACSHA256(authKey))
             {
                 using (FileStream fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     fStream.Seek(offset, SeekOrigin.Begin);
-                    tag = hmacSha256.ComputeHash(fStream);
+                    hash = hmacSha256.ComputeHash(fStream);
                     fStream.Close();
                 }
             }
 
-            return tag;
+            return hash;
         }
 
         public static byte[] ComputeHMACSHA256HashFromFile(string filePath, byte[] authKey, long startPosition, long endPosition)
@@ -162,22 +162,22 @@ namespace CryptHash.Net.Encryption.Utils
         {
             if (dataBytes == null || dataBytes.Length == 0)
             {
-                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+                throw new ArgumentException("Invalid data bytes.", nameof(dataBytes));
             }
 
             if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Invalid data bytes.", nameof(authKey));
+                throw new ArgumentException("Invalid auth key.", nameof(authKey));
             }
 
-            byte[] tag = null;
+            byte[] hash = null;
 
             using (var hmacSha256 = new HMACSHA256(authKey))
             {
-                tag = hmacSha256.ComputeHash(dataBytes, offset, count);
+                hash = hmacSha256.ComputeHash(dataBytes, offset, count);
             }
 
-            return tag;
+            return hash;
         }
 
 #endregion SHA256 methods
@@ -197,19 +197,19 @@ namespace CryptHash.Net.Encryption.Utils
                 throw new ArgumentException("Invalid auth key.", nameof(authKey));
             }
 
-            byte[] tag = null;
+            byte[] hash = null;
 
             using (var hmacSha384 = new HMACSHA384(authKey))
             {
                 using (FileStream fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     fStream.Seek(offset, SeekOrigin.Begin);
-                    tag = hmacSha384.ComputeHash(fStream);
+                    hash = hmacSha384.ComputeHash(fStream);
                     fStream.Close();
                 }
             }
 
-            return tag;
+            return hash;
         }
 
         public static byte[] ComputeHMACSHA384HashFromFile(string filePath, byte[] authKey, long startPosition, long endPosition)
@@ -252,22 +252,22 @@ namespace CryptHash.Net.Encryption.Utils
         {
             if (dataBytes == null || dataBytes.Length == 0)
             {
-                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+                throw new ArgumentException("Invalid data bytes.", nameof(dataBytes));
             }
 
             if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Invalid data bytes.", nameof(authKey));
+                throw new ArgumentException("Invalid auth key.", nameof(authKey));
             }
 
-            byte[] tag = null;
+            byte[] hash = null;
 
             using (var hmacSha384 = new HMACSHA384(authKey))
             {
-                tag = hmacSha384.ComputeHash(dataBytes, offset, count);
+                hash = hmacSha384.ComputeHash(dataBytes, offset, count);
             }
 
-            return tag;
+            return hash;
         }
 
 #endregion SHA384 methods
@@ -287,19 +287,19 @@ namespace CryptHash.Net.Encryption.Utils
                 throw new ArgumentException("Invalid auth key.", nameof(authKey));
             }
 
-            byte[] tag = null;
+            byte[] hash = null;
 
             using (var hmacSha512 = new HMACSHA512(authKey))
             {
                 using (FileStream fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     fStream.Seek(offset, SeekOrigin.Begin);
-                    tag = hmacSha512.ComputeHash(fStream);
+                    hash = hmacSha512.ComputeHash(fStream);
                     fStream.Close();
                 }
             }
 
-            return tag;
+            return hash;
         }
 
         public static byte[] ComputeHMACSHA512HashFromFile(string filePath, byte[] authKey, long startPosition, long endPosition)
@@ -342,22 +342,22 @@ namespace CryptHash.Net.Encryption.Utils
         {
             if (dataBytes == null || dataBytes.Length == 0)
             {
-                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+                throw new ArgumentException("Invalid data bytes.", nameof(dataBytes));
             }
 
             if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Invalid data bytes.", nameof(authKey));
+                throw new ArgumentException("Invalid auth key.", nameof(authKey));
             }
 
-            byte[] tag = null;
+            byte[] hash = null;
 
             using (var hmacSha512 = new HMACSHA512(authKey))
             {
-                tag = hmacSha512.ComputeHash(dataBytes, offset, count);
+                hash = hmacSha512.ComputeHash(dataBytes, offset, count);
             }
 
-            return tag;
+            return hash;
         }
 
 #endregion SHA512 methods
@@ -398,7 +398,7 @@ namespace CryptHash.Net.Encryption.Utils
         public static bool TagsMatch(byte[] calcTag, byte[] sentTag)
         {
             if (calcTag.Length != sentTag.Length)
-                throw new ArgumentException("Signature CalcTag and SentTag length must be igual.");
+                throw new ArgumentException("Signature CalcTag and SentTag length must be equal.");
 
             var result = true;
             var compare = 0;
