@@ -4,17 +4,15 @@
  *      https://github.com/alecgn
  */
 
+using CryptHash.Net.Encryption.AES.Base;
+using CryptHash.Net.Encryption.AES.EncryptionResults;
+using CryptHash.Net.Encryption.Utils;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using CryptHash.Net.Encryption.AES.Base;
-using CryptHash.Net.Encryption.AES.EncryptionResults;
-using CryptHash.Net.Encryption.Utils;
 
 namespace CryptHash.Net.Encryption.AES.AE
 {
@@ -22,16 +20,13 @@ namespace CryptHash.Net.Encryption.AES.AE
     {
         #region fields
 
-        private static readonly int _blockBitSize = 128;
-        private static readonly int _blockBytesLength = (_blockBitSize / 8);
+        private static readonly int _keyBitSize = 256;
+        private static readonly int _keyBytesLength = (_keyBitSize / 8);
 
         private static readonly int _IVBitSize = 128;
         private static readonly int _IVBytesLength = (_IVBitSize / 8);
 
-        private static readonly int _keyBitSize = 256;
-        private static readonly int _keyBytesLength = (_keyBitSize / 8);
-
-        private static readonly int _saltBitSize = 256;
+        private static readonly int _saltBitSize = 128;
         private static readonly int _saltBytesLength = (_saltBitSize / 8);
 
         private static readonly int _tagBitSize = 256;
@@ -337,7 +332,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesEncryptionResult()
                     {
                         Success = false,
-                        Message = "Incorrect data length, string data tampered."
+                        Message = "Incorrect data length, string data tampered with."
                     };
                 }
             }
@@ -376,7 +371,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesEncryptionResult()
                     {
                         Success = false,
-                        Message = "Authentication for string decryption failed, wrong password or data tampered."
+                        Message = "Authentication for string decryption failed, wrong password or data tampered with."
                     };
                 }
 
@@ -417,7 +412,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region file encryption
 
-        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false, bool appendEncryptionDataToOutputFile = true)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -433,7 +428,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
-        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false)
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false, bool appendEncryptionDataToOutputFile = true)
         {
             if (secStrPassword == null || secStrPassword.Length <= 0)
             {
@@ -449,7 +444,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
-        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false, bool appendEncryptionDataToOutputFile = true)
         {
             if (string.IsNullOrWhiteSpace(encryptedFilePath))
             {
@@ -471,7 +466,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 //byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
 
                 byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
-                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
 
                 //byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
                 //byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
@@ -521,7 +516,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region file decryption
 
-        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
+        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInIntputFile = true)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -537,7 +532,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
-        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false)
+        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInIntputFile = true)
         {
             if (secStrPassword == null || secStrPassword.Length <= 0)
             {
@@ -553,7 +548,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
-        public AesEncryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
+        public AesEncryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInIntputFile = true)
         {
             if (!File.Exists(encryptedFilePath))
             {
@@ -585,7 +580,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Incorrect data length, file data tampered."
+                    Message = "Incorrect data length, file data tampered with."
                 };
             }
 
@@ -621,7 +616,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesEncryptionResult()
                     {
                         Success = false,
-                        Message = "Authentication for file decryption failed, wrong password or data tampered."
+                        Message = "Authentication for file decryption failed, wrong password or data tampered with."
                     };
                 }
 

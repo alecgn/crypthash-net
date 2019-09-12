@@ -22,7 +22,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         private static readonly int _keyBitSize = 256;
         private static readonly int _keyBytesLength = (_keyBitSize / 8);
 
-        private static readonly int _saltBitSize = 256;
+        private static readonly int _saltBitSize = 128;
         private static readonly int _saltBytesLength = (_saltBitSize / 8);
 
         private const int _nonceBitSize = 96;
@@ -48,7 +48,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         #region string encryption
 
-        public AesEncryptionResult EncryptString(string plainString, string password, string associatedDataString = null)
+        public AesEncryptionResult EncryptString(string plainString, string password, string associatedDataString = null, bool appendEncryptionDataToOutputString = true)
         {
             if (string.IsNullOrEmpty(plainString))
             {
@@ -75,7 +75,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes);
         }
 
-        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword, string associatedDataString = null)
+        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword, string associatedDataString = null, bool appendEncryptionDataToOutputString = true)
         {
             if (string.IsNullOrWhiteSpace(plainString))
             {
@@ -102,7 +102,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes);
         }
 
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword, string associatedDataString = null)
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword, string associatedDataString = null, bool appendEncryptionDataToOutputString = true)
         {
             if (plainStringBytes == null || plainStringBytes.Length <= 0)
             {
@@ -128,7 +128,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes);
         }
 
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes, byte[] associatedData = null)
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool appendEncryptionDataToOutputString = true)
         {
             if (plainStringBytes == null || plainStringBytes.Length == 0)
             {
@@ -207,104 +207,104 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
         }
 
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] key, byte[] nonce, byte[] associatedData = null)
-        {
-            if (plainStringBytes == null || plainStringBytes.Length == 0)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = "String to encrypt required."
-                };
-            }
+        //public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] key, byte[] nonce, byte[] associatedData = null, bool appendEncryptionDataToOutputString = true)
+        //{
+        //    if (plainStringBytes == null || plainStringBytes.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to encrypt required."
+        //        };
+        //    }
 
-            if (plainStringBytes.LongLength > _maxInputDataSizeBytes)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Max. string length cannot be greater than {_maxInputDataSizeBytes} bytes."
-                };
-            }
+        //    if (plainStringBytes.LongLength > _maxInputDataSizeBytes)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Max. string length cannot be greater than {_maxInputDataSizeBytes} bytes."
+        //        };
+        //    }
 
-            if (key == null)
-            {
-                //key = new byte[32];
-                //RandomNumberGenerator.Fill(key);
-                key = EncryptionUtils.GenerateRandomBytes(_keyBytesLength);
-            }
+        //    if (key == null)
+        //    {
+        //        //key = new byte[32];
+        //        //RandomNumberGenerator.Fill(key);
+        //        key = EncryptionUtils.GenerateRandomBytes(_keyBytesLength);
+        //    }
 
-            if (key.Length != _keyBytesLength)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
-                };
-            }
+        //    if (key.Length != _keyBytesLength)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
+        //        };
+        //    }
 
-            if (nonce == null)
-            {
-                //nonce = new byte[12];
-                //RandomNumberGenerator.Fill(nonce);
-                nonce = EncryptionUtils.GenerateRandomBytes(_nonceBytesLength);
-            }
+        //    if (nonce == null)
+        //    {
+        //        //nonce = new byte[12];
+        //        //RandomNumberGenerator.Fill(nonce);
+        //        nonce = EncryptionUtils.GenerateRandomBytes(_nonceBytesLength);
+        //    }
 
-            if (nonce.Length != _nonceBytesLength)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Invalid nonce bit size: ({(nonce.Length * 8)}). Must be ({_nonceBitSize}) bits / ({_nonceBytesLength}) bytes."
-                };
-            }
+        //    if (nonce.Length != _nonceBytesLength)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Invalid nonce bit size: ({(nonce.Length * 8)}). Must be ({_nonceBitSize}) bits / ({_nonceBytesLength}) bytes."
+        //        };
+        //    }
 
-            if (associatedData != null && associatedData.LongLength > _maxInputAuthDataSizeBytes)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Max. associated data length cannot be greater than {_maxInputAuthDataSizeBytes} bytes."
-                };
-            }
+        //    if (associatedData != null && associatedData.LongLength > _maxInputAuthDataSizeBytes)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Max. associated data length cannot be greater than {_maxInputAuthDataSizeBytes} bytes."
+        //        };
+        //    }
 
-            byte[] tag = new byte[_tagBytesLength];
-            byte[] encryptedData = new byte[plainStringBytes.Length];
+        //    byte[] tag = new byte[_tagBytesLength];
+        //    byte[] encryptedData = new byte[plainStringBytes.Length];
 
-            try
-            {
-                using (var aesGcm = new AesGcm(key))
-                {
-                    aesGcm.Encrypt(nonce, plainStringBytes, encryptedData, tag, associatedData);
-                }
+        //    try
+        //    {
+        //        using (var aesGcm = new AesGcm(key))
+        //        {
+        //            aesGcm.Encrypt(nonce, plainStringBytes, encryptedData, tag, associatedData);
+        //        }
 
-                return new AesEncryptionResult()
-                {
-                    Success = true,
-                    Message = "Data succesfully encrypted.",
-                    EncryptedDataBytes = encryptedData,
-                    EncryptedDataBase64String = Convert.ToBase64String(encryptedData),
-                    Tag = tag,
-                    Key = key,
-                    Nonce = nonce
-                };
-            }
-            catch (Exception ex)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Error while trying to encrypt data:\n{ex.ToString()}"
-                };
-            }
-        }
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = true,
+        //            Message = "Data succesfully encrypted.",
+        //            EncryptedDataBytes = encryptedData,
+        //            EncryptedDataBase64String = Convert.ToBase64String(encryptedData),
+        //            Tag = tag,
+        //            Key = key,
+        //            Nonce = nonce
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Error while trying to encrypt data:\n{ex.ToString()}"
+        //        };
+        //    }
+        //}
 
         #endregion string encryption
 
 
         #region string decryption
 
-        public AesEncryptionResult DecryptString(string base64EncryptedString, string password, string associatedDataString = null)
+        public AesEncryptionResult DecryptString(string base64EncryptedString, string password, string associatedDataString = null, bool hasEncryptionDataAppendedInIntputString = true)
         {
             if (string.IsNullOrEmpty(base64EncryptedString))
             {
@@ -331,7 +331,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes);
         }
 
-        public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, string associatedDataString = null)
+        public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInIntputString = true)
         {
             if (string.IsNullOrWhiteSpace(base64EncryptedString))
             {
@@ -358,7 +358,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, string associatedDataString = null)
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInIntputString = true)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length <= 0)
             {
@@ -384,7 +384,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             return EncryptString(encryptedStringBytes, passwordBytes, associatedDataBytes);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null)
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInIntputString = true)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
             {
@@ -466,118 +466,118 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] key, byte[] tag, byte[] nonce, byte[] associatedData = null)
-        {
-            if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = "String to decrypt required."
-                };
-            }
+        //public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] key, byte[] tag, byte[] nonce, byte[] associatedData = null, bool hasEncryptionDataAppendedInIntputString = true)
+        //{
+        //    if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = "String to decrypt required."
+        //        };
+        //    }
 
-            if (encryptedStringBytes.LongLength > _maxInputDataSizeBytes)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Max. encrypted data length cannot be greater than {_maxInputDataSizeBytes} bytes."
-                };
-            }
+        //    if (encryptedStringBytes.LongLength > _maxInputDataSizeBytes)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Max. encrypted data length cannot be greater than {_maxInputDataSizeBytes} bytes."
+        //        };
+        //    }
 
-            if (key == null)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Encryption key required."
-                };
-            }
+        //    if (key == null)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Encryption key required."
+        //        };
+        //    }
 
-            if (key.Length != _keyBytesLength)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
-                };
-            }
+        //    if (key.Length != _keyBytesLength)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
+        //        };
+        //    }
 
-            if (tag == null)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Authentication Tag required."
-                };
-            }
+        //    if (tag == null)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Authentication Tag required."
+        //        };
+        //    }
 
-            if (tag.Length != _tagBytesLength)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Invalid tag bit size: ({(tag.Length * 8)}). Must be: ({_tagBitSize}) bits / ({_tagBytesLength}) bytes."
-                };
-            }
+        //    if (tag.Length != _tagBytesLength)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Invalid tag bit size: ({(tag.Length * 8)}). Must be: ({_tagBitSize}) bits / ({_tagBytesLength}) bytes."
+        //        };
+        //    }
 
-            if (nonce == null)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Nonce required."
-                };
-            }
+        //    if (nonce == null)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Nonce required."
+        //        };
+        //    }
 
-            if (nonce.Length != _nonceBytesLength)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Invalid nonce bit size: ({(nonce.Length * 8)}). Must be: ({_nonceBitSize}) bits / ({_nonceBytesLength}) bytes."
-                };
-            }
+        //    if (nonce.Length != _nonceBytesLength)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Invalid nonce bit size: ({(nonce.Length * 8)}). Must be: ({_nonceBitSize}) bits / ({_nonceBytesLength}) bytes."
+        //        };
+        //    }
 
-            if (associatedData != null && associatedData.LongLength > _maxInputAuthDataSizeBytes)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Max. associated data length cannot be greater than {_maxInputAuthDataSizeBytes} bytes."
-                };
-            }
+        //    if (associatedData != null && associatedData.LongLength > _maxInputAuthDataSizeBytes)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Max. associated data length cannot be greater than {_maxInputAuthDataSizeBytes} bytes."
+        //        };
+        //    }
 
-            byte[] decryptedData = new byte[encryptedStringBytes.Length];
+        //    byte[] decryptedData = new byte[encryptedStringBytes.Length];
 
-            try
-            {
-                using (var aesGcm = new AesGcm(key))
-                {
-                    aesGcm.Decrypt(nonce, encryptedStringBytes, tag, decryptedData, associatedData);
-                }
+        //    try
+        //    {
+        //        using (var aesGcm = new AesGcm(key))
+        //        {
+        //            aesGcm.Decrypt(nonce, encryptedStringBytes, tag, decryptedData, associatedData);
+        //        }
 
-                return new AesEncryptionResult()
-                {
-                    Success = true,
-                    Message = "Data succesfully decrypted.",
-                    DecryptedDataBytes = decryptedData,
-                    DecryptedDataString = Encoding.UTF8.GetString(decryptedData),
-                    Tag = tag,
-                    Key = key,
-                    Nonce = nonce
-                };
-            }
-            catch (Exception ex)
-            {
-                return new AesEncryptionResult()
-                {
-                    Success = false,
-                    Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
-                };
-            }
-        }
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = true,
+        //            Message = "Data succesfully decrypted.",
+        //            DecryptedDataBytes = decryptedData,
+        //            DecryptedDataString = Encoding.UTF8.GetString(decryptedData),
+        //            Tag = tag,
+        //            Key = key,
+        //            Nonce = nonce
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new AesEncryptionResult()
+        //        {
+        //            Success = false,
+        //            Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
+        //        };
+        //    }
+        //}
 
         #endregion string decryption
 

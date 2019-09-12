@@ -37,40 +37,40 @@ namespace CryptHash.Net.CLI
             }
         }
 
-        //private static void TestString()
-        //{
-        //    var testString = "This is a test string! =D";
-        //    var password = "p4$$w0rd123";
-        //    var appendEncryptionData = false;
-        //    var aes = new AE_AES_128_CBC_HMAC_SHA_256();
+        private static void TestString()
+        {
+            var testString = "This is a test string! =D";
+            var password = "p4$$w0rd123";
+            var appendEncryptionData = false;
+            var aes = new AE_AES_256_CBC_HMAC_SHA_512();
 
-        //    var encryptResult = aes.EncryptString(testString, password, appendEncryptionData);
+            var encryptResult = aes.EncryptString(testString, password, appendEncryptionData);
 
-        //    if (encryptResult.Success)
-        //    {
-        //        Console.WriteLine($"String encrypted successfully: \"{encryptResult.EncryptedDataBase64String}\"");
+            if (encryptResult.Success)
+            {
+                Console.WriteLine($"String encrypted successfully: \"{encryptResult.EncryptedDataBase64String}\"");
 
-        //        var decryptResult = aes.DecryptString(encryptResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(password), appendEncryptionData, encryptResult.Tag,
-        //            encryptResult.Salt, encryptResult.IV);
+                var decryptResult = aes.DecryptString(encryptResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(password), appendEncryptionData, encryptResult.Tag,
+                    encryptResult.Salt, encryptResult.IV);
 
-        //        if (decryptResult.Success)
-        //        {
-        //            Console.WriteLine($"String decrypted successfully: \"{decryptResult.DecryptedDataString}\"");
-        //        }
-        //        else
-        //            Console.WriteLine(decryptResult.Message);
-        //    }
-        //    else
-        //        Console.WriteLine(encryptResult.Message);
+                if (decryptResult.Success)
+                {
+                    Console.WriteLine($"String decrypted successfully: \"{decryptResult.DecryptedDataString}\"");
+                }
+                else
+                    Console.WriteLine(decryptResult.Message);
+            }
+            else
+                Console.WriteLine(encryptResult.Message);
 
-        //    Console.ReadKey();
-        //}
+            Console.ReadKey();
+        }
 
         private static void TestFile()
         {
             var filePath = @"C:\Temp\test.txt";
             var password = "p4$$w0rd123";
-            var aes = new AE_AES_128_CBC_HMAC_SHA_256();
+            var aes = new AE_AES_256_CBC_HMAC_SHA_512();
 
             var encryptResult = aes.EncryptFile(filePath, filePath, password);
 

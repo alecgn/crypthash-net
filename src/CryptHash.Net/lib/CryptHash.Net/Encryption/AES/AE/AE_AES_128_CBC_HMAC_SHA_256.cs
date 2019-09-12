@@ -20,14 +20,11 @@ namespace CryptHash.Net.Encryption.AES.AE
     {
         #region fields
 
-        private static readonly int _blockBitSize = 128;
-        private static readonly int _blockBytesLength = (_blockBitSize / 8);
+        private static readonly int _keyBitSize = 128;
+        private static readonly int _keyBytesLength = (_keyBitSize / 8);
 
         private static readonly int _IVBitSize = 128;
         private static readonly int _IVBytesLength = (_IVBitSize / 8);
-
-        private static readonly int _keyBitSize = 128;
-        private static readonly int _keyBytesLength = (_keyBitSize / 8);
 
         private static readonly int _saltBitSize = 128;
         private static readonly int _saltBytesLength = (_saltBitSize / 8);
@@ -335,7 +332,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesEncryptionResult()
                     {
                         Success = false,
-                        Message = "Incorrect data length, string data tampered."
+                        Message = "Incorrect data length, string data tampered data tampered with."
                     };
                 }
             }
@@ -374,7 +371,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesEncryptionResult()
                     {
                         Success = false,
-                        Message = "Authentication for string decryption failed, wrong password or data tampered."
+                        Message = "Authentication for string decryption failed, wrong password or data tampered with."
                     };
                 }
 
@@ -465,23 +462,29 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             try
             {
-                byte[] cryptSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
-                byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                //byte[] cryptSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                //byte[] authSalt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
 
-                // EncryptionUtils.GetBytesFromPBKDF2(...) relies on Rfc2898DeriveBytes, still waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
-                byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
-                byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+
+                //byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                //byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+
+                byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
+                byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
                 var aesEncryptionResult = base.EncryptWithFileStream(sourceFilePath, encryptedFilePath, cryptKey, null, _cipherMode, _paddingMode, deleteSourceFile);
 
                 if (aesEncryptionResult.Success)
                 {
                     RaiseOnEncryptionMessage("Writing additional data to file...");
-                    byte[] additionalData = new byte[_IVBytesLength + (_saltBytesLength * 2)];
+                    byte[] additionalData = new byte[_IVBytesLength + _saltBytesLength];
 
                     Array.Copy(aesEncryptionResult.IV, 0, additionalData, 0, _IVBytesLength);
-                    Array.Copy(cryptSalt, 0, additionalData, _IVBytesLength, _saltBytesLength);
-                    Array.Copy(authSalt, 0, additionalData, (_IVBytesLength + _saltBytesLength), _saltBytesLength);
+                    //Array.Copy(cryptSalt, 0, additionalData, _IVBytesLength, _saltBytesLength);
+                    //Array.Copy(authSalt, 0, additionalData, (_IVBytesLength + _saltBytesLength), _saltBytesLength);
+                    Array.Copy(salt, 0, additionalData, _IVBytesLength, _saltBytesLength);
 
                     EncryptionUtils.AppendDataBytesToFile(encryptedFilePath, additionalData);
 
@@ -490,8 +493,9 @@ namespace CryptHash.Net.Encryption.AES.AE
                     EncryptionUtils.AppendDataBytesToFile(encryptedFilePath, tag);
                     RaiseOnEncryptionMessage("Additional data written to file.");
 
-                    aesEncryptionResult.CryptSalt = cryptSalt;
-                    aesEncryptionResult.AuthSalt = authSalt;
+                    //aesEncryptionResult.CryptSalt = cryptSalt;
+                    //aesEncryptionResult.AuthSalt = authSalt;
+                    aesEncryptionResult.Salt = salt;
                     aesEncryptionResult.Tag = tag;
                 }
 
@@ -571,32 +575,38 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var encryptedFileSize = new FileInfo(encryptedFilePath).Length;
 
-            if (encryptedFileSize < (_tagBytesLength + (_saltBytesLength * 2) + _IVBytesLength))
+            if (encryptedFileSize < (_tagBytesLength + _saltBytesLength + _IVBytesLength))
             {
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Incorrect data length, file data tampered."
+                    Message = "Incorrect data length, file data tampered with."
                 };
             }
 
             try
             {
-                byte[] additionalData = new byte[_IVBytesLength + (_saltBytesLength * 2) + _tagBytesLength];
+                byte[] additionalData = new byte[_IVBytesLength + _saltBytesLength + _tagBytesLength];
                 additionalData = EncryptionUtils.GetBytesFromFile(encryptedFilePath, additionalData.Length, (encryptedFileSize - additionalData.Length));
 
                 byte[] IV = new byte[_IVBytesLength];
-                byte[] cryptSalt = new byte[_saltBytesLength];
-                byte[] authSalt = new byte[_saltBytesLength];
+                //byte[] cryptSalt = new byte[_saltBytesLength];
+                //byte[] authSalt = new byte[_saltBytesLength];
+                byte[] salt = new byte[_saltBytesLength];
                 byte[] sentTag = new byte[_tagBytesLength];
 
                 Array.Copy(additionalData, 0, IV, 0, _IVBytesLength);
-                Array.Copy(additionalData, _IVBytesLength, cryptSalt, 0, _saltBytesLength);
-                Array.Copy(additionalData, (_IVBytesLength + _saltBytesLength), authSalt, 0, _saltBytesLength);
-                Array.Copy(additionalData, (_IVBytesLength + (_saltBytesLength * 2)), sentTag, 0, _tagBytesLength);
+                //Array.Copy(additionalData, _IVBytesLength, cryptSalt, 0, _saltBytesLength);
+                //Array.Copy(additionalData, (_IVBytesLength + _saltBytesLength), authSalt, 0, _saltBytesLength);
+                Array.Copy(additionalData, _IVBytesLength, salt, 0, _saltBytesLength);
+                Array.Copy(additionalData, (_IVBytesLength + _saltBytesLength), sentTag, 0, _tagBytesLength);
 
-                var cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _keyBytesLength, _iterationsForPBKDF2);
-                var authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _keyBytesLength, _iterationsForPBKDF2);
+                //var cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _keyBytesLength, _iterationsForPBKDF2);
+                //var authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _keyBytesLength, _iterationsForPBKDF2);
+
+                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+                byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
+                byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
                 var hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey, 0, (encryptedFileSize - _tagBytesLength));
                 var calcTag = hmacSha256.Take(_tagBytesLength).ToArray();
@@ -606,18 +616,19 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesEncryptionResult()
                     {
                         Success = false,
-                        Message = "Authentication for file decryption failed, wrong password or data tampered."
+                        Message = "Authentication for file decryption failed, wrong password or data tampered with."
                     };
                 }
 
-                long endPosition = (encryptedFileSize - _tagBytesLength - (_saltBytesLength * 2) - _IVBytesLength);
+                long endPosition = (encryptedFileSize - _tagBytesLength - _saltBytesLength - _IVBytesLength);
 
                 var aesDecryptionResult = base.DecryptWithFileStream(encryptedFilePath, decryptedFilePath, cryptKey, IV, _cipherMode, _paddingMode, deleteSourceFile, 4, 0, endPosition);
 
                 if (aesDecryptionResult.Success)
                 {
-                    aesDecryptionResult.CryptSalt = cryptSalt;
-                    aesDecryptionResult.AuthSalt = authSalt;
+                    //aesDecryptionResult.CryptSalt = cryptSalt;
+                    //aesDecryptionResult.AuthSalt = authSalt;
+                    aesDecryptionResult.Salt = salt;
                     aesDecryptionResult.Tag = sentTag;
                 }
 
