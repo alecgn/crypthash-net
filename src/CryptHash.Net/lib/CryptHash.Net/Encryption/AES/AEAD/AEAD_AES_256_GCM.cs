@@ -72,7 +72,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = Encoding.UTF8.GetBytes(password);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes);
+            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutputString);
         }
 
         public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword, string associatedDataString = null, bool appendEncryptionDataToOutputString = true)
@@ -99,7 +99,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes);
+            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutputString);
         }
 
         public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword, string associatedDataString = null, bool appendEncryptionDataToOutputString = true)
@@ -125,7 +125,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes);
+            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutputString);
         }
 
         public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool appendEncryptionDataToOutputString = true)
@@ -170,27 +170,28 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     aesGcm.Encrypt(nonce, plainStringBytes, encryptedData, tag, associatedData);
                 }
 
-                byte[] encryptedDataWithInfo;
-
-                using (var ms = new MemoryStream())
+                if (appendEncryptionDataToOutputString)
                 {
-                    using (var bw = new BinaryWriter(ms))
+                    using (var ms = new MemoryStream())
                     {
-                        bw.Write(encryptedData);
-                        bw.Write(nonce);
-                        bw.Write(salt);
-                        bw.Write(tag);
-                    }
+                        using (var bw = new BinaryWriter(ms))
+                        {
+                            bw.Write(encryptedData);
+                            bw.Write(nonce);
+                            bw.Write(salt);
+                            bw.Write(tag);
+                        }
 
-                    encryptedDataWithInfo = ms.ToArray();
+                        encryptedData = ms.ToArray();
+                    }
                 }
 
                 return new AesEncryptionResult()
                 {
                     Success = true,
                     Message = "Data succesfully encrypted.",
-                    EncryptedDataBytes = encryptedDataWithInfo,
-                    EncryptedDataBase64String = Convert.ToBase64String(encryptedDataWithInfo),
+                    EncryptedDataBytes = encryptedData,
+                    EncryptedDataBase64String = Convert.ToBase64String(encryptedData),
                     Tag = tag,
                     Key = derivedKey,
                     Nonce = nonce,
@@ -328,7 +329,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = Encoding.UTF8.GetBytes(password);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes);
+            return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInIntputString);
         }
 
         public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInIntputString = true)
@@ -355,7 +356,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes);
+            return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInIntputString);
         }
 
         public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInIntputString = true)
@@ -381,10 +382,11 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return EncryptString(encryptedStringBytes, passwordBytes, associatedDataBytes);
+            return EncryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInIntputString);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInIntputString = true)
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInIntputString = true, 
+            byte[] tag = null, byte[] salt = null, byte[] nonce = null)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
             {
@@ -424,24 +426,29 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             try
             {
-                var tag = new byte[_tagBytesLength];
-                Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength), tag, 0, tag.Length);
+                byte[] encryptedStringBytesWithEncryptionData = null;
 
-                var salt = new byte[_saltBytesLength];
-                Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength- _saltBytesLength), salt, 0, salt.Length);
+                if (hasEncryptionDataAppendedInIntputString)
+                {
+                    tag = new byte[_tagBytesLength];
+                    Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength), tag, 0, tag.Length);
 
-                byte[] nonce = new byte[_nonceBytesLength];
-                Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _nonceBytesLength), nonce, 0, nonce.Length);
+                    salt = new byte[_saltBytesLength];
+                    Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength), salt, 0, salt.Length);
 
-                byte[] encryptedSourceDataStringBytes = new byte[(encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _nonceBytesLength)];
-                Array.Copy(encryptedStringBytes, 0, encryptedSourceDataStringBytes, 0, encryptedSourceDataStringBytes.Length);
+                    nonce = new byte[_nonceBytesLength];
+                    Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _nonceBytesLength), nonce, 0, nonce.Length);
+
+                    encryptedStringBytesWithEncryptionData = new byte[(encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _nonceBytesLength)];
+                    Array.Copy(encryptedStringBytes, 0, encryptedStringBytesWithEncryptionData, 0, encryptedStringBytesWithEncryptionData.Length);
+                }
 
                 byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
-                byte[] decryptedData = new byte[encryptedSourceDataStringBytes.Length];
+                byte[] decryptedData = new byte[(hasEncryptionDataAppendedInIntputString ? encryptedStringBytesWithEncryptionData.Length : encryptedStringBytes.Length)];
 
                 using (var aesGcm = new AesGcm(derivedKey))
                 {
-                    aesGcm.Decrypt(nonce, encryptedSourceDataStringBytes, tag, decryptedData, associatedData);
+                    aesGcm.Decrypt(nonce, (hasEncryptionDataAppendedInIntputString ? encryptedStringBytesWithEncryptionData : encryptedStringBytes), tag, decryptedData, associatedData);
                 }
 
                 return new AesEncryptionResult()

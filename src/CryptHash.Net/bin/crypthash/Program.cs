@@ -25,9 +25,10 @@ namespace CryptHash.Net.CLI
         {
             try
             {
-                //TestString();
-                TestFile();
-                //ProcessArgs(args);
+                //TestString_AE_AES();
+                //TestFile_AE_AES();
+                //TestString_AEAD_AES();
+                ProcessArgs(args);
             }
             catch (Exception ex)
             {
@@ -37,7 +38,7 @@ namespace CryptHash.Net.CLI
             }
         }
 
-        private static void TestString()
+        private static void TestString_AE_AES()
         {
             var testString = "This is a test string! =D";
             var password = "p4$$w0rd123";
@@ -83,6 +84,36 @@ namespace CryptHash.Net.CLI
                 if (decryptResult.Success)
                 {
                     Console.WriteLine(decryptResult.Message);
+                }
+                else
+                    Console.WriteLine(decryptResult.Message);
+            }
+            else
+                Console.WriteLine(encryptResult.Message);
+
+            Console.ReadKey();
+        }
+
+        private static void TestString_AEAD_AES()
+        {
+            var testString = "This is a test string! =D";
+            var password = "p4$$w0rd123";
+            var appendEncryptionData = true;
+            var associatedData = "0f8fad5b-d9cb-469f-a165-70867728950f";
+            var aes = new AEAD_AES_256_GCM();
+
+            var encryptResult = aes.EncryptString(testString, password, associatedData, appendEncryptionData);
+
+            if (encryptResult.Success)
+            {
+                Console.WriteLine($"String encrypted successfully: \"{encryptResult.EncryptedDataBase64String}\"");
+
+                var decryptResult = aes.DecryptString(encryptResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(password),
+                    Encoding.UTF8.GetBytes(associatedData), appendEncryptionData, encryptResult.Tag, encryptResult.Salt, encryptResult.Nonce);
+
+                if (decryptResult.Success)
+                {
+                    Console.WriteLine($"String decrypted successfully: \"{decryptResult.DecryptedDataString}\"");
                 }
                 else
                     Console.WriteLine(decryptResult.Message);
