@@ -10,6 +10,7 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
+using CryptHash.Net.Encryption.AES.Enums;
 using CryptHash.Net.Encryption.Utils;
 
 #if (NETSTANDARD2_1 || NETCOREAPP3_0)
@@ -195,7 +196,8 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     Tag = tag,
                     Key = derivedKey,
                     Nonce = nonce,
-                    Salt = salt
+                    Salt = salt,
+                    AesCipherMode = AesCipherMode.GCM
                 };
             }
             catch (Exception ex)
@@ -460,7 +462,8 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     Tag = tag,
                     Key = derivedKey,
                     Nonce = nonce,
-                    Salt = salt
+                    Salt = salt,
+                    AesCipherMode = AesCipherMode.GCM
                 };
             }
             catch (Exception ex)

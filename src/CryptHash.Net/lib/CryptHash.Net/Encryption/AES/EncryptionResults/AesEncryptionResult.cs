@@ -4,6 +4,7 @@
  *      https://github.com/alecgn
  */
 
+using CryptHash.Net.Encryption.AES.Enums;
 using System.Security.Cryptography;
 
 namespace CryptHash.Net.Encryption.AES.EncryptionResults
@@ -19,7 +20,8 @@ namespace CryptHash.Net.Encryption.AES.EncryptionResults
         public byte[] Key { get; set; }
         public byte[] IV { get; set; }
         public byte[] Nonce { get; set; }
-        public CipherMode CipherMode { get; set; }
+        //public CipherMode CipherMode { get; set; }
+        public AesCipherMode AesCipherMode { get; set; }
         public PaddingMode PaddingMode { get; set; }
         //public byte[] CryptSalt { get; set; }
         //public byte[] AuthSalt { get; set; }

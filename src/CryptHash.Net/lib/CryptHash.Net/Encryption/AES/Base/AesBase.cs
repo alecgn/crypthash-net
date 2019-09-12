@@ -9,6 +9,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
+using CryptHash.Net.Encryption.AES.Enums;
 using CryptHash.Net.Encryption.Utils.EventHandlers;
 
 namespace CryptHash.Net.Encryption.AES.Base
@@ -138,7 +139,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 EncryptedDataBase64String = Convert.ToBase64String(encryptedData),
                 Key = _key,
                 IV = _IV,
-                CipherMode = _cipherMode,
+                AesCipherMode = (AesCipherMode)_cipherMode,
                 PaddingMode = _paddingMode
             };
         }
@@ -233,7 +234,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 DecryptedDataString = Encoding.UTF8.GetString(decryptedData),
                 Key = _key,
                 IV = _IV,
-                CipherMode = _cipherMode,
+                AesCipherMode = (AesCipherMode)_cipherMode,
                 PaddingMode = _paddingMode
             };
         }
@@ -366,7 +367,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Message = message,
                     Key = _key,
                     IV = _IV,
-                    CipherMode = _cipherMode,
+                    AesCipherMode = (AesCipherMode)_cipherMode,
                     PaddingMode = _paddingMode
                 };
             }
@@ -521,7 +522,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Message = message,
                     Key = _key,
                     IV = _IV,
-                    CipherMode = _cipherMode,
+                    AesCipherMode = (AesCipherMode)_cipherMode,
                     PaddingMode = _paddingMode
                 };
             }
