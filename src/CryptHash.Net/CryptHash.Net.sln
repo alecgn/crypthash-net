@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptHash.Net", "lib\CryptH
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bin", "bin", "{32203E19-E62F-427D-8134-4B3DD7716B19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "crypthash", "bin\crypthash\crypthash.csproj", "{D1ADED4E-2C11-4F18-8883-DA4613B09446}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "crypthash", "bin\crypthash\crypthash.csproj", "{D1ADED4E-2C11-4F18-8883-DA4613B09446}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptHash.Net.Tests", "lib\CryptHash.Net.Tests\CryptHash.Net.Tests.csproj", "{B4BD2E65-7A37-4027-88AD-30B217B42E02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,10 @@ Global
 		{D1ADED4E-2C11-4F18-8883-DA4613B09446}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1ADED4E-2C11-4F18-8883-DA4613B09446}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1ADED4E-2C11-4F18-8883-DA4613B09446}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4BD2E65-7A37-4027-88AD-30B217B42E02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4BD2E65-7A37-4027-88AD-30B217B42E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4BD2E65-7A37-4027-88AD-30B217B42E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4BD2E65-7A37-4027-88AD-30B217B42E02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7B61C728-9056-441E-9BA1-F230EF68FA3D} = {D637E865-42A1-4AED-8B00-DDE7AE87F495}
 		{D1ADED4E-2C11-4F18-8883-DA4613B09446} = {32203E19-E62F-427D-8134-4B3DD7716B19}
+		{B4BD2E65-7A37-4027-88AD-30B217B42E02} = {D637E865-42A1-4AED-8B00-DDE7AE87F495}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {43037084-02DE-4862-BCCA-60EA6D19E0D3}
