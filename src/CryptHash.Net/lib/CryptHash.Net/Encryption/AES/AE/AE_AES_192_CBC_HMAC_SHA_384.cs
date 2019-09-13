@@ -412,7 +412,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region file encryption
 
-        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false, bool appendEncryptionDataToOutputFile = true)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -428,7 +428,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
-        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false)
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false, bool appendEncryptionDataToOutputFile = true)
         {
             if (secStrPassword == null || secStrPassword.Length <= 0)
             {
@@ -444,7 +444,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
-        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
+        public AesEncryptionResult EncryptFile(string sourceFilePath, string encryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false, bool appendEncryptionDataToOutputFile = true)
         {
             if (string.IsNullOrWhiteSpace(encryptedFilePath))
             {
@@ -468,8 +468,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
                 byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
 
-                //byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2);
-                //byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2);
+                //byte[] cryptKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, cryptSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
+                //byte[] authKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, authSalt, _saltBytesLength, _iterationsForPBKDF2/*, HashAlgorithmName.SHA256*/);
 
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
@@ -516,7 +516,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region file decryption
 
-        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false)
+        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInIntputFile = true)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -532,7 +532,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
-        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false)
+        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInIntputFile = true)
         {
             if (secStrPassword == null || secStrPassword.Length <= 0)
             {
@@ -548,7 +548,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile);
         }
 
-        public AesEncryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false)
+        public AesEncryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInIntputFile = true)
         {
             if (!File.Exists(encryptedFilePath))
             {
