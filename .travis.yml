@@ -1,6 +1,6 @@
 language: csharp
 mono: none
-dotnet: 3.0.0-preview9-19423-09
+dotnet: 3.0.100-preview9-014004
 solution: src/CryptHash.Net/CryptHash.Net.sln
 script:
   - dotnet restore
