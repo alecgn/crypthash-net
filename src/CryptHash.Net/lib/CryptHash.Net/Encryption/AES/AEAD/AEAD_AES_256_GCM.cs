@@ -387,7 +387,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             return EncryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInIntputString);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInIntputString = true, 
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInIntputString = true,
             byte[] tag = null, byte[] salt = null, byte[] nonce = null)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
