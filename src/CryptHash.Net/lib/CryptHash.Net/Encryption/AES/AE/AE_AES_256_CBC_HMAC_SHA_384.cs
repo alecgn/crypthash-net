@@ -16,7 +16,7 @@ using System.Text;
 
 namespace CryptHash.Net.Encryption.AES.AE
 {
-    public class AE_AES_256_CBC_HMAC_SHA_512 : AesBase
+    public class AE_AES_256_CBC_HMAC_SHA_384 : AesBase
     {
         #region fields
 
@@ -29,7 +29,7 @@ namespace CryptHash.Net.Encryption.AES.AE
         private static readonly int _saltBitSize = 128;
         private static readonly int _saltBytesLength = (_saltBitSize / 8);
 
-        private static readonly int _tagBitSize = 256;
+        private static readonly int _tagBitSize = 192;
         private static readonly int _tagBytesLength = (_tagBitSize / 8);
 
         private static readonly int _iterationsForPBKDF2 = 100000;
@@ -42,9 +42,9 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region constructors
 
-        public AE_AES_256_CBC_HMAC_SHA_512() : base() { }
+        public AE_AES_256_CBC_HMAC_SHA_384() : base() { }
 
-        public AE_AES_256_CBC_HMAC_SHA_512(byte[] key, byte[] IV)
+        public AE_AES_256_CBC_HMAC_SHA_384(byte[] key, byte[] IV)
             : base(key, IV, _cipherMode, _paddingMode) { }
 
         #endregion constructors
@@ -169,7 +169,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 if (aesEncryptionResult.Success)
                 {
                     byte[] tag;
-                    byte[] hmacSha512bytes;
+                    byte[] hmacSha384bytes;
 
                     if (appendEncryptionDataToOutputString)
                     {
@@ -184,8 +184,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                                 bw.Write(salt);
                                 bw.Flush();
                                 var encryptedData = ms.ToArray();
-                                hmacSha512bytes = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
-                                tag = hmacSha512bytes.Take(_tagBytesLength).ToArray();
+                                hmacSha384bytes = EncryptionUtils.ComputeHMACSHA384HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
+                                tag = hmacSha384bytes.Take(_tagBytesLength).ToArray();
                                 bw.Write(tag);
                             }
 
@@ -199,8 +199,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                     }
                     else
                     {
-                        hmacSha512bytes = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, aesEncryptionResult.EncryptedDataBytes, 0, aesEncryptionResult.EncryptedDataBytes.Length);
-                        tag = hmacSha512bytes.Take(_tagBytesLength).ToArray();
+                        hmacSha384bytes = EncryptionUtils.ComputeHMACSHA384HashFromDataBytes(authKey, aesEncryptionResult.EncryptedDataBytes, 0, aesEncryptionResult.EncryptedDataBytes.Length);
+                        tag = hmacSha384bytes.Take(_tagBytesLength).ToArray();
 
                         //aesEncryptionResult.CryptSalt = cryptSalt;
                         //aesEncryptionResult.AuthSalt = authSalt;
@@ -303,7 +303,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInIntputString);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, 
+        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes,
             bool hasEncryptionDataAppendedInIntputString = true, byte[] sentTag = null,
             byte[] salt = null, /*byte[] authSalt = null, byte[] cryptSalt = null,*/ byte[] IV = null)
         {
@@ -363,8 +363,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
-                var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInIntputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
-                var calcTag = hmacSha512.Take(_tagBytesLength).ToArray();
+                var hmacSha384 = EncryptionUtils.ComputeHMACSHA384HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInIntputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
+                var calcTag = hmacSha384.Take(_tagBytesLength).ToArray();
 
                 if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
                 {
@@ -379,11 +379,11 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                 if (hasEncryptionDataAppendedInIntputString)
                 {
-                    encryptedSourceDataStringBytes = new byte[(encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength  - _IVBytesLength)];
+                    encryptedSourceDataStringBytes = new byte[(encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _IVBytesLength)];
                     Array.Copy(encryptedStringBytes, 0, encryptedSourceDataStringBytes, 0, encryptedSourceDataStringBytes.Length);
                 }
 
-                var aesDecriptionResult = base.DecryptWithMemoryStream((hasEncryptionDataAppendedInIntputString ? encryptedSourceDataStringBytes : encryptedStringBytes), 
+                var aesDecriptionResult = base.DecryptWithMemoryStream((hasEncryptionDataAppendedInIntputString ? encryptedSourceDataStringBytes : encryptedStringBytes),
                     cryptKey, IV, _cipherMode, _paddingMode);
 
                 if (aesDecriptionResult.Success)
@@ -488,8 +488,8 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                     EncryptionUtils.AppendDataBytesToFile(encryptedFilePath, additionalData);
 
-                    var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromFile(encryptedFilePath, authKey);
-                    var tag = hmacSha512.Take(_tagBytesLength).ToArray();
+                    var hmacSha384 = EncryptionUtils.ComputeHMACSHA384HashFromFile(encryptedFilePath, authKey);
+                    var tag = hmacSha384.Take(_tagBytesLength).ToArray();
                     EncryptionUtils.AppendDataBytesToFile(encryptedFilePath, tag);
                     RaiseOnEncryptionMessage("Additional data written to file.");
 
@@ -608,8 +608,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
-                var hmacSha512 = EncryptionUtils.ComputeHMACSHA512HashFromFile(encryptedFilePath, authKey, 0, (encryptedFileSize - _tagBytesLength));
-                var calcTag = hmacSha512.Take(_tagBytesLength).ToArray();
+                var hmacSha384 = EncryptionUtils.ComputeHMACSHA384HashFromFile(encryptedFilePath, authKey, 0, (encryptedFileSize - _tagBytesLength));
+                var calcTag = hmacSha384.Take(_tagBytesLength).ToArray();
 
                 if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
                 {

@@ -379,7 +379,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                 if (hasEncryptionDataAppendedInIntputString)
                 {
-                    encryptedSourceDataStringBytes = new byte[(encryptedStringBytes.Length - _saltBytesLength - _IVBytesLength - _tagBytesLength)];
+                    encryptedSourceDataStringBytes = new byte[(encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _IVBytesLength)];
                     Array.Copy(encryptedStringBytes, 0, encryptedSourceDataStringBytes, 0, encryptedSourceDataStringBytes.Length);
                 }
 
