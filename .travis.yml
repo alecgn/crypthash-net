@@ -1,7 +1,12 @@
+dist: xenial
+addons:
+  snaps:
+  - name: dotnet-sdk
+    classic: true
+    channel: latest/beta
+sudo: required
 language: csharp
 mono: none
-dotnet: 3.0.100-preview9-014004
-solution: src/CryptHash.Net/CryptHash.Net.sln
 script:
   - dotnet restore
   - dotnet test src/CryptHash.Net/lib/CryptHash.Net.Tests/CryptHash.Net.Tests.csproj
