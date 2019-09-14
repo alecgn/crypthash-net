@@ -1,9 +1,7 @@
 language: csharp
-dist: trusty
 mono: none
-dotnet: 2.2
-install:
-- dotnet restore
+dotnet: 3.0.0-preview9-19423-09
+solution: src/CryptHash.Net/CryptHash.Net.sln
 script:
-- dotnet build
-- dotnet test src/CryptHash.Net/lib/CryptHash.Net.Tests
+  - dotnet restore
+  - dotnet test src/CryptHash.Net/lib/CryptHash.Net.Tests/CryptHash.Net.Tests.csproj
