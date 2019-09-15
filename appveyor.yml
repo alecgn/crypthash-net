@@ -1,0 +1,6 @@
+version: 1.0.{build}
+build: off
+test:
+  assemblies:
+    only:
+    - CryptHash.Net.Tests.dll
