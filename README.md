@@ -1,6 +1,5 @@
 # CryptHash.NET 
-![Build Status](https://travis-ci.org/alecgn/crypthash-net.svg?branch=master) ![Coverage Status](https://coveralls.io/repos/github/alecgn/crypthash-net/badge.svg?branch=master)  
-![Nuget Version](https://img.shields.io/nuget/v/CryptHash.Net) ![Nuget Downloads](https://img.shields.io/nuget/dt/CryptHash.Net)
+[![Build status (crypthash-net)](https://travis-ci.org/alecgn/crypthash-net.svg?branch=master)](https://travis-ci.org/alecgn/crypthash-net) [![Nuget version (CryptHash.Net)](https://img.shields.io/nuget/v/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) [![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net)
 
 ### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption and hashing.
 
