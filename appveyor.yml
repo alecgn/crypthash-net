@@ -3,4 +3,4 @@ build: off
 test:
   assemblies:
     only:
-    - CryptHash.Net.Tests.dll
+    - src/CryptHash.Net/lib/CryptHash.Net.Tests/bin/debug/netcoreapp3.0/CryptHash.Net.Tests.dll
