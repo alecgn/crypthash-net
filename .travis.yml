@@ -1,4 +1,4 @@
-dist: xenial
+dist: trusty
 addons:
   snaps:
   - name: dotnet-sdk
@@ -10,4 +10,4 @@ mono: none
 script:
 script:
   - sudo snap alias dotnet-sdk.dotnet dotnet
-  - dotnet test src/CryptHash.Net/lib/CryptHash.Net.Tests/CryptHash.Net.Tests.csproj
+  - dotnet build src/CryptHash.Net/lib/CryptHash.Net/CryptHash.Net.csproj
