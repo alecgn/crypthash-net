@@ -1,5 +1,5 @@
 # CryptHash.NET 
-![Build Status](https://travis-ci.org/alecgn/crypthash-net.svg?branch=master)  
+![Build Status](https://travis-ci.org/alecgn/crypthash-net.svg?branch=master) ![Coverage Status](https://coveralls.io/repos/github/alecgn/crypthash-net/badge.svg?branch=master)
 ### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption and hashing.
 
 The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
