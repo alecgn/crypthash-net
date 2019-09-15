@@ -1,6 +1,4 @@
-version: 1.0.{build}
+version: 0.0.{build}
 build: off
-test:
-  assemblies:
-    only:
-    - src/CryptHash.Net/lib/CryptHash.Net.Tests/bin/debug/netcoreapp3.0/CryptHash.Net.Tests.dll
+test_script:
+- cmd: dotnet test src/CryptHash.Net/lib/CryptHash.Net.Tests/CryptHash.Net.Tests.csproj
