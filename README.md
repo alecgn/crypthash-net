@@ -1,4 +1,6 @@
-# CryptHash.NET
+# CryptHash.NET 
+[![Build status (crypthash-net)](https://travis-ci.org/alecgn/crypthash-net.svg?branch=master)](https://travis-ci.org/alecgn/crypthash-net) [![Nuget version (CryptHash.Net)](https://img.shields.io/nuget/v/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) [![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net)
+
 ### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption and hashing.
 
 The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
