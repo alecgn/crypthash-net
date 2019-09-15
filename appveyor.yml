@@ -1,5 +1,0 @@
-version: 0.0.{build}
-build: off
-image: Ubuntu1804
-test_script:
-- cmd: dotnet test src/CryptHash.Net/lib/CryptHash.Net.Tests/CryptHash.Net.Tests.csproj --verbosity m --logger:Appveyor
