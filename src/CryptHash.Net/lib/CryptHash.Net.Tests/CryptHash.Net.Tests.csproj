@@ -4,6 +4,12 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <Version>3.0.0</Version>
+
+    <AssemblyVersion>3.0.0</AssemblyVersion>
+
+    <FileVersion>3.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

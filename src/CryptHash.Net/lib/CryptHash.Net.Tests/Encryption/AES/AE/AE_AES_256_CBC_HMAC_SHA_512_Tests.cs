@@ -149,7 +149,8 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha512.DecryptFile(testFilePath, testFilePath, _password, false, hasEncryptionDataAppendedInIntputFile: appendEncryptionData);
+                aesDecryptionResult = _aes256cbcHmacSha512.DecryptFile(testFilePath, testFilePath, Encoding.UTF8.GetBytes(_password), false, hasEncryptionDataAppendedInIntputFile: appendEncryptionData,
+                    aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (aesDecryptionResult.Success)
                 {
