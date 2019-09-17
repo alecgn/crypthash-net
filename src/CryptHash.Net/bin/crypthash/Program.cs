@@ -148,7 +148,7 @@ namespace CryptHash.Net.CLI
 
         private static ExitCode RunDecryptOptionsAndReturnExitCode(DecryptOptions decryptOptions)
         {
-            AesEncryptionResult aesDecryptionResult = null;
+            AesDecryptionResult aesDecryptionResult = null;
 
             switch (decryptOptions.InputType.ToLower())
             {
