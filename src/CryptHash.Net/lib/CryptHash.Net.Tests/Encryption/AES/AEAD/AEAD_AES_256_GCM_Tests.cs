@@ -70,7 +70,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), null, hasEncryptionDataAppendedInIntputString: appendEncryptionData,
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), null, hasEncryptionDataAppendedInInputString: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.Nonce);
 
                 if (!aesDecryptionResult.Success)
@@ -94,7 +94,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), Encoding.UTF8.GetBytes(associatedData), hasEncryptionDataAppendedInIntputString: appendEncryptionData,
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), Encoding.UTF8.GetBytes(associatedData), hasEncryptionDataAppendedInInputString: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.Nonce);
 
                 if (!aesDecryptionResult.Success)
@@ -118,7 +118,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, associatedData, hasEncryptionDataAppendedInIntputString: appendEncryptionData);
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, associatedData, hasEncryptionDataAppendedInInputString: appendEncryptionData);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;
@@ -141,7 +141,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, associatedData, hasEncryptionDataAppendedInIntputString: appendEncryptionData);
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, associatedData, hasEncryptionDataAppendedInInputString: appendEncryptionData);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;

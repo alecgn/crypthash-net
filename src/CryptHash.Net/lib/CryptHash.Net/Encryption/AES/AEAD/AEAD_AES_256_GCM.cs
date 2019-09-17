@@ -307,11 +307,11 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         #region string decryption
 
-        public AesEncryptionResult DecryptString(string base64EncryptedString, string password, string associatedDataString = null, bool hasEncryptionDataAppendedInIntputString = true)
+        public AesDecryptionResult DecryptString(string base64EncryptedString, string password, string associatedDataString = null, bool hasEncryptionDataAppendedInInputString = true)
         {
             if (string.IsNullOrEmpty(base64EncryptedString))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "String to decrypt required."
@@ -320,7 +320,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             if (string.IsNullOrEmpty(password))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
@@ -331,14 +331,14 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = Encoding.UTF8.GetBytes(password);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInIntputString);
+            return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString);
         }
 
-        public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInIntputString = true)
+        public AesDecryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInInputString = true)
         {
             if (string.IsNullOrWhiteSpace(base64EncryptedString))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "String to decrypt required."
@@ -347,7 +347,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             if (secStrPassword == null || secStrPassword.Length <= 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
@@ -358,14 +358,14 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInIntputString);
+            return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInIntputString = true)
+        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInInputString = true)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length <= 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "String to encrypt required."
@@ -374,7 +374,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             if (secStrPassword == null || secStrPassword.Length <= 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
@@ -384,15 +384,15 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return EncryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInIntputString);
+            return EncryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInIntputString = true,
+        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInInputString = true,
             byte[] tag = null, byte[] salt = null, byte[] nonce = null)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "String to decrypt required."
@@ -401,7 +401,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             if (encryptedStringBytes.LongLength > _maxInputDataSizeBytes)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Max. encrypted data length cannot be greater than {_maxInputDataSizeBytes} bytes."
@@ -410,7 +410,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             if (passwordBytes == null)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Password required."
@@ -419,7 +419,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             if (associatedData != null && associatedData.LongLength > _maxInputAuthDataSizeBytes)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Max. associated data length cannot be greater than {_maxInputAuthDataSizeBytes} bytes."
@@ -430,7 +430,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             {
                 byte[] encryptedStringBytesWithEncryptionData = null;
 
-                if (hasEncryptionDataAppendedInIntputString)
+                if (hasEncryptionDataAppendedInInputString)
                 {
                     tag = new byte[_tagBytesLength];
                     Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength), tag, 0, tag.Length);
@@ -446,14 +446,14 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                 }
 
                 byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
-                byte[] decryptedData = new byte[(hasEncryptionDataAppendedInIntputString ? encryptedStringBytesWithEncryptionData.Length : encryptedStringBytes.Length)];
+                byte[] decryptedData = new byte[(hasEncryptionDataAppendedInInputString ? encryptedStringBytesWithEncryptionData.Length : encryptedStringBytes.Length)];
 
                 using (var aesGcm = new AesGcm(derivedKey))
                 {
-                    aesGcm.Decrypt(nonce, (hasEncryptionDataAppendedInIntputString ? encryptedStringBytesWithEncryptionData : encryptedStringBytes), tag, decryptedData, associatedData);
+                    aesGcm.Decrypt(nonce, (hasEncryptionDataAppendedInInputString ? encryptedStringBytesWithEncryptionData : encryptedStringBytes), tag, decryptedData, associatedData);
                 }
 
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = true,
                     Message = "Data succesfully decrypted.",
@@ -468,7 +468,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
             catch (Exception ex)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
@@ -476,11 +476,11 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
         }
 
-        //public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] key, byte[] tag, byte[] nonce, byte[] associatedData = null, bool hasEncryptionDataAppendedInIntputString = true)
+        //public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, byte[] key, byte[] tag, byte[] nonce, byte[] associatedData = null, bool hasEncryptionDataAppendedInInputString = true)
         //{
         //    if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = "String to decrypt required."
@@ -489,7 +489,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         //    if (encryptedStringBytes.LongLength > _maxInputDataSizeBytes)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = $"Max. encrypted data length cannot be greater than {_maxInputDataSizeBytes} bytes."
@@ -498,7 +498,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         //    if (key == null)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = $"Encryption key required."
@@ -507,7 +507,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         //    if (key.Length != _keyBytesLength)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be ({_keyBitSize}) bits / ({_keyBytesLength}) bytes."
@@ -516,7 +516,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         //    if (tag == null)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = $"Authentication Tag required."
@@ -525,7 +525,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         //    if (tag.Length != _tagBytesLength)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = $"Invalid tag bit size: ({(tag.Length * 8)}). Must be: ({_tagBitSize}) bits / ({_tagBytesLength}) bytes."
@@ -534,7 +534,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         //    if (nonce == null)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = $"Nonce required."
@@ -543,7 +543,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         //    if (nonce.Length != _nonceBytesLength)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = $"Invalid nonce bit size: ({(nonce.Length * 8)}). Must be: ({_nonceBitSize}) bits / ({_nonceBytesLength}) bytes."
@@ -552,7 +552,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         //    if (associatedData != null && associatedData.LongLength > _maxInputAuthDataSizeBytes)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = $"Max. associated data length cannot be greater than {_maxInputAuthDataSizeBytes} bytes."
@@ -568,7 +568,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         //            aesGcm.Decrypt(nonce, encryptedStringBytes, tag, decryptedData, associatedData);
         //        }
 
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = true,
         //            Message = "Data succesfully decrypted.",
@@ -581,7 +581,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         //    }
         //    catch (Exception ex)
         //    {
-        //        return new AesEncryptionResult()
+        //        return new AesDecryptionResult()
         //        {
         //            Success = false,
         //            Message = $"Error while trying to decrypt data:\n{ex.ToString()}"

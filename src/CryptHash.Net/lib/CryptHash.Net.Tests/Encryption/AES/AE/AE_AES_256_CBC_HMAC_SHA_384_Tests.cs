@@ -44,7 +44,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, hasEncryptionDataAppendedInIntputString: appendEncryptionData);
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, hasEncryptionDataAppendedInInputString: appendEncryptionData);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;
@@ -67,7 +67,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
             if (aesEncryptionResult.Success)
             {
                 aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password),
-                    hasEncryptionDataAppendedInIntputString: appendEncryptionData, aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
+                    hasEncryptionDataAppendedInInputString: appendEncryptionData, aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;
@@ -119,7 +119,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha384.DecryptFile(testFilePath, testFilePath, _password, false, hasEncryptionDataAppendedInIntputFile: appendEncryptionData);
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptFile(testFilePath, testFilePath, _password, false, hasEncryptionDataAppendedInInputFile: appendEncryptionData);
 
                 if (aesDecryptionResult.Success)
                 {
@@ -149,7 +149,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha384.DecryptFile(testFilePath, testFilePath, Encoding.UTF8.GetBytes(_password), false, hasEncryptionDataAppendedInIntputFile: appendEncryptionData,
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptFile(testFilePath, testFilePath, Encoding.UTF8.GetBytes(_password), false, hasEncryptionDataAppendedInInputFile: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (aesDecryptionResult.Success)

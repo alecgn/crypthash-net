@@ -146,11 +146,11 @@
 //            }
 //        }
 
-//        public AesEncryptionResult Decrypt(byte[] encryptedData, byte[] key, byte[] tag, byte[] nonce, byte[] associatedData = null)
+//        public AesDecryptionResult Decrypt(byte[] encryptedData, byte[] key, byte[] tag, byte[] nonce, byte[] associatedData = null)
 //        {
 //            if (encryptedData == null || encryptedData.Length == 0)
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = "Encrypted data cannot be null or 0 length."
@@ -159,7 +159,7 @@
 
 //            if (encryptedData.LongLength > _maxInputDataSizeBytes)
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = $"Max. encrypted data length cannot be greater than {_maxInputDataSizeBytes} bytes."
@@ -168,7 +168,7 @@
 
 //            if (key == null)
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = $"Key cannot be null."
@@ -177,7 +177,7 @@
 
 //            if (!_allowedKeyBitSizes.Contains((key.Length * 8)))
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = $"Invalid key bit size: ({(key.Length * 8)}). Must be one of the following sizes: ({string.Join(", ", _allowedKeyBitSizes)})."
@@ -186,7 +186,7 @@
 
 //            if (tag == null)
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = $"Tag cannot be null."
@@ -195,7 +195,7 @@
 
 //            if ((tag.Length * 8) != _allowedTagBitSize)
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = $"Invalid tag bit size: ({(tag.Length * 8)}). Must be: ({_allowedTagBitSize})."
@@ -204,7 +204,7 @@
 
 //            if (nonce == null)
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = $"Nonce cannot be null."
@@ -213,7 +213,7 @@
 
 //            if ((nonce.Length * 8) != _allowedNonceBitSize)
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = $"Invalid nonce bit size: ({(nonce.Length * 8)}). Must be: ({_allowedNonceBitSize})."
@@ -222,7 +222,7 @@
 
 //            if (associatedData != null && associatedData.LongLength > _maxInputAuthDataSizeBytes)
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = $"Max. associated data length cannot be greater than {_maxInputAuthDataSizeBytes} bytes."
@@ -241,7 +241,7 @@
 //                    aesGcm.Decrypt(_nonce, encryptedData, tag, decryptedData, associatedData);
 //                }
 
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = true,
 //                    Message = "Data succesfully decrypted.",
@@ -254,7 +254,7 @@
 //            }
 //            catch (Exception ex)
 //            {
-//                return new AesEncryptionResult()
+//                return new AesDecryptionResult()
 //                {
 //                    Success = false,
 //                    Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
