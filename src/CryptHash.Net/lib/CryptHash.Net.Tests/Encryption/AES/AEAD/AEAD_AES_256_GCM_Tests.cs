@@ -63,7 +63,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
         {
             string associatedData = null;
             var appendEncryptionData = false;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256gcm.EncryptString(_testString, _password, associatedData, appendEncryptionDataToOutputString: appendEncryptionData);
@@ -87,7 +87,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
         {
             string associatedData = "0f8fad5b-d9cb-469f-a165-70867728950e";
             var appendEncryptionData = false;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256gcm.EncryptString(_testString, _password, associatedData, appendEncryptionDataToOutputString: appendEncryptionData);
@@ -111,7 +111,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
         {
             string associatedData = null;
             var appendEncryptionData = true;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256gcm.EncryptString(_testString, _password, associatedData, appendEncryptionDataToOutputString: appendEncryptionData);
@@ -134,7 +134,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
         {
             string associatedData = "0f8fad5b-d9cb-469f-a165-70867728950e";
             var appendEncryptionData = true;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256gcm.EncryptString(_testString, _password, associatedData, appendEncryptionDataToOutputString: appendEncryptionData);

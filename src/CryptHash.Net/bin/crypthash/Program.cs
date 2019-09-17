@@ -169,7 +169,7 @@ namespace CryptHash.Net.CLI
                                 aesDecryptionResult = new AEAD_AES_256_GCM().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password, decryptOptions.AssociatedData);
                                 break;
                             default:
-                                aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
+                                aesDecryptionResult = new AesDecryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
                                 break;
                         }
                     }
@@ -215,16 +215,16 @@ namespace CryptHash.Net.CLI
                                 }
                                 break;
                             case "aes256gcm":
-                                aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Algorithm \"{decryptOptions.Algorithm}\" currently not available for file decryption." };
+                                aesDecryptionResult = new AesDecryptionResult() { Success = false, Message = $"Algorithm \"{decryptOptions.Algorithm}\" currently not available for file decryption." };
                                 break;
                             default:
-                                aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
+                                aesDecryptionResult = new AesDecryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
                                 break;
                         }
                     }
                     break;
                 default:
-                    aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown input type \"{decryptOptions.InputType}\"." };
+                    aesDecryptionResult = new AesDecryptionResult() { Success = false, Message = $"Unknown input type \"{decryptOptions.InputType}\"." };
                     break;
             }
 

@@ -37,7 +37,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         public void Test_DecryptString_with_encryption_data_appended()
         {
             var appendEncryptionData = true;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
@@ -59,7 +59,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         public void Test_DecryptString_without_encryption_data_appended()
         {
             var appendEncryptionData = false;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
@@ -109,7 +109,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         {
             var testFilePath = Path.GetTempFileName();
             var appendEncryptionData = true;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             var testFileStringContentRead = "";
             string errorMessage = "";
 
@@ -139,7 +139,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         {
             var testFilePath = Path.GetTempFileName();
             var appendEncryptionData = false;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             var testFileStringContentRead = "";
             string errorMessage = "";
 
