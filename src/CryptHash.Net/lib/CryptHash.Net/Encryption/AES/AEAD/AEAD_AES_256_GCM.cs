@@ -18,7 +18,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 {
     public class AEAD_AES_256_GCM
     {
-        #region fields
+#region fields
 
         private static readonly int _keyBitSize = 256;
         private static readonly int _keyBytesLength = (_keyBitSize / 8);
@@ -42,12 +42,12 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
         private static readonly int _iterationsForPBKDF2 = 100000;
 
-        #endregion private fields
+#endregion private fields
 
 
-        #region public methods
+#region public methods
 
-        #region string encryption
+#region string encryption
 
         public AesEncryptionResult EncryptString(string plainString, string password, string associatedDataString = null, bool appendEncryptionDataToOutputString = true)
         {
@@ -302,10 +302,10 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         //    }
         //}
 
-        #endregion string encryption
+#endregion string encryption
 
 
-        #region string decryption
+#region string decryption
 
         public AesDecryptionResult DecryptString(string base64EncryptedString, string password, string associatedDataString = null, bool hasEncryptionDataAppendedInInputString = true)
         {
@@ -384,7 +384,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return EncryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString);
+            return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString);
         }
 
         public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInInputString = true,
@@ -589,9 +589,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         //    }
         //}
 
-        #endregion string decryption
+#endregion string decryption
 
-        #endregion public methods
+#endregion public methods
     }
 }
 #endif
