@@ -1,6 +1,6 @@
 ﻿/*
  *      Alessandro Cagliostro, 2019
- *      
+ *
  *      https://github.com/alecgn
  */
 
@@ -148,7 +148,7 @@ namespace CryptHash.Net.CLI
 
         private static ExitCode RunDecryptOptionsAndReturnExitCode(DecryptOptions decryptOptions)
         {
-            AesEncryptionResult aesDecryptionResult = null;
+            AesDecryptionResult aesDecryptionResult = null;
 
             switch (decryptOptions.InputType.ToLower())
             {
@@ -169,7 +169,7 @@ namespace CryptHash.Net.CLI
                                 aesDecryptionResult = new AEAD_AES_256_GCM().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password, decryptOptions.AssociatedData);
                                 break;
                             default:
-                                aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
+                                aesDecryptionResult = new AesDecryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
                                 break;
                         }
                     }
@@ -183,8 +183,8 @@ namespace CryptHash.Net.CLI
                                     using (var progressBar = new ProgressBar())
                                     {
                                         var aes128 = new AE_AES_128_CBC_HMAC_SHA_256();
-                                        aes128.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
-                                        aes128.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+                                        aes128.OnDecryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                        aes128.OnDecryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
 
                                         aesDecryptionResult = aes128.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
                                     }
@@ -195,8 +195,8 @@ namespace CryptHash.Net.CLI
                                     using (var progressBar = new ProgressBar())
                                     {
                                         var aes192 = new AE_AES_192_CBC_HMAC_SHA_384();
-                                        aes192.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
-                                        aes192.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+                                        aes192.OnDecryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                        aes192.OnDecryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
 
                                         aesDecryptionResult = aes192.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
                                     }
@@ -207,24 +207,24 @@ namespace CryptHash.Net.CLI
                                     using (var progressBar = new ProgressBar())
                                     {
                                         var aes256 = new AE_AES_256_CBC_HMAC_SHA_512();
-                                        aes256.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
-                                        aes256.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+                                        aes256.OnDecryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                        aes256.OnDecryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
 
                                         aesDecryptionResult = aes256.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
                                     }
                                 }
                                 break;
                             case "aes256gcm":
-                                aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Algorithm \"{decryptOptions.Algorithm}\" currently not available for file decryption." };
+                                aesDecryptionResult = new AesDecryptionResult() { Success = false, Message = $"Algorithm \"{decryptOptions.Algorithm}\" currently not available for file decryption." };
                                 break;
                             default:
-                                aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
+                                aesDecryptionResult = new AesDecryptionResult() { Success = false, Message = $"Unknown algorithm \"{decryptOptions.Algorithm}\"." };
                                 break;
                         }
                     }
                     break;
                 default:
-                    aesDecryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown input type \"{decryptOptions.InputType}\"." };
+                    aesDecryptionResult = new AesDecryptionResult() { Success = false, Message = $"Unknown input type \"{decryptOptions.InputType}\"." };
                     break;
             }
 

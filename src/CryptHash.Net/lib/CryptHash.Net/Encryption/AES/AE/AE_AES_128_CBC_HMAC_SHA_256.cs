@@ -215,11 +215,11 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region string decryption
 
-        public AesEncryptionResult DecryptString(string base64EncryptedString, string password, bool hasEncryptionDataAppendedInIntputString = true)
+        public AesDecryptionResult DecryptString(string base64EncryptedString, string password, bool hasEncryptionDataAppendedInInputString = true)
         {
             if (string.IsNullOrWhiteSpace(base64EncryptedString))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "String to decrypt required."
@@ -228,7 +228,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             if (string.IsNullOrWhiteSpace(password))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
@@ -238,14 +238,14 @@ namespace CryptHash.Net.Encryption.AES.AE
             var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
             var passwordBytes = Encoding.UTF8.GetBytes(password);
 
-            return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInIntputString);
+            return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInInputString);
         }
 
-        public AesEncryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, bool hasEncryptionDataAppendedInIntputString = true)
+        public AesDecryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, bool hasEncryptionDataAppendedInInputString = true)
         {
             if (string.IsNullOrWhiteSpace(base64EncryptedString))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "String to decrypt required."
@@ -254,7 +254,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             if (secStrPassword == null || secStrPassword.Length <= 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
@@ -264,14 +264,14 @@ namespace CryptHash.Net.Encryption.AES.AE
             var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
-            return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInIntputString);
+            return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInInputString);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, bool hasEncryptionDataAppendedInIntputString = true)
+        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, bool hasEncryptionDataAppendedInInputString = true)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length <= 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "String to decrypt required."
@@ -280,7 +280,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             if (secStrPassword == null || secStrPassword.Length <= 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
@@ -289,16 +289,16 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
-            return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInIntputString);
+            return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInInputString);
         }
 
-        public AesEncryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes,
-            bool hasEncryptionDataAppendedInIntputString = true, byte[] sentTag = null,
+        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes,
+            bool hasEncryptionDataAppendedInInputString = true, byte[] sentTag = null,
             byte[] salt = null, byte[] IV = null)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "String to decrypt required."
@@ -307,18 +307,18 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             if (passwordBytes == null || passwordBytes.Length == 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
                 };
             }
 
-            if (hasEncryptionDataAppendedInIntputString)
+            if (hasEncryptionDataAppendedInInputString)
             {
                 if (encryptedStringBytes.Length < (_tagBytesLength + _saltBytesLength + _IVBytesLength))
                 {
-                    return new AesEncryptionResult()
+                    return new AesDecryptionResult()
                     {
                         Success = false,
                         Message = "Incorrect data length, string data tampered data tampered with."
@@ -328,7 +328,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             try
             {
-                if (hasEncryptionDataAppendedInIntputString)
+                if (hasEncryptionDataAppendedInInputString)
                 {
                     sentTag = new byte[_tagBytesLength];
                     Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength), sentTag, 0, sentTag.Length);
@@ -343,12 +343,12 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
-                var hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInIntputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
+                var hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInInputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
                 var calcTag = hmacSha256.Take(_tagBytesLength).ToArray();
 
                 if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
                 {
-                    return new AesEncryptionResult()
+                    return new AesDecryptionResult()
                     {
                         Success = false,
                         Message = "Authentication for string decryption failed, wrong password or data tampered with."
@@ -357,27 +357,27 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                 byte[] encryptedSourceDataStringBytes = null;
 
-                if (hasEncryptionDataAppendedInIntputString)
+                if (hasEncryptionDataAppendedInInputString)
                 {
                     encryptedSourceDataStringBytes = new byte[(encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _IVBytesLength)];
                     Array.Copy(encryptedStringBytes, 0, encryptedSourceDataStringBytes, 0, encryptedSourceDataStringBytes.Length);
                 }
 
-                var aesDecriptionResult = base.DecryptWithMemoryStream((hasEncryptionDataAppendedInIntputString ? encryptedSourceDataStringBytes : encryptedStringBytes),
+                var aesDecryptionResult = base.DecryptWithMemoryStream((hasEncryptionDataAppendedInInputString ? encryptedSourceDataStringBytes : encryptedStringBytes),
                     cryptKey, IV, _cipherMode, _paddingMode);
 
-                if (aesDecriptionResult.Success)
+                if (aesDecryptionResult.Success)
                 {
-                    aesDecriptionResult.DecryptedDataString = Encoding.UTF8.GetString(aesDecriptionResult.DecryptedDataBytes);
-                    aesDecriptionResult.Salt = salt;
-                    aesDecriptionResult.Tag = sentTag;
+                    aesDecryptionResult.DecryptedDataString = Encoding.UTF8.GetString(aesDecryptionResult.DecryptedDataBytes);
+                    aesDecryptionResult.Salt = salt;
+                    aesDecryptionResult.Tag = sentTag;
                 }
 
-                return aesDecriptionResult;
+                return aesDecryptionResult;
             }
             catch (Exception ex)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Error while trying to decrypt string:\n{ex.ToString()}"
@@ -491,11 +491,11 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         #region file decryption
 
-        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, string password, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInIntputFile = true)
+        public AesDecryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, string password, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInInputFile = true)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
@@ -504,14 +504,14 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var passwordBytes = Encoding.UTF8.GetBytes(password);
 
-            return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile, hasEncryptionDataAppendedInIntputFile);
+            return DecryptFile(encryptedFilePath, decryptedFilePath, passwordBytes, deleteSourceFile, hasEncryptionDataAppendedInInputFile);
         }
 
-        public AesEncryptionResult DecryptFile(string sourceFilePath, string encryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInIntputFile = true)
+        public AesDecryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, SecureString secStrPassword, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInInputFile = true)
         {
             if (secStrPassword == null || secStrPassword.Length <= 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
@@ -520,15 +520,15 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
 
-            return DecryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile, hasEncryptionDataAppendedInIntputFile);
+            return DecryptFile(encryptedFilePath, decryptedFilePath, passwordBytes, deleteSourceFile, hasEncryptionDataAppendedInInputFile);
         }
 
-        public AesEncryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInIntputFile = true,
+        public AesDecryptionResult DecryptFile(string encryptedFilePath, string decryptedFilePath, byte[] passwordBytes, bool deleteSourceFile = false, bool hasEncryptionDataAppendedInInputFile = true,
             byte[] sentTag = null, byte[] salt = null, byte[] IV = null)
         {
             if (!File.Exists(encryptedFilePath))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Encrypted file \"{encryptedFilePath}\" not found."
@@ -542,7 +542,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             if (passwordBytes == null || passwordBytes.Length == 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Password required."
@@ -551,11 +551,11 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             var encryptedFileSize = new FileInfo(encryptedFilePath).Length;
 
-            if (hasEncryptionDataAppendedInIntputFile)
+            if (hasEncryptionDataAppendedInInputFile)
             {
                 if (encryptedFileSize < (_tagBytesLength + _saltBytesLength + _IVBytesLength))
                 {
-                    return new AesEncryptionResult()
+                    return new AesDecryptionResult()
                     {
                         Success = false,
                         Message = "Incorrect data length, file data tampered with."
@@ -565,7 +565,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             try
             {
-                if (hasEncryptionDataAppendedInIntputFile)
+                if (hasEncryptionDataAppendedInInputFile)
                 {
                     byte[] additionalData = new byte[_IVBytesLength + _saltBytesLength + _tagBytesLength];
                     additionalData = EncryptionUtils.GetBytesFromFile(encryptedFilePath, additionalData.Length, (encryptedFileSize - additionalData.Length));
@@ -583,19 +583,19 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
-                var hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey, 0, (hasEncryptionDataAppendedInIntputFile ? encryptedFileSize - _tagBytesLength : encryptedFileSize));
+                var hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey, 0, (hasEncryptionDataAppendedInInputFile ? encryptedFileSize - _tagBytesLength : encryptedFileSize));
                 var calcTag = hmacSha256.Take(_tagBytesLength).ToArray();
 
                 if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
                 {
-                    return new AesEncryptionResult()
+                    return new AesDecryptionResult()
                     {
                         Success = false,
                         Message = "Authentication for file decryption failed, wrong password or data tampered with."
                     };
                 }
 
-                long endPosition = (hasEncryptionDataAppendedInIntputFile ? (encryptedFileSize - _tagBytesLength - _saltBytesLength - _IVBytesLength) : encryptedFileSize);
+                long endPosition = (hasEncryptionDataAppendedInInputFile ? (encryptedFileSize - _tagBytesLength - _saltBytesLength - _IVBytesLength) : encryptedFileSize);
 
                 var aesDecryptionResult = base.DecryptWithFileStream(encryptedFilePath, decryptedFilePath, cryptKey, IV, _cipherMode, _paddingMode, deleteSourceFile, 4, 0, endPosition);
 
@@ -609,7 +609,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
             catch (Exception ex)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Error while trying to decrypt file:\n{ex.ToString()}"

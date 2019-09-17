@@ -63,14 +63,14 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
         {
             string associatedData = null;
             var appendEncryptionData = false;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256gcm.EncryptString(_testString, _password, associatedData, appendEncryptionDataToOutputString: appendEncryptionData);
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), null, hasEncryptionDataAppendedInIntputString: appendEncryptionData,
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), null, hasEncryptionDataAppendedInInputString: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.Nonce);
 
                 if (!aesDecryptionResult.Success)
@@ -87,14 +87,14 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
         {
             string associatedData = "0f8fad5b-d9cb-469f-a165-70867728950e";
             var appendEncryptionData = false;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256gcm.EncryptString(_testString, _password, associatedData, appendEncryptionDataToOutputString: appendEncryptionData);
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), Encoding.UTF8.GetBytes(associatedData), hasEncryptionDataAppendedInIntputString: appendEncryptionData,
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), Encoding.UTF8.GetBytes(associatedData), hasEncryptionDataAppendedInInputString: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.Nonce);
 
                 if (!aesDecryptionResult.Success)
@@ -111,14 +111,14 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
         {
             string associatedData = null;
             var appendEncryptionData = true;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256gcm.EncryptString(_testString, _password, associatedData, appendEncryptionDataToOutputString: appendEncryptionData);
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, associatedData, hasEncryptionDataAppendedInIntputString: appendEncryptionData);
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, associatedData, hasEncryptionDataAppendedInInputString: appendEncryptionData);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;
@@ -134,14 +134,14 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
         {
             string associatedData = "0f8fad5b-d9cb-469f-a165-70867728950e";
             var appendEncryptionData = true;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256gcm.EncryptString(_testString, _password, associatedData, appendEncryptionDataToOutputString: appendEncryptionData);
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, associatedData, hasEncryptionDataAppendedInIntputString: appendEncryptionData);
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, associatedData, hasEncryptionDataAppendedInInputString: appendEncryptionData);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;

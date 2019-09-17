@@ -37,14 +37,14 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         public void Test_DecryptString_with_encryption_data_appended()
         {
             var appendEncryptionData = true;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256cbcHmacSha512.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha512.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, hasEncryptionDataAppendedInIntputString: appendEncryptionData);
+                aesDecryptionResult = _aes256cbcHmacSha512.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, hasEncryptionDataAppendedInInputString: appendEncryptionData);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;
@@ -59,7 +59,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         public void Test_DecryptString_without_encryption_data_appended()
         {
             var appendEncryptionData = false;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
             var aesEncryptionResult = _aes256cbcHmacSha512.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
@@ -67,7 +67,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
             if (aesEncryptionResult.Success)
             {
                 aesDecryptionResult = _aes256cbcHmacSha512.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password),
-                    hasEncryptionDataAppendedInIntputString: appendEncryptionData, aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
+                    hasEncryptionDataAppendedInInputString: appendEncryptionData, aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;
@@ -109,7 +109,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         {
             var testFilePath = Path.GetTempFileName();
             var appendEncryptionData = true;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             var testFileStringContentRead = "";
             string errorMessage = "";
 
@@ -119,7 +119,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha512.DecryptFile(testFilePath, testFilePath, _password, false, hasEncryptionDataAppendedInIntputFile: appendEncryptionData);
+                aesDecryptionResult = _aes256cbcHmacSha512.DecryptFile(testFilePath, testFilePath, _password, false, hasEncryptionDataAppendedInInputFile: appendEncryptionData);
 
                 if (aesDecryptionResult.Success)
                 {
@@ -139,7 +139,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         {
             var testFilePath = Path.GetTempFileName();
             var appendEncryptionData = false;
-            var aesDecryptionResult = new AesEncryptionResult();
+            var aesDecryptionResult = new AesDecryptionResult();
             var testFileStringContentRead = "";
             string errorMessage = "";
 
@@ -149,7 +149,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha512.DecryptFile(testFilePath, testFilePath, Encoding.UTF8.GetBytes(_password), false, hasEncryptionDataAppendedInIntputFile: appendEncryptionData,
+                aesDecryptionResult = _aes256cbcHmacSha512.DecryptFile(testFilePath, testFilePath, Encoding.UTF8.GetBytes(_password), false, hasEncryptionDataAppendedInInputFile: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (aesDecryptionResult.Success)

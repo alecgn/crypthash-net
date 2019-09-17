@@ -20,7 +20,11 @@ namespace CryptHash.Net.Encryption.AES.Base
 
         public event OnEncryptionMessageHandler OnEncryptionMessage;
 
+        public event OnDecryptionMessageHandler OnDecryptionMessage;
+
         public event OnEncryptionProgressHandler OnEncryptionProgress;
+
+        public event OnDecryptionProgressHandler OnDecryptionProgress;
 
         #endregion events
 
@@ -144,12 +148,12 @@ namespace CryptHash.Net.Encryption.AES.Base
             };
         }
 
-        internal AesEncryptionResult DecryptWithMemoryStream(byte[] encryptedData, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC,
+        internal AesDecryptionResult DecryptWithMemoryStream(byte[] encryptedData, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC,
             PaddingMode paddingMode = PaddingMode.PKCS7)
         {
             if (encryptedData == null || encryptedData.Length == 0)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Encrypted data cannot be null or 0 bytes."
@@ -158,7 +162,7 @@ namespace CryptHash.Net.Encryption.AES.Base
 
             if (key == null)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Key cannot be null."
@@ -167,7 +171,7 @@ namespace CryptHash.Net.Encryption.AES.Base
 
             if (IV == null)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "IV cannot be null."
@@ -189,7 +193,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                         aesManaged.Key = _key;
                     else
                     {
-                        return new AesEncryptionResult()
+                        return new AesDecryptionResult()
                         {
                             Success = false,
                             Message = $"Invalid key bit size ({(_key.Length * 8)})."
@@ -219,14 +223,14 @@ namespace CryptHash.Net.Encryption.AES.Base
             }
             catch (Exception ex)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
                 };
             }
 
-            return new AesEncryptionResult()
+            return new AesDecryptionResult()
             {
                 Success = true,
                 Message = "Data succesfully decrypted.",
@@ -381,12 +385,12 @@ namespace CryptHash.Net.Encryption.AES.Base
             }
         }
 
-        internal AesEncryptionResult DecryptWithFileStream(string encryptedFilePath, string decryptedFilePath, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC,
+        internal AesDecryptionResult DecryptWithFileStream(string encryptedFilePath, string decryptedFilePath, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC,
             PaddingMode paddingMode = PaddingMode.PKCS7, bool deleteEncryptedFile = false, int kBbufferSize = 4, long startPosition = 0, long endPosition = 0)
         {
             if (!File.Exists(encryptedFilePath))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Encrypted file \"{encryptedFilePath}\" not found."
@@ -395,7 +399,7 @@ namespace CryptHash.Net.Encryption.AES.Base
 
             if (string.IsNullOrWhiteSpace(decryptedFilePath))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Decrypted file path required."
@@ -406,7 +410,7 @@ namespace CryptHash.Net.Encryption.AES.Base
 
             if (!Directory.Exists(destinationDirectory))
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Destination directory \"{destinationDirectory}\" not found."
@@ -415,7 +419,7 @@ namespace CryptHash.Net.Encryption.AES.Base
 
             if (key == null)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "Key cannot be null."
@@ -424,7 +428,7 @@ namespace CryptHash.Net.Encryption.AES.Base
 
             if (IV == null)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = "IV cannot be null."
@@ -433,7 +437,7 @@ namespace CryptHash.Net.Encryption.AES.Base
 
             if (endPosition < startPosition)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"End position (\"{endPosition}\") cannot be less than start position (\"{startPosition}\")."
@@ -490,7 +494,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                                             {
                                                 percentageDone = tmpPercentageDone;
 
-                                                RaiseOnEncryptionProgress(percentageDone, (percentageDone != 100 ? $"Decrypting ({percentageDone}%)..." : $"Decrypted ({percentageDone}%)."));
+                                                RaiseOnDecryptionProgress(percentageDone, (percentageDone != 100 ? $"Decrypting ({percentageDone}%)..." : $"Decrypted ({percentageDone}%)."));
                                             }
                                         }
                                     }
@@ -516,7 +520,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 var message = $"File \"{encryptedFilePath}\" successfully decrypted to \"{decryptedFilePath}\".";
                 message += (deleteEncryptedFile && !pathsEqual ? $"\nFile \"{encryptedFilePath}\" deleted." : "");
 
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = true,
                     Message = message,
@@ -528,7 +532,7 @@ namespace CryptHash.Net.Encryption.AES.Base
             }
             catch (Exception ex)
             {
-                return new AesEncryptionResult()
+                return new AesDecryptionResult()
                 {
                     Success = false,
                     Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
@@ -546,9 +550,19 @@ namespace CryptHash.Net.Encryption.AES.Base
             OnEncryptionMessage?.Invoke(message);
         }
 
+        internal void RaiseOnDecryptionMessage(string message)
+        {
+            OnDecryptionMessage?.Invoke(message);
+        }
+
         internal void RaiseOnEncryptionProgress(int percentageDone, string message)
         {
             OnEncryptionProgress?.Invoke(percentageDone, message);
+        }
+
+        internal void RaiseOnDecryptionProgress(int percentageDone, string message)
+        {
+            OnDecryptionProgress?.Invoke(percentageDone, message);
         }
 
         #endregion private methods
