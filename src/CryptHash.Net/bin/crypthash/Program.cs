@@ -159,10 +159,10 @@ namespace CryptHash.Net.CLI
                             case "aes128cbc":
                                 aesDecryptionResult = new AE_AES_128_CBC_HMAC_SHA_256().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 break;
-                            case "aes192":
+                            case "aes192cbc":
                                 aesDecryptionResult = new AE_AES_192_CBC_HMAC_SHA_384().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 break;
-                            case "aes256":
+                            case "aes256cbc":
                                 aesDecryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password);
                                 break;
                             case "aes256gcm":
