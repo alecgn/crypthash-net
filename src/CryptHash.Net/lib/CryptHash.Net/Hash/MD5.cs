@@ -48,7 +48,7 @@ namespace CryptHash.Net.Hash
                     {
                         Success = true,
                         Message = "String succesfully hashed.",
-                        Hash = sb.ToString()
+                        HashString = sb.ToString()
                     };
                 }
             }
@@ -101,7 +101,7 @@ namespace CryptHash.Net.Hash
                         {
                             Success = true,
                             Message = $"File \"{sourceFilePath}\" succesfully hashed.",
-                            Hash = sb.ToString()
+                            HashString = sb.ToString()
                         };
                     }
                 }

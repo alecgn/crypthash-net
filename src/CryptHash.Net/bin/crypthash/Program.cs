@@ -313,17 +313,17 @@ namespace CryptHash.Net.CLI
             {
                 bool hashesMatch = (
                     hashOptions.Algorithm.ToLower() != "bcrypt"
-                        ? (hashResult.Hash).Equals(hashOptions.CompareHash, StringComparison.InvariantCultureIgnoreCase)
-                        : new Hash.BCrypt().Verify(hashOptions.InputToBeHashed, hashOptions.CompareHash).Success
+                        ? (hashResult.HashString).Equals(hashOptions.CompareHash, StringComparison.InvariantCultureIgnoreCase)
+                        : new Hash.BCrypt().VerifyHash(hashOptions.InputToBeHashed, hashOptions.CompareHash).Success
                 );
 
                 var outputMessage = (
                     hashesMatch
-                        ? $"Computed hash MATCH with given hash: {(hashOptions.Algorithm.ToLower() != "bcrypt" ? hashResult.Hash : hashOptions.CompareHash)}"
+                        ? $"Computed hash MATCH with given hash: {(hashOptions.Algorithm.ToLower() != "bcrypt" ? hashResult.HashString : hashOptions.CompareHash)}"
                         : $"Computed hash DOES NOT MATCH with given hash." +
                         (
                             hashOptions.Algorithm.ToLower() != "bcrypt"
-                                ? $"\nComputed hash: {hashResult.Hash}\nGiven hash: {hashOptions.CompareHash}"
+                                ? $"\nComputed hash: {hashResult.HashString}\nGiven hash: {hashOptions.CompareHash}"
                                 : ""
                         )
                 );
@@ -334,7 +334,7 @@ namespace CryptHash.Net.CLI
             }
             else if (hashResult.Success && string.IsNullOrWhiteSpace(hashOptions.CompareHash))
             {
-                Console.WriteLine(hashResult.Hash);
+                Console.WriteLine(hashResult.HashString);
 
                 return ExitCode.Sucess;
             }

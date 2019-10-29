@@ -31,7 +31,7 @@ namespace CryptHash.Net.Hash
                 {
                     Success = true,
                     Message = "String succesfully hashed.",
-                    Hash = hashedString
+                    HashString = hashedString
                 };
             }
             catch (Exception ex)
@@ -63,7 +63,7 @@ namespace CryptHash.Net.Hash
                 {
                     Success = true,
                     Message = "String succesfully hashed.",
-                    Hash = hashedString
+                    HashString = hashedString
                 };
             }
             catch (Exception ex)
@@ -95,7 +95,7 @@ namespace CryptHash.Net.Hash
                 {
                     Success = true,
                     Message = "String succesfully hashed.",
-                    Hash = hashedString
+                    HashString = hashedString
                 };
             }
             catch (Exception ex)
@@ -127,7 +127,7 @@ namespace CryptHash.Net.Hash
                 {
                     Success = true,
                     Message = "String succesfully hashed.",
-                    Hash = hashedString
+                    HashString = hashedString
                 };
             }
             catch (Exception ex)
@@ -140,7 +140,7 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult Verify(string stringToBeVerified, string hashedString, bool enhancedEntropy = false, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
+        public GenericHashResult VerifyHash(string stringToBeVerified, string hash, bool enhancedEntropy = false, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
         {
             if (string.IsNullOrWhiteSpace(stringToBeVerified))
             {
@@ -153,7 +153,7 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                var match = BCryptNet.BCrypt.Verify(stringToBeVerified, hashedString, enhancedEntropy, hashType);
+                var match = BCryptNet.BCrypt.Verify(stringToBeVerified, hash, enhancedEntropy, hashType);
 
                 if (match)
                 {
@@ -161,7 +161,7 @@ namespace CryptHash.Net.Hash
                     {
                         Success = true,
                         Message = "String and hash match.",
-                        Hash = hashedString
+                        HashString = hash
                     };
                 }
                 else
