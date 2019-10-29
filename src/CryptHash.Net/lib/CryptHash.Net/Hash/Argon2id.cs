@@ -68,7 +68,7 @@ namespace CryptHash.Net.Hash
                     Success = newHash.HashBytes.SequenceEqual(hash),
                     HashBytes = newHash.HashBytes,
                     HashString = newHash.HashString,
-                    Message = "String an hash match.",
+                    Message = $"String and hash{(newHash.HashBytes.SequenceEqual(hash) ? " " : " does not ")}match.",
                     SaltBytes = salt,
                     Iterations = iterations,
                     DegreeOfParallelism = degreeOfParallelism,
