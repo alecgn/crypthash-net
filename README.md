@@ -20,7 +20,8 @@ Currently supported hash algorithms are:
 * **SHA256**  
 * **SHA384**  
 * **SHA512**  
-* **BCrypt**
+* **BCrypt**  
+* **Argon2id**
 
 Other encryption/hashing algorithms will be implemented in the future.
 
