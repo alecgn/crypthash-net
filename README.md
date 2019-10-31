@@ -27,7 +27,7 @@ Other encryption/hashing algorithms will be implemented in the future.
 
 NuGet package: https://www.nuget.org/packages/CryptHash.Net
 
-Compiled console utility and library binaries (self-contained / no framework dependent) for Windows (x86/x64/ARM), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v3.0.0.  When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".  
+Compiled console utility and library binaries (self-contained / no framework dependent) for Windows (x86/x64/ARM), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v3.1.0.  When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".  
 Additionally in the above release link there's a Windows x64 compiled version for native code using CoreRT (runs much faster than the other versions, just one single executable).
 
 **WARNING:** PER SEMANTIC VERSIONING, THE ABOVE RELEASE (3.x.x) IS NOT COMPATIBLE WITH PREVIOUS RELEASES (1.x.x and 2.x.x), AND AS SUCH MIGHT NOT PROPERLY DECRYPT DATA YOU ENCRYPTED WITH PREVIOUS VERSIONS.
