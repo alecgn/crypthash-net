@@ -28,14 +28,14 @@ Other encryption/hashing algorithms will be implemented in the future.
 NuGet package: https://www.nuget.org/packages/CryptHash.Net
 
 Compiled console utility and library binaries (self-contained / no framework dependent) for Windows (x86/x64/ARM), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v3.1.0.  When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".  
-Additionally in the above release link there's a Windows x64 compiled version for native code using CoreRT (runs much faster than the other versions, just one single executable).
+Additionally in the above release link there're a Windows x64 and a Linux x64 versions native compiled using CoreRT, wich runs much faster than the other versions.
 
 **WARNING:** PER SEMANTIC VERSIONING, THE ABOVE RELEASE (3.x.x) IS NOT COMPATIBLE WITH PREVIOUS RELEASES (1.x.x and 2.x.x), AND AS SUCH MIGHT NOT PROPERLY DECRYPT DATA YOU ENCRYPTED WITH PREVIOUS VERSIONS.
 From this version (3.x.x) onwards, any new implementations will be planned so as to maintain compatibility and stability. There should be no more breaking-changes, as the project's architecture and design are already well defined. If there is a need to make a breaking-change going forward then a method for properly decryting data you encryted with version 3.x.x will be provided.
 
 Publish it yourself using the following dotnet client command-line:
 
->**dotnet publish -c Release -r \<RID\>**
+>**dotnet publish -c Release -r \<RID\> /p:PublishSingleFile=true /p:PublishTrimmed=true**
 --------------------------------------------------
 **WINDOWS RIDs**
 
