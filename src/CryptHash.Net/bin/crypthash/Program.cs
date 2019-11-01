@@ -281,19 +281,59 @@ namespace CryptHash.Net.CLI
                         switch (hashOptions.Algorithm.ToLower())
                         {
                             case "md5":
-                                hashResult = new MD5().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
+                                //hashResult = new MD5().HashFile(hashOptions.InputToBeHashed);
+
+                                using (var progressBar = new ProgressBar())
+                                {
+                                    var md5 = new MD5();
+                                    md5.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+
+                                    hashResult = md5.HashFile(hashOptions.InputToBeHashed);
+                                }
                                 break;
                             case "sha1":
-                                hashResult = new SHA1().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
+                                //hashResult = new SHA1().HashFile(hashOptions.InputToBeHashed);
+
+                                using (var progressBar = new ProgressBar())
+                                {
+                                    var sha1 = new SHA1();
+                                    sha1.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+
+                                    hashResult = sha1.HashFile(hashOptions.InputToBeHashed);
+                                }
                                 break;
                             case "sha256":
-                                hashResult = new SHA256().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
+                                //hashResult = new SHA256().HashFile(hashOptions.InputToBeHashed);
+
+                                using (var progressBar = new ProgressBar())
+                                {
+                                    var sha256 = new SHA256();
+                                    sha256.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+
+                                    hashResult = sha256.HashFile(hashOptions.InputToBeHashed);
+                                }
                                 break;
                             case "sha384":
-                                hashResult = new SHA384().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
+                                //hashResult = new SHA384().HashFile(hashOptions.InputToBeHashed);
+
+                                using (var progressBar = new ProgressBar())
+                                {
+                                    var sha384 = new SHA384();
+                                    sha384.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+
+                                    hashResult = sha384.HashFile(hashOptions.InputToBeHashed);
+                                }
                                 break;
                             case "sha512":
-                                hashResult = new SHA512().HashFile(hashOptions.InputToBeHashed, hashOptions.Verbose);
+                                //hashResult = new SHA512().HashFile(hashOptions.InputToBeHashed);
+
+                                using (var progressBar = new ProgressBar())
+                                {
+                                    var sha512 = new SHA512();
+                                    sha512.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+
+                                    hashResult = sha512.HashFile(hashOptions.InputToBeHashed);
+                                }
                                 break;
                             case "bcrypt":
                                 hashResult = new GenericHashResult() { Success = false, Message = $"Algorithm \"{hashOptions.Algorithm}\" currently not available for file hashing." };

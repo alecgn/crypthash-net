@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace CryptHash.Net.Encryption.Utils
 {
@@ -412,6 +413,21 @@ namespace CryptHash.Net.Encryption.Utils
                 result = false;
 
             return result;
+        }
+
+        public static string ConvertByteArrayToHexString(byte[] byteArray)
+        {
+            if (byteArray == null || byteArray.Length <= 0)
+                return null;
+
+            var sb = new StringBuilder();
+
+            for (int i = 0; i < byteArray.Length; i++)
+            {
+                sb.Append(byteArray[i].ToString("X2"));
+            }
+
+            return sb.ToString();
         }
     }
 }

@@ -13,4 +13,6 @@ namespace CryptHash.Net.Encryption.Utils.EventHandlers
     public delegate void OnEncryptionProgressHandler(int percentageDone, string message);
 
     public delegate void OnDecryptionProgressHandler(int percentageDone, string message);
+
+    public delegate void OnHashProgressHandler(int percentageDone, string message);
 }

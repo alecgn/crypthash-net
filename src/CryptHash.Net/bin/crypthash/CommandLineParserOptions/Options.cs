@@ -70,9 +70,6 @@ namespace CryptHash.Net.CLI.CommandLineParser
         [Option('i', "input", Required = true, HelpText = "Input to be hashed (string or file path).")]
         public string InputToBeHashed { get; set; }
 
-        [Option('v', "verbose", Default = false, HelpText = "Show status/progress bar while calculating file hash.")]
-        public bool Verbose { get; set; }
-
         [Option('c', "compare-hash", Default = null, HelpText = "Previously generated hash for comparation with computed hash.")]
         public string CompareHash { get; set; }
     }
