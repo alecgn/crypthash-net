@@ -429,5 +429,20 @@ namespace CryptHash.Net.Encryption.Utils
 
             return sb.ToString();
         }
+
+        public static byte[] ConvertHexStringToByteArray(string hexString)
+        {
+            if (string.IsNullOrWhiteSpace(hexString))
+                return null;
+
+            byte[] byteArray = new byte[hexString.Length];
+
+            for (int i = 0; i < hexString.Length; i++)
+            {
+                byteArray[i] = Convert.ToByte(hexString[i].ToString(), 16);
+            }
+
+            return byteArray;
+        }
     }
 }

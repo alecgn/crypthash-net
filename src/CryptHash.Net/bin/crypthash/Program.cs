@@ -267,6 +267,9 @@ namespace CryptHash.Net.CLI
                             case "sha512":
                                 hashResult = new SHA512().HashString(hashOptions.InputToBeHashed);
                                 break;
+                            case "pbkdf2":
+                                hashResult = new PBKDF2_HMAC_SHA_1().HashString(hashOptions.InputToBeHashed);
+                                break;
                             case "bcrypt":
                                 hashResult = new Hash.BCrypt().HashString(hashOptions.InputToBeHashed);
                                 break;
@@ -335,6 +338,7 @@ namespace CryptHash.Net.CLI
                                     hashResult = sha512.HashFile(hashOptions.InputToBeHashed);
                                 }
                                 break;
+                            case "pbkdf2":
                             case "bcrypt":
                                 hashResult = new GenericHashResult() { Success = false, Message = $"Algorithm \"{hashOptions.Algorithm}\" currently not available for file hashing." };
                                 break;
@@ -352,9 +356,12 @@ namespace CryptHash.Net.CLI
             if (hashResult.Success && !string.IsNullOrWhiteSpace(hashOptions.CompareHash))
             {
                 bool hashesMatch = (
-                    hashOptions.Algorithm.ToLower() != "bcrypt"
+                    hashOptions.Algorithm.ToLower() != "bcrypt" && hashOptions.Algorithm.ToLower() != "pbkdf2"
                         ? (hashResult.HashString).Equals(hashOptions.CompareHash, StringComparison.InvariantCultureIgnoreCase)
-                        : new Hash.BCrypt().VerifyHash(hashOptions.InputToBeHashed, hashOptions.CompareHash).Success
+                        : (hashOptions.Algorithm.ToLower() == "bcrypt"
+                            ? new Hash.BCrypt().VerifyHash(hashOptions.InputToBeHashed, hashOptions.CompareHash).Success
+                            : new Hash.PBKDF2_HMAC_SHA_1().VerifyHash(hashOptions.InputToBeHashed, hashOptions.CompareHash).Success
+                        )
                 );
 
                 var outputMessage = (

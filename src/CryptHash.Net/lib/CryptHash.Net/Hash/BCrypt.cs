@@ -151,6 +151,15 @@ namespace CryptHash.Net.Hash
                 };
             }
 
+            if (string.IsNullOrWhiteSpace(hash))
+            {
+                return new GenericHashResult()
+                {
+                    Success = false,
+                    Message = "Hash required."
+                };
+            }
+
             try
             {
                 var match = BCryptNet.BCrypt.Verify(stringToBeVerified, hash, enhancedEntropy, hashType);

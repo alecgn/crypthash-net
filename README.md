@@ -20,6 +20,7 @@ Currently supported hash algorithms are:
 * **SHA256**  
 * **SHA384**  
 * **SHA512**  
+* **PBKDF2**  
 * **BCrypt**  
 * **Argon2id**
 
@@ -27,7 +28,7 @@ Other encryption/hashing algorithms will be implemented in the future.
 
 NuGet package: https://www.nuget.org/packages/CryptHash.Net
 
-Compiled console utility and library binaries (self-contained / no framework dependent) for Windows (x86/x64/ARM), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v3.1.0.  When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".  
+Compiled console utility and library binaries (self-contained / no framework dependent) for Windows (x86/x64/ARM), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v3.2.0.  When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".  
 Additionally in the above release link there're a Windows x64 and a Linux x64 versions native compiled using CoreRT, wich runs much faster than the other versions.
 
 **WARNING:** PER SEMANTIC VERSIONING, THE ABOVE RELEASE (3.x.x) IS NOT COMPATIBLE WITH PREVIOUS RELEASES (1.x.x and 2.x.x), AND AS SUCH MIGHT NOT PROPERLY DECRYPT DATA YOU ENCRYPTED WITH PREVIOUS VERSIONS.
