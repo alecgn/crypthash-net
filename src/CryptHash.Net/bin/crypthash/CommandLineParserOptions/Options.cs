@@ -58,13 +58,13 @@ namespace CryptHash.Net.CLI.CommandLineParser
         public string AssociatedData { get; set; }
     }
 
-    [Verb("hash", HelpText = "String and file hashing (MD5, SHA1, SHA256, SHA384, SHA512 and BCrypt).")]
+    [Verb("hash", HelpText = "String and file hashing (MD5, SHA1, SHA256, SHA384, SHA512, PBKDF2 and BCrypt).")]
     public class HashOptions
     {
         [Option('t', "input-type", Required = true, HelpText = "Input type (\"string\" or \"file\").")]
         public string InputType { get; set; }
 
-        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (\"md5\", \"sha1\", \"sha256\", \"sha384\", \"sha512\" and \"bcrypt\").")]
+        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (\"md5\", \"sha1\", \"sha256\", \"sha384\", \"sha512\", \"pbkdf2\" and \"bcrypt\").")]
         public string Algorithm { get; set; }
 
         [Option('i', "input", Required = true, HelpText = "Input to be hashed (string or file path).")]
