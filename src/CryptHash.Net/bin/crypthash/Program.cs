@@ -268,7 +268,7 @@ namespace CryptHash.Net.CLI
                                 hashResult = new SHA512().HashString(hashOptions.InputToBeHashed);
                                 break;
                             case "pbkdf2":
-                                hashResult = new PBKDF2_HMAC_SHA_1().HashString(hashOptions.InputToBeHashed);
+                                hashResult = new PBKDF2().HashString(hashOptions.InputToBeHashed);
                                 break;
                             case "bcrypt":
                                 hashResult = new Hash.BCrypt().HashString(hashOptions.InputToBeHashed);
@@ -360,7 +360,7 @@ namespace CryptHash.Net.CLI
                         ? (hashResult.HashString).Equals(hashOptions.CompareHash, StringComparison.InvariantCultureIgnoreCase)
                         : (hashOptions.Algorithm.ToLower() == "bcrypt"
                             ? new Hash.BCrypt().VerifyHash(hashOptions.InputToBeHashed, hashOptions.CompareHash).Success
-                            : new Hash.PBKDF2_HMAC_SHA_1().VerifyHash(hashOptions.InputToBeHashed, hashOptions.CompareHash).Success
+                            : new Hash.PBKDF2().VerifyHash(hashOptions.InputToBeHashed, hashOptions.CompareHash).Success
                         )
                 );
 

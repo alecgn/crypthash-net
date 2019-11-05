@@ -1,22 +1,24 @@
 ﻿using CryptHash.Net.Encryption.Utils;
 using CryptHash.Net.Hash.HashResults;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
-using System.Security.Cryptography;
 
 namespace CryptHash.Net.Hash
 {
-    [Obsolete("This class is obsolete. Use PBKDF2.cs class instead.")]
-    public class PBKDF2_HMAC_SHA_1
+    public class PBKDF2
     {
-        private static readonly int _hashBitSize = 160;
-        private static readonly int _hashBytesLength = (_hashBitSize / 8);
+        private const int _hashBitSize = 256;
+        private const int _hashBytesLength = (_hashBitSize / 8);
 
         private static readonly int _saltBitSize = 128;
         private static readonly int _saltBytesLength = (_saltBitSize / 8);
 
-        private static readonly int _iterations = 100000;
+        private const int _iterations = 10000;
 
-        public GenericHashResult HashString(string stringToBeHashed, byte[] salt = null)
+        private const KeyDerivationPrf _prf = KeyDerivationPrf.HMACSHA1;
+
+        public GenericHashResult HashString(string stringToBeHashed, byte[] salt = null, KeyDerivationPrf prf = _prf, int iterationCount = _iterations,
+            int numBytesRequested = _hashBytesLength)
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
@@ -32,11 +34,13 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                using (var rfc2898DeriveBytes = new Rfc2898DeriveBytes(stringToBeHashed, salt))
-                {
-                    rfc2898DeriveBytes.IterationCount = _iterations;
-                    hash = rfc2898DeriveBytes.GetBytes(_hashBytesLength);
-                }
+                hash = KeyDerivation.Pbkdf2(
+                    password: stringToBeHashed,
+                    salt: salt,
+                    prf: prf,
+                    iterationCount: iterationCount,
+                    numBytesRequested: numBytesRequested
+                );
 
                 var hashBytes = new byte[(_saltBytesLength + _hashBytesLength)];
                 Array.Copy(salt, 0, hashBytes, 0, _saltBytesLength);
@@ -52,14 +56,16 @@ namespace CryptHash.Net.Hash
             }
             catch (Exception ex)
             {
-                return new GenericHashResult() { 
+                return new GenericHashResult()
+                {
                     Success = false,
                     Message = ex.ToString()
                 };
             }
         }
 
-        public GenericHashResult VerifyHash(string stringToBeVerified, string hash)
+        public GenericHashResult VerifyHash(string stringToBeVerified, string hash, KeyDerivationPrf prf = _prf, int iterationCount = _iterations,
+            int numBytesRequested = _hashBytesLength)
         {
             if (string.IsNullOrWhiteSpace(stringToBeVerified))
             {
@@ -96,7 +102,7 @@ namespace CryptHash.Net.Hash
             var hashBytes = new byte[_hashBytesLength];
             Array.Copy(hashWithSaltBytes, _saltBytesLength, hashBytes, 0, _hashBytesLength);
 
-            var result = HashString(stringToBeVerified, saltBytes);
+            var result = HashString(stringToBeVerified, saltBytes, prf, iterationCount, numBytesRequested);
 
             if (string.Equals(result.HashString, hash))
             {
