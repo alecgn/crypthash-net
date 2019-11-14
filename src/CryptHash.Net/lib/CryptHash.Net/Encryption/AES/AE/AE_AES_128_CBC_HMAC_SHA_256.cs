@@ -154,7 +154,8 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             try
             {
-                byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                //byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                byte[] salt = EncryptionUtils.GenerateSalt();
                 byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
@@ -440,7 +441,8 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             try
             {
-                byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                //byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                byte[] salt = EncryptionUtils.GenerateSalt();
                 byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
 
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();

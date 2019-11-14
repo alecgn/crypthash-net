@@ -27,7 +27,8 @@ namespace CryptHash.Net.Hash
                 };
             }
 
-            salt = salt ?? EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+            //salt = salt ?? EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+            salt = salt ?? EncryptionUtils.GenerateSalt();
             byte[] hash;
 
             try

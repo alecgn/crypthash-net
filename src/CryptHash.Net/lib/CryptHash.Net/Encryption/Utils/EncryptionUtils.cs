@@ -28,6 +28,21 @@ namespace CryptHash.Net.Encryption.Utils
             return randomBytes;
         }
 
+        public static byte[] Generate128BitKey()
+        {
+            return GenerateRandomBytes(128/8);
+        }
+
+        public static byte[] GenerateSalt(int saltLength = 0)
+        {
+            return (saltLength == 0 ? Generate128BitKey() : GenerateRandomBytes(saltLength));
+        }
+
+        public static byte[] Generate256BitKey()
+        {
+            return GenerateRandomBytes(256/8);
+        }
+
         // waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
         public static byte[] GetHashedBytesFromPBKDF2(byte[] passwordBytes, byte[] saltBytes, int keyBytesLength, int iterations/*, HashAlgorithmName hashAlgorithmName*/)
         {

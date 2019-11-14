@@ -18,7 +18,7 @@ namespace CryptHash.Net.Hash
         {
             try
             {
-                salt = salt ?? EncryptionUtils.GenerateRandomBytes(16); // generate a 128 bits salt, if not provided
+                salt = salt ?? EncryptionUtils.GenerateSalt(); // generate a 128 bits salt, if not provided
                 degreeOfParallelism = (degreeOfParallelism <= 0 ? Environment.ProcessorCount : degreeOfParallelism);
 
                 using (var argon2id = new Konscious.Security.Cryptography.Argon2id(stringToBeHashedBytes) {

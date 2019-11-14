@@ -160,7 +160,8 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             try
             {
-                byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                //byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
+                byte[] salt = EncryptionUtils.GenerateSalt();
                 byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
                 byte[] nonce = EncryptionUtils.GenerateRandomBytes(_nonceBytesLength);
                 byte[] tag = new byte[_tagBytesLength];
