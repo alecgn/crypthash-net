@@ -31,16 +31,16 @@ namespace CryptHash.Net.Hash
             }
 
             if (key == null || key.Length <= 0)
-                key = EncryptionUtils.GenerateRandomBytes(256 / 8);
+                key = EncryptionUtils.GenerateRandomBytes(384 / 8);
 
             GenericHashResult result = null;
 
             try
             {
-                using (var hmacSha256 = HMACSHA256.Create())
+                using (var hmacSha384 = HMACSHA384.Create())
                 {
-                    hmacSha256.Key = key;
-                    byte[] hashedBytes = hmacSha256.ComputeHash(bytesToBeHashed);
+                    hmacSha384.Key = key;
+                    byte[] hashedBytes = hmacSha384.ComputeHash(bytesToBeHashed);
 
                     result = new GenericHashResult()
                     {
@@ -74,7 +74,7 @@ namespace CryptHash.Net.Hash
             }
 
             if (key == null || key.Length <= 0)
-                key = EncryptionUtils.GenerateRandomBytes(256/8);
+                key = EncryptionUtils.GenerateRandomBytes(384 / 8);
 
             var bytesToBeHashed = Encoding.UTF8.GetBytes(stringToBeHashed);
             var result = HashBytes(bytesToBeHashed, key);
@@ -97,7 +97,7 @@ namespace CryptHash.Net.Hash
             }
 
             if (key == null || key.Length <= 0)
-                key = EncryptionUtils.GenerateRandomBytes(256 / 8);
+                key = EncryptionUtils.GenerateRandomBytes(384 / 8);
 
             HMACHashResult result = null;
 
@@ -113,9 +113,9 @@ namespace CryptHash.Net.Hash
                     byte[] buffer = new byte[(1024 * 4)];
                     long amount = (endPosition - startPosition);
 
-                    using (var hmacSha256 = HMACSHA256.Create())
+                    using (var hmacSha384 = HMACSHA384.Create())
                     {
-                        hmacSha256.Key = key;
+                        hmacSha384.Key = key;
                         int percentageDone = 0;
 
                         while (amount > 0)
@@ -127,9 +127,9 @@ namespace CryptHash.Net.Hash
                                 amount -= bytesRead;
 
                                 if (amount > 0)
-                                    hmacSha256.TransformBlock(buffer, 0, bytesRead, buffer, 0);
+                                    hmacSha384.TransformBlock(buffer, 0, bytesRead, buffer, 0);
                                 else
-                                    hmacSha256.TransformFinalBlock(buffer, 0, bytesRead);
+                                    hmacSha384.TransformFinalBlock(buffer, 0, bytesRead);
 
                                 var tmpPercentageDone = (int)(fStream.Position * 100 / endPosition);
 
@@ -144,7 +144,7 @@ namespace CryptHash.Net.Hash
                                 throw new InvalidOperationException();
                         }
 
-                        hash = hmacSha256.Hash;
+                        hash = hmacSha384.Hash;
                     }
                 }
 

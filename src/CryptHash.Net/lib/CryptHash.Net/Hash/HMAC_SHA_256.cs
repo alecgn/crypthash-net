@@ -74,7 +74,7 @@ namespace CryptHash.Net.Hash
             }
 
             if (key == null || key.Length <= 0)
-                key = EncryptionUtils.GenerateRandomBytes(256/8);
+                key = EncryptionUtils.GenerateRandomBytes(256 / 8);
 
             var bytesToBeHashed = Encoding.UTF8.GetBytes(stringToBeHashed);
             var result = HashBytes(bytesToBeHashed, key);

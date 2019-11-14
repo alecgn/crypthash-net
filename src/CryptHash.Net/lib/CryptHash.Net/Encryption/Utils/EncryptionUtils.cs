@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -450,14 +451,25 @@ namespace CryptHash.Net.Encryption.Utils
             if (string.IsNullOrWhiteSpace(hexString))
                 return null;
 
-            byte[] byteArray = new byte[hexString.Length];
+            if (hexString.Length % 2 != 0)
+                throw new ArgumentException("Incorret hexadecimal string.", nameof(hexString));
 
-            for (int i = 0; i < hexString.Length; i++)
+            var byteArray = new byte[hexString.Length / 2];
+            var i = 0;
+
+            foreach (var hexVal in ChunkHexString(hexString))
             {
-                byteArray[i] = Convert.ToByte(hexString[i].ToString(), 16);
+                byteArray[i] = Convert.ToByte(hexVal, 16);
+                i++;
             }
 
             return byteArray;
+        }
+
+        public static IEnumerable<string> ChunkHexString(string hexString)
+        {
+            for (int i = 0; i < hexString.Length; i += 2)
+                yield return hexString.Substring(i, 2);
         }
     }
 }
