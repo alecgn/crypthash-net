@@ -10,7 +10,8 @@ using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Encryption.AES.Enums;
-using CryptHash.Net.Encryption.Utils.EventHandlers;
+using CryptHash.Net.Util;
+using CryptHash.Net.Util.EventHandlers;
 
 namespace CryptHash.Net.Encryption.AES.Base
 {
@@ -351,14 +352,14 @@ namespace CryptHash.Net.Encryption.AES.Base
 
                 if (pathsEqual)
                 {
-                    Utils.EncryptionUtils.ClearFileAttributes(sourceFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
+                    CommonMethods.ClearFileAttributes(sourceFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
                     File.Delete(sourceFilePath);
                     File.Move(encryptedFilePath + "_tmpcrypt", encryptedFilePath);
                 }
 
                 if (deleteSourceFile && !pathsEqual)
                 {
-                    Utils.EncryptionUtils.ClearFileAttributes(sourceFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
+                    CommonMethods.ClearFileAttributes(sourceFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
                     File.Delete(sourceFilePath);
                 }
 
@@ -506,14 +507,14 @@ namespace CryptHash.Net.Encryption.AES.Base
 
                 if (pathsEqual)
                 {
-                    Utils.EncryptionUtils.ClearFileAttributes(encryptedFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
+                    CommonMethods.ClearFileAttributes(encryptedFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
                     File.Delete(encryptedFilePath);
                     File.Move(decryptedFilePath + "_tmpdecrypt", decryptedFilePath);
                 }
 
                 if (deleteEncryptedFile && !pathsEqual)
                 {
-                    Utils.EncryptionUtils.ClearFileAttributes(encryptedFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
+                    CommonMethods.ClearFileAttributes(encryptedFilePath); // set "Normal" FileAttributes to avoid erros while trying to delete the file below
                     File.Delete(encryptedFilePath);
                 }
 

@@ -13,9 +13,9 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace CryptHash.Net.Encryption.Utils
+namespace CryptHash.Net.Util
 {
-    public static class EncryptionUtils
+    public static class CommonMethods
     {
         public static byte[] GenerateRandomBytes(int length)
         {

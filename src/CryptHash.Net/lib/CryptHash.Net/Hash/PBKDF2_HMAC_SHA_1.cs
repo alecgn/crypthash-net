@@ -1,4 +1,4 @@
-﻿using CryptHash.Net.Encryption.Utils;
+﻿using CryptHash.Net.Util;
 using CryptHash.Net.Hash.HashResults;
 using System;
 using System.Security.Cryptography;
@@ -27,8 +27,8 @@ namespace CryptHash.Net.Hash
                 };
             }
 
-            //salt = salt ?? EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
-            salt = salt ?? EncryptionUtils.GenerateSalt();
+            //salt = salt ?? CommonMethods.GenerateRandomBytes(_saltBytesLength);
+            salt = salt ?? CommonMethods.GenerateSalt();
             byte[] hash;
 
             try

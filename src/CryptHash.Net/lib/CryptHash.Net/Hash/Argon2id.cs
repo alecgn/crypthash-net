@@ -4,7 +4,7 @@
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Encryption.Utils;
+using CryptHash.Net.Util;
 using CryptHash.Net.Hash.HashResults;
 using System;
 using System.Linq;
@@ -18,7 +18,7 @@ namespace CryptHash.Net.Hash
         {
             try
             {
-                salt = salt ?? EncryptionUtils.GenerateSalt(); // generate a 128 bits salt, if not provided
+                salt = salt ?? CommonMethods.GenerateSalt(); // generate a 128 bits salt, if not provided
                 degreeOfParallelism = (degreeOfParallelism <= 0 ? Environment.ProcessorCount : degreeOfParallelism);
 
                 using (var argon2id = new Konscious.Security.Cryptography.Argon2id(stringToBeHashedBytes) {

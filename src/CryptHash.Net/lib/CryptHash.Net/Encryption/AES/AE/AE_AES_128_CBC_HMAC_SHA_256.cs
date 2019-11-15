@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Encryption.AES.Base;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
-using CryptHash.Net.Encryption.Utils;
+using CryptHash.Net.Util;
 
 namespace CryptHash.Net.Encryption.AES.AE
 {
@@ -102,7 +102,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
 
             var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
 
             return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutputString);
         }
@@ -127,7 +127,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
 
             return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutputString);
         }
@@ -154,9 +154,9 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             try
             {
-                //byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
-                byte[] salt = EncryptionUtils.GenerateSalt();
-                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+                //byte[] salt = CommonMethods.GenerateRandomBytes(_saltBytesLength);
+                byte[] salt = CommonMethods.GenerateSalt();
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
@@ -178,7 +178,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                                 bw.Write(salt);
                                 bw.Flush();
                                 var encryptedData = ms.ToArray();
-                                hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
+                                hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
                                 tag = hmacSha256.Take(_tagBytesLength).ToArray();
                                 bw.Write(tag);
                             }
@@ -191,7 +191,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     }
                     else
                     {
-                        hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromDataBytes(authKey, aesEncryptionResult.EncryptedDataBytes, 0, aesEncryptionResult.EncryptedDataBytes.Length);
+                        hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, aesEncryptionResult.EncryptedDataBytes, 0, aesEncryptionResult.EncryptedDataBytes.Length);
                         tag = hmacSha256.Take(_tagBytesLength).ToArray();
 
                         aesEncryptionResult.Salt = salt;
@@ -263,7 +263,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
 
             var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
 
             return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInInputString);
         }
@@ -288,7 +288,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
 
             return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInInputString);
         }
@@ -341,13 +341,13 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _IVBytesLength), IV, 0, IV.Length);
                 }
 
-                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
-                var hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInInputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
+                var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInInputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
                 var calcTag = hmacSha256.Take(_tagBytesLength).ToArray();
 
-                if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
+                if (!CommonMethods.TagsMatch(calcTag, sentTag))
                 {
                     return new AesDecryptionResult()
                     {
@@ -418,7 +418,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
 
             return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile, appendEncryptionDataToOutputFile);
         }
@@ -441,9 +441,9 @@ namespace CryptHash.Net.Encryption.AES.AE
 
             try
             {
-                //byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
-                byte[] salt = EncryptionUtils.GenerateSalt();
-                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+                //byte[] salt = CommonMethods.GenerateRandomBytes(_saltBytesLength);
+                byte[] salt = CommonMethods.GenerateSalt();
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
 
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
@@ -460,15 +460,15 @@ namespace CryptHash.Net.Encryption.AES.AE
                         Array.Copy(aesEncryptionResult.IV, 0, additionalData, 0, _IVBytesLength);
                         Array.Copy(salt, 0, additionalData, _IVBytesLength, _saltBytesLength);
 
-                        EncryptionUtils.AppendDataBytesToFile(encryptedFilePath, additionalData);
+                        CommonMethods.AppendDataBytesToFile(encryptedFilePath, additionalData);
                     }
 
-                    var hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey);
+                    var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey);
                     var tag = hmacSha256.Take(_tagBytesLength).ToArray();
 
                     if (appendEncryptionDataToOutputFile)
                     {
-                        EncryptionUtils.AppendDataBytesToFile(encryptedFilePath, tag);
+                        CommonMethods.AppendDataBytesToFile(encryptedFilePath, tag);
                         RaiseOnEncryptionMessage("Additional data written to file.");
                     }
 
@@ -520,7 +520,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
 
             return DecryptFile(encryptedFilePath, decryptedFilePath, passwordBytes, deleteSourceFile, hasEncryptionDataAppendedInInputFile);
         }
@@ -570,7 +570,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 if (hasEncryptionDataAppendedInInputFile)
                 {
                     byte[] additionalData = new byte[_IVBytesLength + _saltBytesLength + _tagBytesLength];
-                    additionalData = EncryptionUtils.GetBytesFromFile(encryptedFilePath, additionalData.Length, (encryptedFileSize - additionalData.Length));
+                    additionalData = CommonMethods.GetBytesFromFile(encryptedFilePath, additionalData.Length, (encryptedFileSize - additionalData.Length));
 
                     IV = new byte[_IVBytesLength];
                     salt = new byte[_saltBytesLength];
@@ -581,14 +581,14 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Array.Copy(additionalData, (_IVBytesLength + _saltBytesLength), sentTag, 0, _tagBytesLength);
                 }
 
-                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
-                var hmacSha256 = EncryptionUtils.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey, 0, (hasEncryptionDataAppendedInInputFile ? encryptedFileSize - _tagBytesLength : encryptedFileSize));
+                var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey, 0, (hasEncryptionDataAppendedInInputFile ? encryptedFileSize - _tagBytesLength : encryptedFileSize));
                 var calcTag = hmacSha256.Take(_tagBytesLength).ToArray();
 
-                if (!EncryptionUtils.TagsMatch(calcTag, sentTag))
+                if (!CommonMethods.TagsMatch(calcTag, sentTag))
                 {
                     return new AesDecryptionResult()
                     {

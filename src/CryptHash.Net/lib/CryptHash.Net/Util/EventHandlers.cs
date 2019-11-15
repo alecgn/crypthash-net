@@ -4,7 +4,7 @@
  *      https://github.com/alecgn
  */
 
-namespace CryptHash.Net.Encryption.Utils.EventHandlers
+namespace CryptHash.Net.Util.EventHandlers
 {
     public delegate void OnEncryptionMessageHandler(string message);
 

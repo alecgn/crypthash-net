@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Encryption.AES.Enums;
-using CryptHash.Net.Encryption.Utils;
+using CryptHash.Net.Util;
 
 #if (NETSTANDARD2_1 || NETCOREAPP3_0)
 namespace CryptHash.Net.Encryption.AES.AEAD
@@ -97,7 +97,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
 
             var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
             return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutputString);
@@ -123,7 +123,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                 };
             }
 
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
             return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutputString);
@@ -160,10 +160,10 @@ namespace CryptHash.Net.Encryption.AES.AEAD
 
             try
             {
-                //byte[] salt = EncryptionUtils.GenerateRandomBytes(_saltBytesLength);
-                byte[] salt = EncryptionUtils.GenerateSalt();
-                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
-                byte[] nonce = EncryptionUtils.GenerateRandomBytes(_nonceBytesLength);
+                //byte[] salt = CommonMethods.GenerateRandomBytes(_saltBytesLength);
+                byte[] salt = CommonMethods.GenerateSalt();
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
+                byte[] nonce = CommonMethods.GenerateRandomBytes(_nonceBytesLength);
                 byte[] tag = new byte[_tagBytesLength];
                 byte[] encryptedData = new byte[plainStringBytes.Length];
 
@@ -235,7 +235,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         //    {
         //        //key = new byte[32];
         //        //RandomNumberGenerator.Fill(key);
-        //        key = EncryptionUtils.GenerateRandomBytes(_keyBytesLength);
+        //        key = CommonMethods.GenerateRandomBytes(_keyBytesLength);
         //    }
 
         //    if (key.Length != _keyBytesLength)
@@ -251,7 +251,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         //    {
         //        //nonce = new byte[12];
         //        //RandomNumberGenerator.Fill(nonce);
-        //        nonce = EncryptionUtils.GenerateRandomBytes(_nonceBytesLength);
+        //        nonce = CommonMethods.GenerateRandomBytes(_nonceBytesLength);
         //    }
 
         //    if (nonce.Length != _nonceBytesLength)
@@ -356,7 +356,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
 
             var plainStringBytes = Encoding.UTF8.GetBytes(base64EncryptedString);
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
             return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString);
@@ -382,7 +382,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                 };
             }
 
-            var passwordBytes = EncryptionUtils.ConvertSecureStringToByteArray(secStrPassword);
+            var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
             return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString);
@@ -446,7 +446,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     Array.Copy(encryptedStringBytes, 0, encryptedStringBytesWithEncryptionData, 0, encryptedStringBytesWithEncryptionData.Length);
                 }
 
-                byte[] derivedKey = EncryptionUtils.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
                 byte[] decryptedData = new byte[(hasEncryptionDataAppendedInInputString ? encryptedStringBytesWithEncryptionData.Length : encryptedStringBytes.Length)];
 
                 using (var aesGcm = new AesGcm(derivedKey))

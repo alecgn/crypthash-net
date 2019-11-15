@@ -4,211 +4,26 @@
  *      https://github.com/alecgn
  */
 
-using System;
-using System.IO;
-using System.Text;
-using CryptHash.Net.Encryption.Utils.EventHandlers;
+using CryptHash.Net.Hash.Hash.Base;
 using CryptHash.Net.Hash.HashResults;
-using CryptHash.Net.Encryption.Utils;
 
-namespace CryptHash.Net.Hash
+namespace CryptHash.Net.Hash.Hash
 {
-    public class MD5
+    public class MD5 : HashBase
     {
-        public event OnHashProgressHandler OnHashProgress;
-
-
-        public GenericHashResult HashString(string stringToBeHashed)
+        public GenericHashResult ComputeHash(byte[] bytesToComputeHash)
         {
-            if (string.IsNullOrWhiteSpace(stringToBeHashed))
-            {
-                return new GenericHashResult()
-                {
-                    Success = false,
-                    Message = "String to be hashed required."
-                };
-            }
-
-            StringBuilder sb = null;
-            GenericHashResult result = null;
-
-            try
-            {
-                using (var md5 = System.Security.Cryptography.MD5.Create())
-                {
-                    byte[] stringToBeHashedBytes = Encoding.UTF8.GetBytes(stringToBeHashed);
-                    byte[] hashedBytes = md5.ComputeHash(stringToBeHashedBytes);
-
-
-                    sb = new StringBuilder();
-
-                    for (int i = 0; i < hashedBytes.Length; i++)
-                    {
-                        sb.Append(hashedBytes[i].ToString("X2"));
-                    }
-
-                    result = new GenericHashResult()
-                    {
-                        Success = true,
-                        Message = "String succesfully hashed.",
-                        HashString = sb.ToString(),
-                        HashBytes = hashedBytes
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new GenericHashResult()
-                {
-                    Success = false,
-                    Message = ex.ToString()
-                };
-            }
-            finally
-            {
-                sb.Clear();
-                sb = null;
-            }
-
-            return result;
+            return base.ComputeHash(Enums.HashAlgorithm.MD5, bytesToComputeHash);
         }
 
-        //public GenericHashResult HashFile(string sourceFilePath, bool verbose = false)
-        //{
-        //    if (!File.Exists(sourceFilePath))
-        //    {
-        //        return new GenericHashResult()
-        //        {
-        //            Success = false,
-        //            Message = $"File \"{sourceFilePath}\" not found."
-        //        };
-        //    }
-
-        //    StringBuilder sb = null;
-        //    GenericHashResult result = null;
-
-        //    try
-        //    {
-        //        using (var md5 = System.Security.Cryptography.MD5.Create())
-        //        {
-        //            using (var fs = File.OpenRead(sourceFilePath))
-        //            {
-        //                sb = new StringBuilder();
-        //                var hashedBytes = md5.ComputeHash(fs);
-
-        //                for (int i = 0; i < hashedBytes.Length; i++)
-        //                {
-        //                    sb.Append(hashedBytes[i].ToString("X2"));
-        //                }
-
-        //                result = new GenericHashResult()
-        //                {
-        //                    Success = true,
-        //                    Message = $"File \"{sourceFilePath}\" succesfully hashed.",
-        //                    HashString = sb.ToString()
-        //                };
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new GenericHashResult()
-        //        {
-        //            Success = false,
-        //            Message = ex.ToString()
-        //        };
-        //    }
-        //    finally
-        //    {
-        //        sb.Clear();
-        //        sb = null;
-        //    }
-
-        //    return result;
-        //}
-
-        public GenericHashResult HashFile(string sourceFilePath)
+        public GenericHashResult ComputeHash(string stringToComputeHash)
         {
-            if (!File.Exists(sourceFilePath))
-            {
-                return new GenericHashResult()
-                {
-                    Success = false,
-                    Message = $"File \"{sourceFilePath}\" not found."
-                };
-            }
-
-            GenericHashResult result = null;
-
-            try
-            {
-                byte[] hash = null;
-
-                using (var fStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
-                {
-                    var startPosition = 0;
-                    var endPosition = fStream.Length;
-                    fStream.Position = startPosition;
-                    byte[] buffer = new byte[(1024 * 4)];
-                    long amount = (endPosition - startPosition);
-
-                    using (var md5 = System.Security.Cryptography.MD5.Create())
-                    {
-                        int percentageDone = 0;
-
-                        while (amount > 0)
-                        {
-                            int bytesRead = fStream.Read(buffer, 0, (int)Math.Min(buffer.Length, amount));
-
-                            if (bytesRead > 0)
-                            {
-                                amount -= bytesRead;
-
-                                if (amount > 0)
-                                    md5.TransformBlock(buffer, 0, bytesRead, buffer, 0);
-                                else
-                                    md5.TransformFinalBlock(buffer, 0, bytesRead);
-
-                                var tmpPercentageDone = (int)(fStream.Position * 100 / endPosition);
-
-                                if (tmpPercentageDone != percentageDone)
-                                {
-                                    percentageDone = tmpPercentageDone;
-
-                                    RaiseOnHashProgress(percentageDone, (percentageDone != 100 ? $"Calculating hash ({percentageDone}%)..." : $"Hash calculated ({percentageDone}%)."));
-                                }
-                            }
-                            else
-                                throw new InvalidOperationException();
-                        }
-
-                        hash = md5.Hash;
-                    }
-                }
-
-                result = new GenericHashResult()
-                {
-                    Success = true,
-                    Message = $"File \"{sourceFilePath}\" succesfully hashed.",
-                    HashString = EncryptionUtils.ConvertByteArrayToHexString(hash),
-                    HashBytes = hash
-                };
-            }
-            catch (Exception ex)
-            {
-                result = new GenericHashResult()
-                {
-                    Success = false,
-                    Message = ex.ToString()
-                };
-            }
-
-            return result;
+            return base.ComputeHash(Enums.HashAlgorithm.MD5, stringToComputeHash);
         }
 
-        private void RaiseOnHashProgress(int percentageDone, string message)
+        public GenericHashResult ComputeFileHash(string sourceFilePath)
         {
-            OnHashProgress?.Invoke(percentageDone, message);
+            return base.ComputeFileHash(Enums.HashAlgorithm.MD5, sourceFilePath);
         }
     }
 }

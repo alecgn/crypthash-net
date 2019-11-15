@@ -15,6 +15,7 @@ using CryptHash.Net.Encryption.AES.AE;
 using CryptHash.Net.Encryption.AES.AEAD;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Hash;
+using CryptHash.Net.Hash.Hash;
 using CryptHash.Net.Hash.HashResults;
 
 namespace CryptHash.Net.CLI
@@ -253,19 +254,19 @@ namespace CryptHash.Net.CLI
                         switch (hashOptions.Algorithm.ToLower())
                         {
                             case "md5":
-                                hashResult = new MD5().HashString(hashOptions.InputToBeHashed);
+                                hashResult = new MD5().ComputeHash(hashOptions.InputToBeHashed);
                                 break;
                             case "sha1":
-                                hashResult = new SHA1().HashString(hashOptions.InputToBeHashed);
+                                hashResult = new SHA1().ComputeHash(hashOptions.InputToBeHashed);
                                 break;
                             case "sha256":
-                                hashResult = new SHA256().HashString(hashOptions.InputToBeHashed);
+                                hashResult = new SHA256().ComputeHash(hashOptions.InputToBeHashed);
                                 break;
                             case "sha384":
-                                hashResult = new SHA384().HashString(hashOptions.InputToBeHashed);
+                                hashResult = new SHA384().ComputeHash(hashOptions.InputToBeHashed);
                                 break;
                             case "sha512":
-                                hashResult = new SHA512().HashString(hashOptions.InputToBeHashed);
+                                hashResult = new SHA512().ComputeHash(hashOptions.InputToBeHashed);
                                 break;
                             case "pbkdf2":
                                 hashResult = new PBKDF2().HashString(hashOptions.InputToBeHashed);
@@ -291,7 +292,7 @@ namespace CryptHash.Net.CLI
                                     var md5 = new MD5();
                                     md5.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = md5.HashFile(hashOptions.InputToBeHashed);
+                                    hashResult = md5.ComputeFileHash(hashOptions.InputToBeHashed);
                                 }
                                 break;
                             case "sha1":
@@ -302,7 +303,7 @@ namespace CryptHash.Net.CLI
                                     var sha1 = new SHA1();
                                     sha1.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = sha1.HashFile(hashOptions.InputToBeHashed);
+                                    hashResult = sha1.ComputeFileHash(hashOptions.InputToBeHashed);
                                 }
                                 break;
                             case "sha256":
@@ -313,7 +314,7 @@ namespace CryptHash.Net.CLI
                                     var sha256 = new SHA256();
                                     sha256.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = sha256.HashFile(hashOptions.InputToBeHashed);
+                                    hashResult = sha256.ComputeFileHash(hashOptions.InputToBeHashed);
                                 }
                                 break;
                             case "sha384":
@@ -324,7 +325,7 @@ namespace CryptHash.Net.CLI
                                     var sha384 = new SHA384();
                                     sha384.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = sha384.HashFile(hashOptions.InputToBeHashed);
+                                    hashResult = sha384.ComputeFileHash(hashOptions.InputToBeHashed);
                                 }
                                 break;
                             case "sha512":
@@ -335,7 +336,7 @@ namespace CryptHash.Net.CLI
                                     var sha512 = new SHA512();
                                     sha512.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = sha512.HashFile(hashOptions.InputToBeHashed);
+                                    hashResult = sha512.ComputeFileHash(hashOptions.InputToBeHashed);
                                 }
                                 break;
                             case "pbkdf2":

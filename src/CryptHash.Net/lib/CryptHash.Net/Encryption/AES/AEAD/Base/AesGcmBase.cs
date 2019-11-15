@@ -75,7 +75,7 @@
 //            {
 //                //key = new byte[32];
 //                //RandomNumberGenerator.Fill(key);
-//                key = EncryptionUtils.GenerateRandomBytes((_allowedKeyBitSizes.Max() / 8));
+//                key = CommonMethods.GenerateRandomBytes((_allowedKeyBitSizes.Max() / 8));
 //            }
 
 //            if (!_allowedKeyBitSizes.Contains((key.Length * 8)))
@@ -91,7 +91,7 @@
 //            {
 //                //nonce = new byte[12];
 //                //RandomNumberGenerator.Fill(nonce);
-//                nonce = EncryptionUtils.GenerateRandomBytes((_allowedNonceBitSize / 8));
+//                nonce = CommonMethods.GenerateRandomBytes((_allowedNonceBitSize / 8));
 //            }
 
 //            if ((nonce.Length * 8) != _allowedNonceBitSize)
