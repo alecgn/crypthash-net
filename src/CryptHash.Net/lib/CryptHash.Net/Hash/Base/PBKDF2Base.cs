@@ -5,7 +5,7 @@ using System;
 
 namespace CryptHash.Net.Hash
 {
-    public class PBKDF2
+    public abstract class PBKDF2Base
     {
         private const int _hashBitSize = 256;
         private const int _hashBytesLength = (_hashBitSize / 8);
@@ -13,30 +13,30 @@ namespace CryptHash.Net.Hash
         private static readonly int _saltBitSize = 128;
         private static readonly int _saltBytesLength = (_saltBitSize / 8);
 
-        private const int _iterations = 10000;
+        private const int _iterations = 100000;
 
         private const KeyDerivationPrf _prf = KeyDerivationPrf.HMACSHA1;
 
-        public GenericHashResult HashString(string stringToBeHashed, byte[] salt = null, KeyDerivationPrf prf = _prf, int iterationCount = _iterations,
+        internal GenericHashResult ComputeHash(string stringToComputeHash, byte[] salt = null, KeyDerivationPrf prf = _prf, int iterationCount = _iterations,
             int numBytesRequested = _hashBytesLength)
         {
-            if (string.IsNullOrWhiteSpace(stringToBeHashed))
+            if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "String to be hashed required."
+                    Message = "String to compute hash required."
                 };
             }
 
-            //salt = salt ?? CommonMethods.GenerateRandomBytes(_saltBytesLength);
+            //salt = salt ?? CommonMethods.GenerateSalt(_saltBytesLength);
             salt = salt ?? CommonMethods.GenerateSalt();
             byte[] hash;
 
             try
             {
                 hash = KeyDerivation.Pbkdf2(
-                    password: stringToBeHashed,
+                    password: stringToComputeHash,
                     salt: salt,
                     prf: prf,
                     iterationCount: iterationCount,
@@ -50,8 +50,8 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = true,
-                    Message = "String succesfully hashed.",
-                    HashString = $"{Convert.ToBase64String(hashBytes)}",
+                    Message = OutputMessages.Message["Hash.Compute.Success"],
+                    HashString = Convert.ToBase64String(hashBytes),
                     HashBytes = hashBytes
                 };
             }
@@ -65,7 +65,7 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult VerifyHash(string stringToBeVerified, string hash, KeyDerivationPrf prf = _prf, int iterationCount = _iterations,
+        internal GenericHashResult VerifyHash(string stringToBeVerified, string hash, KeyDerivationPrf prf = _prf, int iterationCount = _iterations,
             int numBytesRequested = _hashBytesLength)
         {
             if (string.IsNullOrWhiteSpace(stringToBeVerified))
@@ -103,7 +103,7 @@ namespace CryptHash.Net.Hash
             var hashBytes = new byte[_hashBytesLength];
             Array.Copy(hashWithSaltBytes, _saltBytesLength, hashBytes, 0, _hashBytesLength);
 
-            var result = HashString(stringToBeVerified, saltBytes, prf, iterationCount, numBytesRequested);
+            var result = ComputeHash(stringToBeVerified, saltBytes, prf, iterationCount, numBytesRequested);
 
             if (string.Equals(result.HashString, hash))
             {

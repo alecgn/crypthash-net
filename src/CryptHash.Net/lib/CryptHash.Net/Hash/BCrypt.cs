@@ -12,7 +12,7 @@ namespace CryptHash.Net.Hash
 {
     public class BCrypt
     {
-        public GenericHashResult HashString(string stringToBeHashed)
+        public GenericHashResult ComputeHash(string stringToBeHashed)
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
@@ -44,7 +44,7 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult HashString(string stringToBeHashed, string salt)
+        public GenericHashResult ComputeHash(string stringToBeHashed, string salt)
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
@@ -76,7 +76,7 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult HashString(string stringToBeHashed, string salt, bool enhancedEntropy, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
+        public GenericHashResult ComputeHash(string stringToBeHashed, string salt, bool enhancedEntropy, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
@@ -108,7 +108,7 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult HashString(string stringToBeHashed, int workFactor, bool enhancedEntropy = false)
+        public GenericHashResult ComputeHash(string stringToBeHashed, int workFactor, bool enhancedEntropy = false)
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {

@@ -13,7 +13,7 @@ namespace CryptHash.Net.Hash
 {
     public class Argon2id
     {
-        public Argon2idHashResult HashString(byte[] stringToBeHashedBytes, int iterations, int kBmemorySize, int degreeOfParallelism, int amountBytesToReturn, 
+        public Argon2idHashResult ComputeHash(byte[] stringToBeHashedBytes, int iterations, int kBmemorySize, int degreeOfParallelism, int amountBytesToReturn, 
             byte[] salt = null, byte[] associatedData = null, byte[] knownSecret = null)
         {
             try
@@ -61,7 +61,7 @@ namespace CryptHash.Net.Hash
         {
             try
             {
-                var newHash = HashString(stringToBeHashedBytes, iterations, kBmemorySize, degreeOfParallelism, amountBytesToReturn, salt, associatedData, knownSecret);
+                var newHash = ComputeHash(stringToBeHashedBytes, iterations, kBmemorySize, degreeOfParallelism, amountBytesToReturn, salt, associatedData, knownSecret);
 
                 return new Argon2idHashResult()
                 {

@@ -11,7 +11,7 @@ using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
 using CryptHash.Net.Hash.HashResults;
 
-namespace CryptHash.Net.Hash.Hash.Base
+namespace CryptHash.Net.Hash.Base
 {
     public abstract class HashBase
     {
@@ -80,7 +80,7 @@ namespace CryptHash.Net.Hash.Hash.Base
                     result = new GenericHashResult()
                     {
                         Success = true,
-                        Message = "Hash computed succesfully.",
+                        Message = OutputMessages.Message["Hash.Compute.Success"],
                         HashBytes = hash
                     };
                 }

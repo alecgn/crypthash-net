@@ -269,10 +269,10 @@ namespace CryptHash.Net.CLI
                                 hashResult = new SHA512().ComputeHash(hashOptions.InputToBeHashed);
                                 break;
                             case "pbkdf2":
-                                hashResult = new PBKDF2().HashString(hashOptions.InputToBeHashed);
+                                hashResult = new PBKDF2().ComputeHash(hashOptions.InputToBeHashed);
                                 break;
                             case "bcrypt":
-                                hashResult = new Hash.BCrypt().HashString(hashOptions.InputToBeHashed);
+                                hashResult = new Hash.BCrypt().ComputeHash(hashOptions.InputToBeHashed);
                                 break;
                             default:
                                 hashResult = new GenericHashResult() { Success = false, Message = $"Unknown algorithm \"{hashOptions.Algorithm}\"." };

@@ -11,7 +11,7 @@ using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
 using CryptHash.Net.Hash.HashResults;
 
-namespace CryptHash.Net.Hash.HMAC.Base
+namespace CryptHash.Net.Hash.Base
 {
     public abstract class HMACBase
     {

@@ -5,9 +5,9 @@
  */
 
 using CryptHash.Net.Hash.HashResults;
-using CryptHash.Net.Hash.HMAC.Base;
+using CryptHash.Net.Hash.Base;
 
-namespace CryptHash.Net.Hash.HMAC
+namespace CryptHash.Net.Hash
 {
     public class HMAC_SHA_256 : HMACBase
     {

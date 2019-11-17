@@ -16,7 +16,7 @@ namespace CryptHash.Net.Hash
 
         private static readonly int _iterations = 100000;
 
-        public GenericHashResult HashString(string stringToBeHashed, byte[] salt = null)
+        public GenericHashResult ComputeHash(string stringToBeHashed, byte[] salt = null)
         {
             if (string.IsNullOrWhiteSpace(stringToBeHashed))
             {
@@ -97,7 +97,7 @@ namespace CryptHash.Net.Hash
             var hashBytes = new byte[_hashBytesLength];
             Array.Copy(hashWithSaltBytes, _saltBytesLength, hashBytes, 0, _hashBytesLength);
 
-            var result = HashString(stringToBeVerified, saltBytes);
+            var result = ComputeHash(stringToBeVerified, saltBytes);
 
             if (string.Equals(result.HashString, hash))
             {
