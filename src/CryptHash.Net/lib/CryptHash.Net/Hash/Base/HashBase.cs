@@ -80,7 +80,7 @@ namespace CryptHash.Net.Hash.Base
                     result = new GenericHashResult()
                     {
                         Success = true,
-                        Message = OutputMessages.Message["Hash.Compute.Success"],
+                        Message = MessageDictionary.Message["Hash.Compute.Success"],
                         HashBytes = hash
                     };
                 }
