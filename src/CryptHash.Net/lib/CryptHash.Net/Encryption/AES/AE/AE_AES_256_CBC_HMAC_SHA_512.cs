@@ -4,15 +4,15 @@
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Encryption.AES.Base;
-using CryptHash.Net.Encryption.AES.EncryptionResults;
-using CryptHash.Net.Util;
 using System;
 using System.IO;
 using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using CryptHash.Net.Encryption.AES.Base;
+using CryptHash.Net.Encryption.AES.EncryptionResults;
+using CryptHash.Net.Util;
 
 namespace CryptHash.Net.Encryption.AES.AE
 {
@@ -62,7 +62,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "String to encrypt required."
+                    Message = MessageDictionary.Instance["Encryption.InputRequired"]
                 };
             }
 
@@ -71,7 +71,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Encryption.PasswordRequired"]
                 };
             }
 
@@ -88,7 +88,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "String to encrypt required."
+                    Message = MessageDictionary.Instance["Encryption.InputRequired"]
                 };
             }
 
@@ -97,7 +97,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Encryption.PasswordRequired"]
                 };
             }
 
@@ -114,7 +114,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "String to encrypt required."
+                    Message = MessageDictionary.Instance["Encryption.InputRequired"]
                 };
             }
 
@@ -123,7 +123,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Encryption.PasswordRequired"]
                 };
             }
 
@@ -134,21 +134,21 @@ namespace CryptHash.Net.Encryption.AES.AE
 
         public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes, bool appendEncryptionDataToOutputString = true)
         {
-            if (plainStringBytes == null || plainStringBytes.Length == 0)
+            if (plainStringBytes == null || plainStringBytes.Length <= 0)
             {
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "String to encrypt required."
+                    Message = MessageDictionary.Instance["Encryption.InputRequired"]
                 };
             }
 
-            if (passwordBytes == null || passwordBytes.Length == 0)
+            if (passwordBytes == null || passwordBytes.Length <= 0)
             {
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Encryption.PasswordRequired"]
                 };
             }
 
@@ -206,7 +206,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = $"Error while trying to encrypt string:\n{ex.ToString()}"
+                    Message = $"{MessageDictionary.Instance["Encryption.ExceptionError"]}\n{ex.ToString()}"
                 };
             }
         }
@@ -223,7 +223,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "String to decrypt required."
+                    Message = MessageDictionary.Instance["Decryption.InputRequired"]
                 };
             }
 
@@ -232,7 +232,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Decryption.PasswordRequired"]
                 };
             }
 
@@ -249,7 +249,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "String to decrypt required."
+                    Message = MessageDictionary.Instance["Decryption.InputRequired"]
                 };
             }
 
@@ -258,7 +258,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Decryption.PasswordRequired"]
                 };
             }
 
@@ -275,7 +275,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "String to decrypt required."
+                    Message = MessageDictionary.Instance["Decryption.InputRequired"]
                 };
             }
 
@@ -284,7 +284,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Decryption.PasswordRequired"]
                 };
             }
 
@@ -293,7 +293,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInInputString);
         }
 
-        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, 
+        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes,
             bool hasEncryptionDataAppendedInInputString = true, byte[] sentTag = null,
             byte[] salt = null, byte[] IV = null)
         {
@@ -302,7 +302,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "String to decrypt required."
+                    Message = MessageDictionary.Instance["Decryption.InputRequired"]
                 };
             }
 
@@ -311,7 +311,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Decryption.PasswordRequired"]
                 };
             }
 
@@ -322,7 +322,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesDecryptionResult()
                     {
                         Success = false,
-                        Message = "Incorrect data length, string data tampered with."
+                        Message = MessageDictionary.Instance["Decryption.IncorrectInputLengthError"]
                     };
                 }
             }
@@ -352,7 +352,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesDecryptionResult()
                     {
                         Success = false,
-                        Message = "Authentication for string decryption failed, wrong password or data tampered with."
+                        Message = MessageDictionary.Instance["Decryption.AuthenticationTagsMismatchError"]
                     };
                 }
 
@@ -360,11 +360,11 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                 if (hasEncryptionDataAppendedInInputString)
                 {
-                    encryptedSourceDataStringBytes = new byte[(encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength  - _IVBytesLength)];
+                    encryptedSourceDataStringBytes = new byte[(encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _IVBytesLength)];
                     Array.Copy(encryptedStringBytes, 0, encryptedSourceDataStringBytes, 0, encryptedSourceDataStringBytes.Length);
                 }
 
-                var aesDecryptionResult = base.DecryptWithMemoryStream((hasEncryptionDataAppendedInInputString ? encryptedSourceDataStringBytes : encryptedStringBytes), 
+                var aesDecryptionResult = base.DecryptWithMemoryStream((hasEncryptionDataAppendedInInputString ? encryptedSourceDataStringBytes : encryptedStringBytes),
                     cryptKey, IV, _cipherMode, _paddingMode);
 
                 if (aesDecryptionResult.Success)
@@ -381,7 +381,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = $"Error while trying to decrypt string:\n{ex.ToString()}"
+                    Message = $"{MessageDictionary.Instance["Decryption.ExceptionError"]}\n{ex.ToString()}"
                 };
             }
         }
@@ -398,7 +398,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Encryption.PasswordRequired"]
                 };
             }
 
@@ -414,7 +414,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Encryption.PasswordRequired"]
                 };
             }
 
@@ -430,12 +430,12 @@ namespace CryptHash.Net.Encryption.AES.AE
                 encryptedFilePath = sourceFilePath;
             }
 
-            if (passwordBytes == null || passwordBytes.Length == 0)
+            if (passwordBytes == null || passwordBytes.Length <= 0)
             {
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Encryption.PasswordRequired"]
                 };
             }
 
@@ -454,7 +454,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 {
                     if (appendEncryptionDataToOutputFile)
                     {
-                        RaiseOnEncryptionMessage("Writing additional data to file...");
+                        RaiseOnEncryptionMessage(MessageDictionary.Instance["Encryption.FileAdditionalDataWriting"]);
                         byte[] additionalData = new byte[_IVBytesLength + _saltBytesLength];
 
                         Array.Copy(aesEncryptionResult.IV, 0, additionalData, 0, _IVBytesLength);
@@ -469,7 +469,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     if (appendEncryptionDataToOutputFile)
                     {
                         CommonMethods.AppendDataBytesToFile(encryptedFilePath, tag);
-                        RaiseOnEncryptionMessage("Additional data written to file.");
+                        RaiseOnEncryptionMessage(MessageDictionary.Instance["Encryption.FileAdditionalDataWritten"]);
                     }
 
                     aesEncryptionResult.Salt = salt;
@@ -483,7 +483,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = $"Error while trying to encrypt file:\n{ex.ToString()}"
+                    Message = $"{MessageDictionary.Instance["Encryption.ExceptionError"]}\n{ex.ToString()}"
                 };
             }
         }
@@ -500,7 +500,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Decryption.PasswordRequired"]
                 };
             }
 
@@ -516,7 +516,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Decryption.PasswordRequired"]
                 };
             }
 
@@ -533,7 +533,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = $"Encrypted file \"{encryptedFilePath}\" not found."
+                    Message = $"{MessageDictionary.Instance["Decryption.EncryptedFileNotFound"]}: \"{encryptedFilePath}\"."
                 };
             }
 
@@ -542,12 +542,12 @@ namespace CryptHash.Net.Encryption.AES.AE
                 decryptedFilePath = encryptedFilePath;
             }
 
-            if (passwordBytes == null || passwordBytes.Length == 0)
+            if (passwordBytes == null || passwordBytes.Length <= 0)
             {
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Password required."
+                    Message = MessageDictionary.Instance["Decryption.PasswordRequired"]
                 };
             }
 
@@ -560,7 +560,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesDecryptionResult()
                     {
                         Success = false,
-                        Message = "Incorrect data length, file data tampered with."
+                        Message = MessageDictionary.Instance["Decryption.IncorrectInputLengthError"]
                     };
                 }
             }
@@ -593,7 +593,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesDecryptionResult()
                     {
                         Success = false,
-                        Message = "Authentication for file decryption failed, wrong password or data tampered with."
+                        Message = MessageDictionary.Instance["Decryption.AuthenticationTagsMismatchError"]
                     };
                 }
 
@@ -614,7 +614,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = $"Error while trying to decrypt file:\n{ex.ToString()}"
+                    Message = $"{MessageDictionary.Instance["Decryption.ExceptionError"]}\n{ex.ToString()}"
                 };
             }
         }

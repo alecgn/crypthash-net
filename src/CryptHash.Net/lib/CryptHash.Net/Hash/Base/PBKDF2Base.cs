@@ -50,7 +50,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = true,
-                    Message = MessageDictionary.Message["Hash.Compute.Success"],
+                    Message = MessageDictionary.Instance["Hash.Compute.Success"],
                     HashString = Convert.ToBase64String(hashBytes),
                     HashBytes = hashBytes
                 };

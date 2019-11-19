@@ -4,7 +4,7 @@
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Hash.Hash.Base;
+using CryptHash.Net.Hash.Base;
 using CryptHash.Net.Hash.HashResults;
 
 namespace CryptHash.Net.Hash.Hash
