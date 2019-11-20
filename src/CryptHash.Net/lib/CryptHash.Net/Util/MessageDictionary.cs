@@ -9,10 +9,16 @@ namespace CryptHash.Net.Util
     {
         private static readonly Lazy<MessageDictionary> _lazyMessageDictionary = new Lazy<MessageDictionary>(() => new MessageDictionary());
 
-        private readonly IDictionary<string, string> _cdicMessages = new ConcurrentDictionary<string, string>() 
-        { 
-                ["Encryption.InputRequired"] = "Input to encrypt required." ,
-                ["Encryption.PasswordRequired"]  = "Password to encrypt required.",
+        private readonly IDictionary<string, string> _cdicMessages;
+
+        public static MessageDictionary Instance { get { return _lazyMessageDictionary.Value; } }
+
+        private MessageDictionary()
+        {
+            _cdicMessages = new ConcurrentDictionary<string, string>()
+            {
+                ["Encryption.InputRequired"] = "Input to encrypt required.",
+                ["Encryption.PasswordRequired"] = "Password to encrypt required.",
                 ["Encryption.ExceptionError"] = "Error while trying to encrypt data:",
                 ["Encryption.FileAdditionalDataWriting"] = "Writing additional data to file...",
                 ["Encryption.FileAdditionalDataWritten"] = "Additional data written to file.",
@@ -23,13 +29,7 @@ namespace CryptHash.Net.Util
                 ["Decryption.AuthenticationTagsMismatchError"] = "Authentication for decryption failed, wrong password or data probably tampered with.",
                 ["Decryption.EncryptedFileNotFound"] = "Encrypted file not found:",
                 ["Hash.ComputeSuccess"] = "Input hash computed succesfully."
-        };
-
-        public static MessageDictionary Instance { get { return _lazyMessageDictionary.Value; } }
-
-        private MessageDictionary()
-        {
-            //_cdicMessages = new ConcurrentDictionary<string, string>();
+            };
         }
 
         private string GetMessage(string key)
