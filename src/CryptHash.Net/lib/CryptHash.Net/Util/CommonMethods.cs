@@ -57,7 +57,7 @@ namespace CryptHash.Net.Util
             return pbkdf2HashedBytes;
         }
 
-#if (NETSTANDARD2_1 || NETCOREAPP3_0)
+#if NETSTANDARD2_1
         public static byte[] GetHashedBytesFromPBKDF2(byte[] passwordBytes, byte[] saltBytes, int keyBytesLength, int iterations, HashAlgorithmName hashAlgorithmName)
         {
             byte[] pbkdf2HashedBytes;

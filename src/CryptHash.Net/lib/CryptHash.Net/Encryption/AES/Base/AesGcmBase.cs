@@ -10,7 +10,7 @@
 //using CryptHash.Net.Encryption.AES.EncryptionResults;
 //using CryptHash.Net.Encryption.Utils;
 
-////#if (NETCOREAPP3_0 || NETSTANDARD2_1)
+////#if NETSTANDARD2_1
 //namespace CryptHash.Net.Encryption.AES.Base
 //{
 //    public abstract class AesGcmBase

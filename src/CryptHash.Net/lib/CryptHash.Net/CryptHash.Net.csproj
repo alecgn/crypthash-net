@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <Authors>Alessandro Cagliostro Goncalves Neves</Authors>
-    <Description>CryptHash.Net is a .NET multi-target class library (.NET Standard 2.0/2.1 and .NET Core 3.0) that can be used in projects with any .NET implementation, like .NET Framework, .NET Core, Mono, Xamarin, etc., for text and files symmetric (AES_128_CBC / AES_192_CBC / AES_256_CBC / AES_256_GCM) authenticated encryption/decryption, and text/files hashing (MD5, SHA1, SHA256, SHA384, SHA512, PBKDF2, BCrypt and Argon2id).</Description>
+    <Description>CryptHash.Net is a .NET multi-target class library (.NET Standard 2.0/2.1) that can be used in projects with any .NET implementation, like .NET Framework, .NET Core, Mono, Xamarin, etc., for text and files symmetric (AES_128_CBC / AES_192_CBC / AES_256_CBC / AES_256_GCM) authenticated encryption/decryption, and text/files hashing (MD5, SHA1, SHA256, SHA384, SHA512, PBKDF2, BCrypt and Argon2id).</Description>
     <Copyright>Alessandro Cagliostro Goncalves Neves, 2019</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>crypthash-icon.png</PackageIcon>

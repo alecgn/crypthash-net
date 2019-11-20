@@ -65,7 +65,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Source data cannot be null or 0 bytes."
+                    Message = MessageDictionary.Instance["Encryption.InputRequired"]
                 };
             }
 
@@ -94,7 +94,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                             return new AesEncryptionResult()
                             {
                                 Success = false,
-                                Message = $"Invalid key bit size ({(_key.Length * 8)})."
+                                Message = $"{MessageDictionary.Instance["Encryption.InvalidKeySizeError"]} ({(_key.Length * 8)})."
                             };
                         }
                     }
@@ -132,14 +132,14 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = $"Error while trying to encrypt data:\n{ex.ToString()}"
+                    Message = $"{MessageDictionary.Instance["Encryption.ExceptionError"]}\n{ex.ToString()}"
                 };
             }
 
             return new AesEncryptionResult()
             {
                 Success = true,
-                Message = "Data succesfully encrypted.",
+                Message = MessageDictionary.Instance["Encryption.EncryptSuccess"],
                 EncryptedDataBytes = encryptedData,
                 EncryptedDataBase64String = Convert.ToBase64String(encryptedData),
                 Key = _key,
@@ -157,7 +157,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Encrypted data cannot be null or 0 bytes."
+                    Message = MessageDictionary.Instance["Decryption.InputRequired"]
                 };
             }
 
@@ -166,7 +166,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Key cannot be null."
+                    Message = MessageDictionary.Instance["Decryption.NullKeyError"]
                 };
             }
 
@@ -175,7 +175,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "IV cannot be null."
+                    Message = MessageDictionary.Instance["Decryption.NullIVError"]
                 };
             }
 
@@ -197,7 +197,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                         return new AesDecryptionResult()
                         {
                             Success = false,
-                            Message = $"Invalid key bit size ({(_key.Length * 8)})."
+                            Message = $"{MessageDictionary.Instance["Encryption.InvalidKeySizeError"]} ({(_key.Length * 8)})."
                         };
                     }
 
@@ -227,14 +227,14 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
+                    Message = $"{MessageDictionary.Instance["Decryption.ExceptionError"]}\n{ex.ToString()}"
                 };
             }
 
             return new AesDecryptionResult()
             {
                 Success = true,
-                Message = "Data succesfully decrypted.",
+                Message = MessageDictionary.Instance["Decryption.DecryptSuccess"],
                 DecryptedDataBytes = decryptedData,
                 DecryptedDataString = Encoding.UTF8.GetString(decryptedData),
                 Key = _key,
@@ -252,7 +252,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = $"Source file \"{sourceFilePath}\" not found."
+                    Message = $"{MessageDictionary.Instance["Encryption.FileNotFound"]} \"{sourceFilePath}\"."
                 };
             }
 
@@ -261,7 +261,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = "Encrypted file path required."
+                    Message = MessageDictionary.Instance["Encryption.EncryptedFilePathError"]
                 };
             }
 
@@ -272,7 +272,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = $"Destination directory \"{destinationDirectory}\" not found."
+                    Message = $"{MessageDictionary.Instance["Encryption.DestinationDirectoryNotFound"]} \"{destinationDirectory}\"."
                 };
             }
 
@@ -301,7 +301,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                             return new AesEncryptionResult()
                             {
                                 Success = false,
-                                Message = $"Invalid key bit size ({(_key.Length * 8)})."
+                                Message = $"{MessageDictionary.Instance["Encryption.InvalidKeySizeError"]} ({(_key.Length * 8)})."
                             };
                         }
                     }
@@ -363,8 +363,9 @@ namespace CryptHash.Net.Encryption.AES.Base
                     File.Delete(sourceFilePath);
                 }
 
-                var message = $"File \"{sourceFilePath}\" successfully encrypted to \"{encryptedFilePath}\".";
-                message += (deleteSourceFile && !pathsEqual ? $"\nFile \"{sourceFilePath}\" deleted." : "");
+                //var message = $"File \"{sourceFilePath}\" successfully encrypted to \"{encryptedFilePath}\".";
+                var message = string.Format(MessageDictionary.Instance["Encryption.FileEncryptSuccess"], sourceFilePath, encryptedFilePath);
+                message += (deleteSourceFile && !pathsEqual ? $"\n{string.Format(MessageDictionary.Instance["Encryption.FileDeleted"], sourceFilePath)}" : "");
 
                 return new AesEncryptionResult()
                 {
@@ -381,7 +382,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = $"Error while trying to encrypt data:\n{ex.ToString()}"
+                    Message = $"{MessageDictionary.Instance["Encryption.ExceptionError"]}\n{ex.ToString()}"
                 };
             }
         }
@@ -394,7 +395,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = $"Encrypted file \"{encryptedFilePath}\" not found."
+                    Message = $"{MessageDictionary.Instance["Decryption.EncryptedFileNotFound"]} \"{encryptedFilePath}\"."
                 };
             }
 
@@ -403,7 +404,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Decrypted file path required."
+                    Message = MessageDictionary.Instance["Decryption.DecryptedFilePathError"]
                 };
             }
 
@@ -414,7 +415,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = $"Destination directory \"{destinationDirectory}\" not found."
+                    Message = $"{MessageDictionary.Instance["Encryption.DestinationDirectoryNotFound"]} \"{destinationDirectory}\"."
                 };
             }
 
@@ -423,7 +424,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "Key cannot be null."
+                    Message = MessageDictionary.Instance["Decryption.NullKeyError"]
                 };
             }
 
@@ -432,7 +433,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = "IV cannot be null."
+                    Message = MessageDictionary.Instance["Decryption.NullIVError"]
                 };
             }
 
@@ -441,7 +442,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = $"End position (\"{endPosition}\") cannot be less than start position (\"{startPosition}\")."
+                    Message = string.Format(MessageDictionary.Instance["Decryption.EndPositionLessThanStartError"], endPosition, startPosition)
                 };
             }
 
@@ -518,8 +519,8 @@ namespace CryptHash.Net.Encryption.AES.Base
                     File.Delete(encryptedFilePath);
                 }
 
-                var message = $"File \"{encryptedFilePath}\" successfully decrypted to \"{decryptedFilePath}\".";
-                message += (deleteEncryptedFile && !pathsEqual ? $"\nFile \"{encryptedFilePath}\" deleted." : "");
+                var message = string.Format(MessageDictionary.Instance["Decryption.FileDecryptSuccess"], encryptedFilePath, decryptedFilePath);
+                message += (deleteEncryptedFile && !pathsEqual ? $"\n{string.Format(MessageDictionary.Instance["Encryption.FileDeleted"], encryptedFilePath)}" : "");
 
                 return new AesDecryptionResult()
                 {
@@ -536,7 +537,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesDecryptionResult()
                 {
                     Success = false,
-                    Message = $"Error while trying to decrypt data:\n{ex.ToString()}"
+                    Message = $"{MessageDictionary.Instance["Decryption.ExceptionError"]}\n{ex.ToString()}"
                 };
             }
         }
