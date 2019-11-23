@@ -94,7 +94,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                             return new AesEncryptionResult()
                             {
                                 Success = false,
-                                Message = $"{MessageDictionary.Instance["Encryption.InvalidKeySizeError"]} ({(_key.Length * 8)})."
+                                Message = $"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({(_key.Length * 8)})."
                             };
                         }
                     }
@@ -197,7 +197,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                         return new AesDecryptionResult()
                         {
                             Success = false,
-                            Message = $"{MessageDictionary.Instance["Encryption.InvalidKeySizeError"]} ({(_key.Length * 8)})."
+                            Message = $"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({(_key.Length * 8)})."
                         };
                     }
 
@@ -252,7 +252,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 return new AesEncryptionResult()
                 {
                     Success = false,
-                    Message = $"{MessageDictionary.Instance["Encryption.FileNotFound"]} \"{sourceFilePath}\"."
+                    Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{sourceFilePath}\"."
                 };
             }
 
@@ -301,7 +301,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                             return new AesEncryptionResult()
                             {
                                 Success = false,
-                                Message = $"{MessageDictionary.Instance["Encryption.InvalidKeySizeError"]} ({(_key.Length * 8)})."
+                                Message = $"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({(_key.Length * 8)})."
                             };
                         }
                     }

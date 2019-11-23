@@ -322,7 +322,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesDecryptionResult()
                     {
                         Success = false,
-                        Message = MessageDictionary.Instance["Decryption.IncorrectInputLengthError"]
+                        Message = MessageDictionary.Instance["Common.IncorrectInputLengthError"]
                     };
                 }
             }
@@ -560,7 +560,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     return new AesDecryptionResult()
                     {
                         Success = false,
-                        Message = MessageDictionary.Instance["Decryption.IncorrectInputLengthError"]
+                        Message = MessageDictionary.Instance["Common.IncorrectInputLengthError"]
                     };
                 }
             }

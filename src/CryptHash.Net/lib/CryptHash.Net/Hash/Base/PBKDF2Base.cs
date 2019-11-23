@@ -25,7 +25,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "String to compute hash required."
+                    Message = MessageDictionary.Instance["Hash.InputRequired"]
                 };
             }
 
@@ -73,7 +73,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "String to be verified required."
+                    Message = MessageDictionary.Instance["Hash.InputRequired"]
                 };
             }
 
@@ -82,7 +82,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "Hash required."
+                    Message = MessageDictionary.Instance["Hash.VerificationHashRequired"]
                 };
             }
 
@@ -93,7 +93,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "Incorrect data length."
+                    Message = MessageDictionary.Instance["Common.IncorrectInputLengthError"]
                 };
             }
 
@@ -110,7 +110,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = true,
-                    Message = "String and hash match.",
+                    Message = MessageDictionary.Instance["Hash.Match"],
                     HashString = hash,
                     HashBytes = result.HashBytes
                 };
@@ -120,7 +120,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "String and hash does not match."
+                    Message = MessageDictionary.Instance["Hash.DoesNotMatch"]
                 };
             }
         }

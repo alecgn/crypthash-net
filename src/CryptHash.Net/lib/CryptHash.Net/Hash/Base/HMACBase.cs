@@ -25,7 +25,7 @@ namespace CryptHash.Net.Hash.Base
                 return new HMACHashResult()
                 {
                     Success = false,
-                    Message = "Bytes to compute HMAC required."
+                    Message = MessageDictionary.Instance["HMAC.InputRequired"]
                 };
             }
 
@@ -70,13 +70,19 @@ namespace CryptHash.Net.Hash.Base
                         return new HMACHashResult()
                         {
                             Success = false,
-                            Message = $"Algorithm \"{hashAlgorithm.ToString()}\" currently not supported."
+                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hashAlgorithm.ToString()}\"."
                         };
                     }
             }
 
             if (key != null && key.Length != hashAlgorithmHMACKeySize)
-                throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmHMACName}.", nameof(key));
+            {
+                //throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmHMACName}.", nameof(key));
+                return new HMACHashResult() {
+                    Success = false,
+                    Message = $"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({key.Length})."
+                };
+            }
 
             if (key == null)
                 key = CommonMethods.GenerateRandomBytes(hashAlgorithmHMACKeySize / 8);
@@ -93,7 +99,7 @@ namespace CryptHash.Net.Hash.Base
                     result = new HMACHashResult()
                     {
                         Success = true,
-                        Message = "HMAC computed succesfully.",
+                        Message = MessageDictionary.Instance["HMAC.ComputeSuccess"],
                         HashBytes = hash,
                         Key = key
                     };
@@ -118,7 +124,7 @@ namespace CryptHash.Net.Hash.Base
                 return new HMACHashResult()
                 {
                     Success = false,
-                    Message = "String to compute HMAC required."
+                    Message = MessageDictionary.Instance["HMAC.InputRequired"]
                 };
             }
 
@@ -138,7 +144,7 @@ namespace CryptHash.Net.Hash.Base
                 return new HMACHashResult()
                 {
                     Success = false,
-                    Message = $"File \"{sourceFilePath}\" not found."
+                    Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{sourceFilePath}\"."
                 };
             }
 
@@ -183,13 +189,20 @@ namespace CryptHash.Net.Hash.Base
                         return new HMACHashResult()
                         {
                             Success = false,
-                            Message = $"Algorithm \"{hashAlgorithm.ToString()}\" currently not supported."
+                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hashAlgorithm.ToString()}\"."
                         };
                     }
             }
 
             if (key != null && key.Length != hashAlgorithmHMACKeySize)
-                throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmName}.", nameof(key));
+            {
+                //throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmName}.", nameof(key));
+                return new HMACHashResult()
+                {
+                    Success = false,
+                    Message = $"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({key.Length})."
+                };
+            }
 
             if (key == null)
                 key = CommonMethods.GenerateRandomBytes(hashAlgorithmHMACKeySize / 8);
@@ -246,7 +259,7 @@ namespace CryptHash.Net.Hash.Base
                 result = new HMACHashResult()
                 {
                     Success = true,
-                    Message = "File HMAC computed succesfully.",
+                    Message = MessageDictionary.Instance["HMAC.ComputeSuccess"],
                     HashString = CommonMethods.ConvertByteArrayToHexString(hash),
                     HashBytes = hash,
                     Key = key

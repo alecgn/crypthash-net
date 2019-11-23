@@ -25,7 +25,7 @@ namespace CryptHash.Net.Hash.Base
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "Bytes to compute hash required."
+                    Message = MessageDictionary.Instance["Hash.InputRequired"]
                 };
             }
 
@@ -64,7 +64,7 @@ namespace CryptHash.Net.Hash.Base
                         return new GenericHashResult()
                         {
                             Success = false,
-                            Message = $"Algorithm \"{hashAlgorithm.ToString()}\" currently not supported."
+                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hashAlgorithm.ToString()}\"."
                         };
                     }
             }
@@ -104,7 +104,7 @@ namespace CryptHash.Net.Hash.Base
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "String to compute hash required."
+                    Message = MessageDictionary.Instance["Hash.InputRequired"]
                 };
             }
 
@@ -124,7 +124,7 @@ namespace CryptHash.Net.Hash.Base
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = $"File \"{sourceFilePath}\" not found."
+                    Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{sourceFilePath}\"."
                 };
             }
 
@@ -163,7 +163,7 @@ namespace CryptHash.Net.Hash.Base
                         return new GenericHashResult()
                         {
                             Success = false,
-                            Message = $"Algorithm \"{hashAlgorithm.ToString()}\" currently not supported."
+                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hashAlgorithm.ToString()}\"."
                         };
                     }
             }
@@ -219,7 +219,7 @@ namespace CryptHash.Net.Hash.Base
                 result = new GenericHashResult()
                 {
                     Success = true,
-                    Message = "File hash computed succesfully.",
+                    Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
                     HashString = CommonMethods.ConvertByteArrayToHexString(hash),
                     HashBytes = hash
                 };
