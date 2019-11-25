@@ -104,7 +104,7 @@ namespace CryptHash.Net.Util
         public static void ClearFileAttributes(string filePath)
         {
             if (!File.Exists(filePath))
-                throw new FileNotFoundException($"File {filePath} not found.", nameof(filePath));
+                throw new FileNotFoundException($"{MessageDictionary.Instance["Common.FileNotFound"]} {filePath}.", nameof(filePath));
 
             File.SetAttributes(filePath, FileAttributes.Normal);
         }
@@ -116,7 +116,7 @@ namespace CryptHash.Net.Util
         {
             if (!File.Exists(filePath))
             {
-                throw new FileNotFoundException($"File \"{filePath}\" not found.", filePath);
+                throw new FileNotFoundException($"{MessageDictionary.Instance["Common.FileNotFound"]} {filePath}.", filePath);
             }
 
             if (authKey == null || authKey.Length == 0)

@@ -23,7 +23,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "String to be hashed required."
+                    Message = MessageDictionary.Instance["Hash.InputRequired"]
                 };
             }
 
@@ -46,7 +46,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = true,
-                    Message = "String succesfully hashed.",
+                    Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
                     HashString = $"{Convert.ToBase64String(hashBytes)}",
                     HashBytes = hashBytes
                 };
@@ -67,7 +67,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "String to be verified required."
+                    Message = MessageDictionary.Instance["Hash.InputRequired"]
                 };
             }
 
@@ -76,7 +76,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "Hash required."
+                    Message = MessageDictionary.Instance["Hash.InputRequired"]
                 };
             }
 
@@ -87,7 +87,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "Incorrect data length."
+                    Message = ["Common.IncorrectInputLengthError"]
                 };
             }
 
@@ -104,7 +104,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = true,
-                    Message = "String and hash match.",
+                    Message = MessageDictionary.Instance["Hash.Match"],
                     HashString = hash,
                     HashBytes = result.HashBytes
                 };
@@ -114,7 +114,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = "String and hash does not match."
+                    Message = MessageDictionary.Instance["Hash.DoesNotMatch"]
                 };
             }
         }
