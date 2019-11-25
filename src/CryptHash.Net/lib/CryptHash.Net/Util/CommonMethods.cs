@@ -44,7 +44,6 @@ namespace CryptHash.Net.Util
             return GenerateRandomBytes(256/8);
         }
 
-        // waiting for full .net standard 2.1 implementation of Rfc2898DeriveBytes that accepts HashAlgorithmName as parameter, current version 2.0 does not support it yet.
         public static byte[] GetHashedBytesFromPBKDF2(byte[] passwordBytes, byte[] saltBytes, int keyBytesLength, int iterations/*, HashAlgorithmName hashAlgorithmName*/)
         {
             byte[] pbkdf2HashedBytes;
@@ -121,7 +120,7 @@ namespace CryptHash.Net.Util
 
             if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+                throw new ArgumentException($"{(MessageDictionary.Instance["Common.InvalidAuthKeySizeError"])} ({(authKey == null ? 0 : authKey.Length)}).", nameof(authKey));
             }
 
             byte[] hash = null;
@@ -179,12 +178,12 @@ namespace CryptHash.Net.Util
         {
             if (dataBytes == null || dataBytes.Length == 0)
             {
-                throw new ArgumentException("Invalid data bytes.", nameof(dataBytes));
+                throw new ArgumentException(MessageDictionary.Instance["HMAC.InputRequired"], nameof(dataBytes));
             }
 
             if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+                throw new ArgumentException($"{MessageDictionary.Instance["Common.InvalidAuthKeySizeError"]} ({(authKey == null ? 0 : authKey.Length)}).", nameof(authKey));
             }
 
             byte[] hash = null;
@@ -206,12 +205,12 @@ namespace CryptHash.Net.Util
         {
             if (!File.Exists(filePath))
             {
-                throw new FileNotFoundException($"File \"{filePath}\" not found.", filePath);
+                throw new FileNotFoundException($"{MessageDictionary.Instance["Common.FileNotFound"]} {filePath}.", filePath);
             }
 
             if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+                throw new ArgumentException($"{(MessageDictionary.Instance["Common.InvalidAuthKeySizeError"])} ({(authKey == null ? 0 : authKey.Length)}).", nameof(authKey));
             }
 
             byte[] hash = null;
@@ -269,12 +268,12 @@ namespace CryptHash.Net.Util
         {
             if (dataBytes == null || dataBytes.Length == 0)
             {
-                throw new ArgumentException("Invalid data bytes.", nameof(dataBytes));
+                throw new ArgumentException(MessageDictionary.Instance["HMAC.InputRequired"], nameof(dataBytes));
             }
 
             if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+                throw new ArgumentException($"{MessageDictionary.Instance["Common.InvalidAuthKeySizeError"]} ({(authKey == null ? 0 : authKey.Length)}).", nameof(authKey));
             }
 
             byte[] hash = null;
@@ -296,12 +295,12 @@ namespace CryptHash.Net.Util
         {
             if (!File.Exists(filePath))
             {
-                throw new FileNotFoundException($"File \"{filePath}\" not found.", filePath);
+                throw new FileNotFoundException($"{MessageDictionary.Instance["Common.FileNotFound"]} {filePath}.", filePath);
             }
 
             if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+                throw new ArgumentException($"{(MessageDictionary.Instance["Common.InvalidAuthKeySizeError"])} ({(authKey == null ? 0 : authKey.Length)}).", nameof(authKey));
             }
 
             byte[] hash = null;
@@ -359,12 +358,12 @@ namespace CryptHash.Net.Util
         {
             if (dataBytes == null || dataBytes.Length == 0)
             {
-                throw new ArgumentException("Invalid data bytes.", nameof(dataBytes));
+                throw new ArgumentException(MessageDictionary.Instance["HMAC.InputRequired"], nameof(dataBytes));
             }
 
             if (authKey == null || authKey.Length == 0)
             {
-                throw new ArgumentException("Invalid auth key.", nameof(authKey));
+                throw new ArgumentException($"{MessageDictionary.Instance["Common.InvalidAuthKeySizeError"]} ({(authKey == null ? 0 : authKey.Length)}).", nameof(authKey));
             }
 
             byte[] hash = null;
@@ -392,12 +391,12 @@ namespace CryptHash.Net.Util
         {
             if (!File.Exists(filePath))
             {
-                throw new FileNotFoundException($"File \"{filePath}\" not found.", filePath);
+                throw new FileNotFoundException($"{MessageDictionary.Instance["Common.FileNotFound"]} {filePath}.", filePath);
             }
 
             if (dataLength < 1)
             {
-                throw new ArgumentException("Data length invalid.", nameof(dataLength));
+                throw new ArgumentException($"{MessageDictionary.Instance["Common.InvalidDataLengthError"]} ({dataLength}).", nameof(dataLength));
             }
 
             byte[] dataBytes = new byte[dataLength];

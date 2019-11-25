@@ -14,7 +14,9 @@ namespace CryptHash.Net.Util
             ["Common.FileNotFound"] = "File not found:",
             ["Common.AlgorithmNotSupported"] = $"Algorithm not supported:",
             ["Common.InvalidKeySizeError"] = "Invalid key bit size:",
+            ["Common.InvalidAuthKeySizeError"] = "Invalid auth key bit size:",
             ["Common.IncorrectInputLengthError"] = "Incorrect data length, data probably tampered with.",
+            ["Common.InvalidDataLengthError"] = "Invalid data length: ",
 
             ["Encryption.InputRequired"] = "Input to encrypt required.",
             ["Encryption.PasswordRequired"] = "Password to encrypt required.",
