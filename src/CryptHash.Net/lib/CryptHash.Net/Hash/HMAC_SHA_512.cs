@@ -25,5 +25,25 @@ namespace CryptHash.Net.Hash
         {
             return base.ComputeFileHMAC(Enums.HashAlgorithm.SHA512, sourceFilePath, key);
         }
+
+        public HMACHashResult VerifyHMAC(string base64HMACString, string stringToVerifyHMAC, byte[] key)
+        {
+            return base.VerifyHMAC(Enums.HashAlgorithm.SHA512, base64HMACString, stringToVerifyHMAC, key);
+        }
+
+        public HMACHashResult VerifyHMAC(byte[] hmacBytes, byte[] bytesToVerifyHMAC, byte[] key)
+        {
+            return base.VerifyHMAC(Enums.HashAlgorithm.SHA512, hmacBytes, bytesToVerifyHMAC, key);
+        }
+
+        public HMACHashResult VerifyFileHMAC(string base64HMACString, string sourceFilePath, byte[] key)
+        {
+            return base.VerifyFileHMAC(Enums.HashAlgorithm.SHA512, base64HMACString, sourceFilePath, key);
+        }
+
+        public HMACHashResult VerifyFileHMAC(byte[] hmacBytes, string sourceFilePath, byte[] key)
+        {
+            return base.VerifyFileHMAC(Enums.HashAlgorithm.SHA512, hmacBytes, sourceFilePath, key);
+        }
     }
 }

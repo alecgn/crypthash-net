@@ -17,6 +17,8 @@ namespace CryptHash.Net.Util
             ["Common.InvalidAuthKeySizeError"] = "Invalid auth key bit size:",
             ["Common.IncorrectInputLengthError"] = "Incorrect data length, data probably tampered with.",
             ["Common.InvalidDataLengthError"] = "Invalid data length: ",
+            ["Common.IncorrectTagsLength"] = "Tags length must be equal.",
+            ["Common.IncorrectHexadecimalString"] = "Incorret hexadecimal string.",
 
             ["Encryption.InputRequired"] = "Input to encrypt required.",
             ["Encryption.PasswordRequired"] = "Password to encrypt required.",

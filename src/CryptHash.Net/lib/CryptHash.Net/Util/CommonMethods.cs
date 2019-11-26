@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -414,7 +415,7 @@ namespace CryptHash.Net.Util
         public static bool TagsMatch(byte[] calcTag, byte[] sentTag)
         {
             if (calcTag.Length != sentTag.Length)
-                throw new ArgumentException("Signature CalcTag and SentTag length must be equal.");
+                throw new ArgumentException(MessageDictionary.Instance["Common.IncorrectTagsLength"]);
 
             var result = true;
             var compare = 0;
@@ -435,14 +436,16 @@ namespace CryptHash.Net.Util
             if (byteArray == null || byteArray.Length <= 0)
                 return null;
 
-            var sb = new StringBuilder();
+            //var sb = new StringBuilder();
 
-            for (int i = 0; i < byteArray.Length; i++)
-            {
-                sb.Append(byteArray[i].ToString("X2"));
-            }
+            //for (int i = 0; i < byteArray.Length; i++)
+            //{
+            //    sb.Append(byteArray[i].ToString("X2"));
+            //}
 
-            return sb.ToString();
+            //return sb.ToString();
+
+            return string.Concat(byteArray.Select(b => b.ToString("X2")));
         }
 
         public static byte[] ConvertHexStringToByteArray(string hexString)
@@ -451,7 +454,7 @@ namespace CryptHash.Net.Util
                 return null;
 
             if (hexString.Length % 2 != 0)
-                throw new ArgumentException("Incorret hexadecimal string.", nameof(hexString));
+                throw new ArgumentException(MessageDictionary.Instance["Common.IncorrectHexadecimalString"], nameof(hexString));
 
             var byteArray = new byte[hexString.Length / 2];
             var i = 0;

@@ -10,6 +10,7 @@ using System.Text;
 using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
 using CryptHash.Net.Hash.HashResults;
+using System.Linq;
 
 namespace CryptHash.Net.Hash.Base
 {
@@ -234,6 +235,51 @@ namespace CryptHash.Net.Hash.Base
             }
 
             return result;
+        }
+
+        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, string base64HashString, string stringToVerifyHash)
+        {
+            var hashBytes = Convert.FromBase64String(base64HashString);
+            var stringToVerifyHashBytes = Encoding.UTF8.GetBytes(stringToVerifyHash);
+
+            return VerifyHash(hashAlgorithm, hashBytes, stringToVerifyHashBytes);
+        }
+
+        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, byte[] bytesToVerifyHash)
+        {
+            var hashResult = ComputeHash(hashAlgorithm, bytesToVerifyHash);
+
+            if (hashResult.Success)
+            {
+                var hashesMatch = hashResult.HashBytes.SequenceEqual(hashBytes);
+
+                hashResult.Success = hashesMatch;
+                hashResult.Message = $"{(hashesMatch ? MessageDictionary.Instance["Hash.Match"] : MessageDictionary.Instance["Hash.DoesNotMatch"])}";
+            }
+
+            return hashResult;
+        }
+
+        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string base64HashString, string sourceFilePath)
+        {
+            var hashBytes = Convert.FromBase64String(base64HashString);
+
+            return VerifyFileHash(hashAlgorithm, hashBytes, sourceFilePath);
+        }
+
+        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, string sourceFilePath)
+        {
+            var hashResult = ComputeFileHash(hashAlgorithm, sourceFilePath);
+
+            if (hashResult.Success)
+            {
+                var hashesMatch = hashResult.HashBytes.SequenceEqual(hashBytes);
+
+                hashResult.Success = hashesMatch;
+                hashResult.Message = $"{(hashesMatch ? MessageDictionary.Instance["Hash.Match"] : MessageDictionary.Instance["Hash.DoesNotMatch"])}";
+            }
+
+            return hashResult;
         }
 
         internal void RaiseOnHashProgress(int percentageDone, string message)

@@ -10,6 +10,7 @@ using System.Text;
 using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
 using CryptHash.Net.Hash.HashResults;
+using System.Linq;
 
 namespace CryptHash.Net.Hash.Base
 {
@@ -275,6 +276,51 @@ namespace CryptHash.Net.Hash.Base
             }
 
             return result;
+        }
+
+        internal HMACHashResult VerifyHMAC(Enums.HashAlgorithm hashAlgorithm, string base64HMACString, string stringToVerifyHMAC, byte[] key)
+        {
+            var hmacBytes = Convert.FromBase64String(base64HMACString);
+            var stringToVerifyHMACBytes = Encoding.UTF8.GetBytes(stringToVerifyHMAC);
+
+            return VerifyHMAC(hashAlgorithm, hmacBytes, stringToVerifyHMACBytes, key);
+        }
+
+        internal HMACHashResult VerifyHMAC(Enums.HashAlgorithm hashAlgorithm, byte[] hmacBytes, byte[] bytesToVerifyHMAC, byte[] key)
+        {
+            var hmacResult = ComputeHMAC(hashAlgorithm, bytesToVerifyHMAC, key);
+
+            if (hmacResult.Success)
+            {
+                var hashesMatch = hmacResult.HashBytes.SequenceEqual(hmacBytes);
+
+                hmacResult.Success = hashesMatch;
+                hmacResult.Message = $"{(hashesMatch ? MessageDictionary.Instance["Hash.Match"] : MessageDictionary.Instance["Hash.DoesNotMatch"])}";
+            }
+
+            return hmacResult;
+        }
+
+        internal HMACHashResult VerifyFileHMAC(Enums.HashAlgorithm hashAlgorithm, string base64HMACString, string sourceFilePath, byte[] key)
+        {
+            var hmacBytes = Convert.FromBase64String(base64HMACString);
+
+            return VerifyFileHMAC(hashAlgorithm, hmacBytes, sourceFilePath, key);
+        }
+
+        internal HMACHashResult VerifyFileHMAC(Enums.HashAlgorithm hashAlgorithm, byte[] hmacBytes, string sourceFilePath, byte[] key)
+        {
+            var hmacResult = ComputeFileHMAC(hashAlgorithm, sourceFilePath, key);
+
+            if (hmacResult.Success)
+            {
+                var hashesMatch = hmacResult.HashBytes.SequenceEqual(hmacBytes);
+
+                hmacResult.Success = hashesMatch;
+                hmacResult.Message = $"{(hashesMatch ? MessageDictionary.Instance["Hash.Match"] : MessageDictionary.Instance["Hash.DoesNotMatch"])}";
+            }
+
+            return hmacResult;
         }
 
         internal void RaiseOnHashProgress(int percentageDone, string message)
