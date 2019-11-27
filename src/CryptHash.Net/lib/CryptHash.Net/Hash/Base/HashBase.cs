@@ -118,14 +118,14 @@ namespace CryptHash.Net.Hash.Base
             return result;
         }
 
-        internal GenericHashResult ComputeFileHash(Enums.HashAlgorithm hashAlgorithm, string sourceFilePath)
+        internal GenericHashResult ComputeFileHash(Enums.HashAlgorithm hashAlgorithm, string filePathToComputeHash)
         {
-            if (!File.Exists(sourceFilePath))
+            if (!File.Exists(filePathToComputeHash))
             {
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{sourceFilePath}\"."
+                    Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{filePathToComputeHash}\"."
                 };
             }
 
@@ -175,7 +175,7 @@ namespace CryptHash.Net.Hash.Base
             {
                 byte[] hash = null;
 
-                using (var fStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                using (var fStream = new FileStream(filePathToComputeHash, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
                     var startPosition = 0;
                     var endPosition = fStream.Length;
@@ -260,16 +260,16 @@ namespace CryptHash.Net.Hash.Base
             return hashResult;
         }
 
-        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string base64HashString, string sourceFilePath)
+        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string base64HashString, string filePathToVerifyHash)
         {
             var hashBytes = Convert.FromBase64String(base64HashString);
 
-            return VerifyFileHash(hashAlgorithm, hashBytes, sourceFilePath);
+            return VerifyFileHash(hashAlgorithm, hashBytes, filePathToVerifyHash);
         }
 
-        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, string sourceFilePath)
+        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, string filePathToVerifyHash)
         {
-            var hashResult = ComputeFileHash(hashAlgorithm, sourceFilePath);
+            var hashResult = ComputeFileHash(hashAlgorithm, filePathToVerifyHash);
 
             if (hashResult.Success)
             {

@@ -138,14 +138,14 @@ namespace CryptHash.Net.Hash.Base
             return result;
         }
 
-        internal HMACHashResult ComputeFileHMAC(Enums.HashAlgorithm hashAlgorithm, string sourceFilePath, byte[] key = null)
+        internal HMACHashResult ComputeFileHMAC(Enums.HashAlgorithm hashAlgorithm, string filePathToComputeHMAC, byte[] key = null)
         {
-            if (!File.Exists(sourceFilePath))
+            if (!File.Exists(filePathToComputeHMAC))
             {
                 return new HMACHashResult()
                 {
                     Success = false,
-                    Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{sourceFilePath}\"."
+                    Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{filePathToComputeHMAC}\"."
                 };
             }
 
@@ -214,7 +214,7 @@ namespace CryptHash.Net.Hash.Base
             {
                 byte[] hash = null;
 
-                using (var fStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                using (var fStream = new FileStream(filePathToComputeHMAC, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
                     var startPosition = 0;
                     var endPosition = fStream.Length;
@@ -301,16 +301,16 @@ namespace CryptHash.Net.Hash.Base
             return hmacResult;
         }
 
-        internal HMACHashResult VerifyFileHMAC(Enums.HashAlgorithm hashAlgorithm, string base64HMACString, string sourceFilePath, byte[] key)
+        internal HMACHashResult VerifyFileHMAC(Enums.HashAlgorithm hashAlgorithm, string base64HMACString, string filePathToVerifyHMAC, byte[] key)
         {
             var hmacBytes = Convert.FromBase64String(base64HMACString);
 
-            return VerifyFileHMAC(hashAlgorithm, hmacBytes, sourceFilePath, key);
+            return VerifyFileHMAC(hashAlgorithm, hmacBytes, filePathToVerifyHMAC, key);
         }
 
-        internal HMACHashResult VerifyFileHMAC(Enums.HashAlgorithm hashAlgorithm, byte[] hmacBytes, string sourceFilePath, byte[] key)
+        internal HMACHashResult VerifyFileHMAC(Enums.HashAlgorithm hashAlgorithm, byte[] hmacBytes, string filePathToVerifyHMAC, byte[] key)
         {
-            var hmacResult = ComputeFileHMAC(hashAlgorithm, sourceFilePath, key);
+            var hmacResult = ComputeFileHMAC(hashAlgorithm, filePathToVerifyHMAC, key);
 
             if (hmacResult.Success)
             {

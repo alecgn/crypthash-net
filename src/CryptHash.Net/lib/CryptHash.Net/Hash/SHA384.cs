@@ -21,9 +21,9 @@ namespace CryptHash.Net.Hash.Hash
             return base.ComputeHash(Enums.HashAlgorithm.SHA384, stringToComputeHash);
         }
 
-        public GenericHashResult ComputeFileHash(string sourceFilePath)
+        public GenericHashResult ComputeFileHash(string filePathToComputeHash)
         {
-            return base.ComputeFileHash(Enums.HashAlgorithm.SHA384, sourceFilePath);
+            return base.ComputeFileHash(Enums.HashAlgorithm.SHA384, filePathToComputeHash);
         }
 
         public GenericHashResult VerifyHash(string base64HashString, string stringToVerifyHash)
@@ -36,14 +36,14 @@ namespace CryptHash.Net.Hash.Hash
             return base.VerifyHash(Enums.HashAlgorithm.SHA384, hashBytes, bytesToVerifyHash);
         }
 
-        public GenericHashResult VerifyFileHash(string base64HashString, string sourceFilePath)
+        public GenericHashResult VerifyFileHash(string base64HashString, string filePathToVerifyHash)
         {
-            return base.VerifyFileHash(Enums.HashAlgorithm.SHA384, base64HashString, sourceFilePath);
+            return base.VerifyFileHash(Enums.HashAlgorithm.SHA384, base64HashString, filePathToVerifyHash);
         }
 
-        public GenericHashResult VerifyFileHash(byte[] hashBytes, string sourceFilePath)
+        public GenericHashResult VerifyFileHash(byte[] hashBytes, string filePathToVerifyHash)
         {
-            return base.VerifyFileHash(Enums.HashAlgorithm.SHA384, hashBytes, sourceFilePath);
+            return base.VerifyFileHash(Enums.HashAlgorithm.SHA384, hashBytes, filePathToVerifyHash);
         }
     }
 }
