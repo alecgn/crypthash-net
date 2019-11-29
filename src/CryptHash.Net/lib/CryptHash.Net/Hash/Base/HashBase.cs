@@ -237,14 +237,6 @@ namespace CryptHash.Net.Hash.Base
             return result;
         }
 
-        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, string base64HashString, string stringToVerifyHash)
-        {
-            var hashBytes = Convert.FromBase64String(base64HashString);
-            var stringToVerifyHashBytes = Encoding.UTF8.GetBytes(stringToVerifyHash);
-
-            return VerifyHash(hashAlgorithm, hashBytes, stringToVerifyHashBytes);
-        }
-
         internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, byte[] bytesToVerifyHash)
         {
             var hashResult = ComputeHash(hashAlgorithm, bytesToVerifyHash);
@@ -258,6 +250,14 @@ namespace CryptHash.Net.Hash.Base
             }
 
             return hashResult;
+        }
+
+        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, string base64HashString, string stringToVerifyHash)
+        {
+            var hashBytes = Convert.FromBase64String(base64HashString);
+            var stringToVerifyHashBytes = Encoding.UTF8.GetBytes(stringToVerifyHash);
+
+            return VerifyHash(hashAlgorithm, hashBytes, stringToVerifyHashBytes);
         }
 
         internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string base64HashString, string filePathToVerifyHash)
