@@ -19,7 +19,7 @@ namespace CryptHash.Net.Hash
         /// <returns>HMACHashResult</returns>
         public HMACHashResult ComputeHMAC(byte[] bytesToComputeHMAC, byte[] key = null)
         {
-            return base.ComputeHMAC(Enums.HashAlgorithm.SHA1, bytesToComputeHMAC, key);
+            return base.ComputeHMAC(Enums.HMACAlgorithm.HMACSHA1, bytesToComputeHMAC, key);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace CryptHash.Net.Hash
         /// <returns>HMACHashResult</returns>
         public HMACHashResult ComputeHMAC(string stringToComputeHMAC, byte[] key = null)
         {
-            return base.ComputeHMAC(Enums.HashAlgorithm.SHA1, stringToComputeHMAC, key);
+            return base.ComputeHMAC(Enums.HMACAlgorithm.HMACSHA1, stringToComputeHMAC, key);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace CryptHash.Net.Hash
         /// <returns>HMACHashResult</returns>
         public HMACHashResult ComputeFileHMAC(string filePathToComputeHMAC, byte[] key = null)
         {
-            return base.ComputeFileHMAC(Enums.HashAlgorithm.SHA1, filePathToComputeHMAC, key);
+            return base.ComputeFileHMAC(Enums.HMACAlgorithm.HMACSHA1, filePathToComputeHMAC, key);
         }
 
 
@@ -54,31 +54,31 @@ namespace CryptHash.Net.Hash
         /// <returns>HMACHashResult</returns>
         public HMACHashResult VerifyHMAC(byte[] hmacBytes, byte[] bytesToVerifyHMAC, byte[] key)
         {
-            return base.VerifyHMAC(Enums.HashAlgorithm.SHA1, hmacBytes, bytesToVerifyHMAC, key);
+            return base.VerifyHMAC(Enums.HMACAlgorithm.HMACSHA1, hmacBytes, bytesToVerifyHMAC, key);
         }
 
         /// <summary>
         /// Verifies the HMACSHA1 of an input string using a 160 bit key.
         /// </summary>
-        /// <param name="base64HMACString">The pre-computed HMACSHA1 base64 encoded string.</param>
+        /// <param name="hmacHexString">The pre-computed HMACSHA1 hexadecimal encoded string.</param>
         /// <param name="stringToVerifyHMAC">The input string to compute and verify the HMACSHA1.</param>
         /// <param name="key">The 160 bit key byte array.</param>
         /// <returns>HMACHashResult</returns>
-        public HMACHashResult VerifyHMAC(string base64HMACString, string stringToVerifyHMAC, byte[] key)
+        public HMACHashResult VerifyHMAC(string hmacHexString, string stringToVerifyHMAC, byte[] key)
         {
-            return base.VerifyHMAC(Enums.HashAlgorithm.SHA1, base64HMACString, stringToVerifyHMAC, key);
+            return base.VerifyHMAC(Enums.HMACAlgorithm.HMACSHA1, hmacHexString, stringToVerifyHMAC, key);
         }
 
         /// <summary>
         /// Verifies the HMACSHA1 of an input file using a 160 bit key.
         /// </summary>
-        /// <param name="base64HMACString">The pre-computed HMACSHA1 base64 encoded string.</param>
+        /// <param name="hmacHexString">The pre-computed HMACSHA1 hexadecimal encoded string.</param>
         /// <param name="filePathToVerifyHMAC">The input file path to compute and verify the HMACSHA1.</param>
         /// <param name="key">The 160 bit key byte array.</param>
         /// <returns>HMACHashResult</returns>
-        public HMACHashResult VerifyFileHMAC(string base64HMACString, string sourceFilePath, byte[] key)
+        public HMACHashResult VerifyFileHMAC(string hmacHexString, string sourceFilePath, byte[] key)
         {
-            return base.VerifyFileHMAC(Enums.HashAlgorithm.SHA1, base64HMACString, sourceFilePath, key);
+            return base.VerifyFileHMAC(Enums.HMACAlgorithm.HMACSHA1, hmacHexString, sourceFilePath, key);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace CryptHash.Net.Hash
         /// <returns>HMACHashResult</returns>
         public HMACHashResult VerifyFileHMAC(byte[] hmacBytes, string sourceFilePath, byte[] key)
         {
-            return base.VerifyFileHMAC(Enums.HashAlgorithm.SHA1, hmacBytes, sourceFilePath, key);
+            return base.VerifyFileHMAC(Enums.HMACAlgorithm.HMACSHA1, hmacBytes, sourceFilePath, key);
         }
     }
 }

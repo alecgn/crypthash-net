@@ -30,7 +30,7 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            if (key != null && key.Length != HMACOutputLengthDictionary.Instance[hmacAlgorithm])
+            if (key != null && key.Length != (HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8))
             {
                 //throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmHMACName}.", nameof(key));
                 return new HMACHashResult() {
@@ -83,8 +83,8 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            var bytesToBeHashed = Encoding.UTF8.GetBytes(stringToComputeHMAC);
-            var result = ComputeHMAC(hmacAlgorithm, bytesToBeHashed, key);
+            var stringToComputeHMACBytes = Encoding.UTF8.GetBytes(stringToComputeHMAC);
+            var result = ComputeHMAC(hmacAlgorithm, stringToComputeHMACBytes, key);
 
             if (result.Success)
                 result.HashString = CommonMethods.ConvertByteArrayToHexString(result.HashBytes);
@@ -103,7 +103,7 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            if (key != null && key.Length != HMACOutputLengthDictionary.Instance[hmacAlgorithm])
+            if (key != null && key.Length != (HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8))
             {
                 //throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmName}.", nameof(key));
                 return new HMACHashResult()
@@ -201,17 +201,17 @@ namespace CryptHash.Net.Hash.Base
             return hmacResult;
         }
 
-        internal HMACHashResult VerifyHMAC(Enums.HMACAlgorithm hmacAlgorithm, string base64HMACString, string stringToVerifyHMAC, byte[] key)
+        internal HMACHashResult VerifyHMAC(Enums.HMACAlgorithm hmacAlgorithm, string hmacHexString, string stringToVerifyHMAC, byte[] key)
         {
-            var hmacBytes = Convert.FromBase64String(base64HMACString);
+            var hmacBytes = CommonMethods.ConvertHexStringToByteArray(hmacHexString);
             var stringToVerifyHMACBytes = Encoding.UTF8.GetBytes(stringToVerifyHMAC);
 
             return VerifyHMAC(hmacAlgorithm, hmacBytes, stringToVerifyHMACBytes, key);
         }
 
-        internal HMACHashResult VerifyFileHMAC(Enums.HMACAlgorithm hmacAlgorithm, string base64HMACString, string filePathToVerifyHMAC, byte[] key)
+        internal HMACHashResult VerifyFileHMAC(Enums.HMACAlgorithm hmacAlgorithm, string hmacHexString, string filePathToVerifyHMAC, byte[] key)
         {
-            var hmacBytes = Convert.FromBase64String(base64HMACString);
+            var hmacBytes = CommonMethods.ConvertHexStringToByteArray(hmacHexString);
 
             return VerifyFileHMAC(hmacAlgorithm, hmacBytes, filePathToVerifyHMAC, key);
         }

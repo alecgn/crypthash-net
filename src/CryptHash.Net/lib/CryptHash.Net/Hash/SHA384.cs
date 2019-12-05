@@ -55,23 +55,23 @@ namespace CryptHash.Net.Hash.Hash
         /// <summary>
         /// Verifies the SHA384 hash of an input string.
         /// </summary>
-        /// <param name="base64HashString">The pre-computed SHA384 hash base64 encoded string.</param>
+        /// <param name="hashHexString">The pre-computed SHA384 hash hexadecimal encoded string.</param>
         /// <param name="stringToVerifyHash">The input string to compute and verify the SHA384 hash.</param>
         /// <returns>GenericHashResult</returns>
-        public GenericHashResult VerifyHash(string base64HashString, string stringToVerifyHash)
+        public GenericHashResult VerifyHash(string hashHexString, string stringToVerifyHash)
         {
-            return base.VerifyHash(Enums.HashAlgorithm.SHA384, base64HashString, stringToVerifyHash);
+            return base.VerifyHash(Enums.HashAlgorithm.SHA384, hashHexString, stringToVerifyHash);
         }
 
         /// <summary>
         /// Verifies the SHA384 of an input file.
         /// </summary>
-        /// <param name="base64HashString">The pre-computed SHA384 hash base64 encoded string.</param>
+        /// <param name="hashHexString">The pre-computed SHA384 hash hexadecimal encoded string.</param>
         /// <param name="filePathToVerifyHash">The input file path to compute and verify the SHA384 hash.</param>
         /// <returns>GenericHashResult</returns>
-        public GenericHashResult VerifyFileHash(string base64HashString, string filePathToVerifyHash)
+        public GenericHashResult VerifyFileHash(string hashHexString, string filePathToVerifyHash)
         {
-            return base.VerifyFileHash(Enums.HashAlgorithm.SHA384, base64HashString, filePathToVerifyHash);
+            return base.VerifyFileHash(Enums.HashAlgorithm.SHA384, hashHexString, filePathToVerifyHash);
         }
 
         /// <summary>

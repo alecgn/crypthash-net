@@ -32,7 +32,7 @@ namespace CryptHash.Net.Encryption.AES.AE
         private static readonly int _tagBitSize = 128;
         private static readonly int _tagBytesLength = (_tagBitSize / 8);
 
-        private static readonly int _iterationsForPBKDF2 = 100000;
+        private static readonly int _iterationsForKeyDerivationFunction = 100000;
 
         private static readonly CipherMode _cipherMode = CipherMode.CBC;
         private static readonly PaddingMode _paddingMode = PaddingMode.PKCS7;
@@ -45,7 +45,7 @@ namespace CryptHash.Net.Encryption.AES.AE
         public AE_AES_128_CBC_HMAC_SHA_256() : base() { }
 
         public AE_AES_128_CBC_HMAC_SHA_256(byte[] key, byte[] IV)
-            : base(key, IV, _cipherMode, _paddingMode) { }
+            : base(key, IV) { }
 
         #endregion constructors
 
@@ -184,7 +184,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             {
                 //byte[] salt = CommonMethods.GenerateRandomBytes(_saltBytesLength);
                 byte[] salt = CommonMethods.GenerateSalt();
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
@@ -411,7 +411,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _IVBytesLength), IV, 0, IV.Length);
                 }
 
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
                 var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInInputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
@@ -539,7 +539,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             {
                 //byte[] salt = CommonMethods.GenerateRandomBytes(_saltBytesLength);
                 byte[] salt = CommonMethods.GenerateSalt();
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
 
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
@@ -715,7 +715,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Array.Copy(additionalData, (_IVBytesLength + _saltBytesLength), sentTag, 0, _tagBytesLength);
                 }
 
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForPBKDF2);
+                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
