@@ -20,6 +20,11 @@ Currently supported hash algorithms are:
 * **SHA256**  
 * **SHA384**  
 * **SHA512**  
+* **HMAC-MD5**  
+* **HMAC-SHA1**  
+* **HMAC-SHA256**  
+* **HMAC-SHA384**  
+* **HMAC-SHA512**  
 * **PBKDF2**  
 * **BCrypt**  
 * **Argon2id**
