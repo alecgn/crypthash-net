@@ -19,7 +19,8 @@ namespace CryptHash.Net.Hash.Base
         public event OnHashProgressHandler OnHashProgress;
 
 
-        internal GenericHashResult ComputeHash(Enums.HashAlgorithm hashAlgorithm, byte[] bytesToComputeHash)
+        internal GenericHashResult ComputeHash(Enums.HashAlgorithm hashAlgorithm, byte[] bytesToComputeHash,
+            int offset = 0, int count = 0)
         {
             if (bytesToComputeHash == null || bytesToComputeHash.Length <= 0)
             {
@@ -36,13 +37,17 @@ namespace CryptHash.Net.Hash.Base
             {
                 using (var hashAlg = System.Security.Cryptography.HashAlgorithm.Create(hashAlgorithm.ToString()))
                 {
-                    byte[] hash = hashAlg.ComputeHash(bytesToComputeHash);
+                    offset = (offset == 0 ? 0 : offset);
+                    count = (count == 0 ? 0 : count);
+
+                    byte[] hash = hashAlg.ComputeHash(bytesToComputeHash, offset, count);
 
                     result = new GenericHashResult()
                     {
                         Success = true,
                         Message = MessageDictionary.Instance["Hash.Compute.Success"],
-                        HashBytes = hash
+                        HashBytes = hash,
+                        HashString = CommonMethods.ConvertByteArrayToHexString(hash)
                     };
                 }
             }
@@ -58,7 +63,8 @@ namespace CryptHash.Net.Hash.Base
             return result;
         }
 
-        internal GenericHashResult ComputeHash(Enums.HashAlgorithm hashAlgorithm, string stringToComputeHash)
+        internal GenericHashResult ComputeHash(Enums.HashAlgorithm hashAlgorithm, string stringToComputeHash,
+            int offset = 0, int count = 0)
         {
             if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
@@ -70,15 +76,12 @@ namespace CryptHash.Net.Hash.Base
             }
 
             var stringToComputeHashBytes = Encoding.UTF8.GetBytes(stringToComputeHash);
-            var result = ComputeHash(hashAlgorithm, stringToComputeHashBytes);
-
-            if (result.Success)
-                result.HashString = CommonMethods.ConvertByteArrayToHexString(result.HashBytes);
-
-            return result;
+            
+            return ComputeHash(hashAlgorithm, stringToComputeHashBytes, offset, count);
         }
 
-        internal GenericHashResult ComputeFileHash(Enums.HashAlgorithm hashAlgorithm, string filePathToComputeHash)
+        internal GenericHashResult ComputeFileHash(Enums.HashAlgorithm hashAlgorithm, string filePathToComputeHash, 
+            long offset = 0, long count = 0)
         {
             if (!File.Exists(filePathToComputeHash))
             {
@@ -97,11 +100,11 @@ namespace CryptHash.Net.Hash.Base
 
                 using (var fStream = new FileStream(filePathToComputeHash, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-                    var startPosition = 0;
-                    var endPosition = fStream.Length;
-                    fStream.Position = startPosition;
+                    offset = (offset == 0 ? 0 : offset);
+                    count = (count == 0 ? fStream.Length : count);
+                    fStream.Position = offset;
                     byte[] buffer = new byte[(1024 * 4)];
-                    long amount = (endPosition - startPosition);
+                    long amount = (count - offset);
 
                     using (var hashAlg = System.Security.Cryptography.HashAlgorithm.Create(hashAlgorithm.ToString()))
                     {
@@ -120,7 +123,7 @@ namespace CryptHash.Net.Hash.Base
                                 else
                                     hashAlg.TransformFinalBlock(buffer, 0, bytesRead);
 
-                                var tmpPercentageDone = (int)(fStream.Position * 100 / endPosition);
+                                var tmpPercentageDone = (int)(fStream.Position * 100 / count);
 
                                 if (tmpPercentageDone != percentageDone)
                                 {
@@ -157,9 +160,11 @@ namespace CryptHash.Net.Hash.Base
             return result;
         }
 
-        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, byte[] bytesToVerifyHash)
+
+        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, byte[] bytesToVerifyHash,
+            int offset = 0, int count = 0)
         {
-            var hashResult = ComputeHash(hashAlgorithm, bytesToVerifyHash);
+            var hashResult = ComputeHash(hashAlgorithm, bytesToVerifyHash, offset, count);
 
             if (hashResult.Success)
             {
@@ -172,24 +177,27 @@ namespace CryptHash.Net.Hash.Base
             return hashResult;
         }
 
-        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string stringToVerifyHash)
+        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string stringToVerifyHash,
+            int offset = 0, int count = 0)
         {
             var hashBytes = CommonMethods.ConvertHexStringToByteArray(hashHexString);
             var stringToVerifyHashBytes = Encoding.UTF8.GetBytes(stringToVerifyHash);
 
-            return VerifyHash(hashAlgorithm, hashBytes, stringToVerifyHashBytes);
+            return VerifyHash(hashAlgorithm, hashBytes, stringToVerifyHashBytes, offset, count);
         }
 
-        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string filePathToVerifyHash)
+        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string filePathToVerifyHash,
+            long offset = 0, long count = 0)
         {
             var hashBytes = CommonMethods.ConvertHexStringToByteArray(hashHexString);
 
-            return VerifyFileHash(hashAlgorithm, hashBytes, filePathToVerifyHash);
+            return VerifyFileHash(hashAlgorithm, hashBytes, filePathToVerifyHash, offset, count);
         }
 
-        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, string filePathToVerifyHash)
+        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, string filePathToVerifyHash,
+            long offset = 0, long count = 0)
         {
-            var hashResult = ComputeFileHash(hashAlgorithm, filePathToVerifyHash);
+            var hashResult = ComputeFileHash(hashAlgorithm, filePathToVerifyHash, offset, count);
 
             if (hashResult.Success)
             {

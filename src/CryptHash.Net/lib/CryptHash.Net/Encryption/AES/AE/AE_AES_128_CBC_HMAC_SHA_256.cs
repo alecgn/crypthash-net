@@ -12,6 +12,8 @@ using System.Security.Cryptography;
 using System.Text;
 using CryptHash.Net.Encryption.AES.Base;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
+using CryptHash.Net.Hash;
+using CryptHash.Net.Hash.Enums;
 using CryptHash.Net.Util;
 
 namespace CryptHash.Net.Encryption.AES.AE
@@ -206,7 +208,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                                 bw.Write(salt);
                                 bw.Flush();
                                 var encryptedData = ms.ToArray();
-                                hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
+                                //hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedData, 0, encryptedData.Length);
+                                hmacSha256 = new HMAC_SHA_256().ComputeHMAC(encryptedData, authKey, 0, encryptedData.Length).HashBytes;
                                 tag = hmacSha256.Take(_tagBytesLength).ToArray();
                                 bw.Write(tag);
                             }
@@ -219,7 +222,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                     }
                     else
                     {
-                        hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, aesEncryptionResult.EncryptedDataBytes, 0, aesEncryptionResult.EncryptedDataBytes.Length);
+                        //hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, aesEncryptionResult.EncryptedDataBytes, 0, aesEncryptionResult.EncryptedDataBytes.Length);
+                        hmacSha256 = new HMAC_SHA_256().ComputeHMAC(aesEncryptionResult.EncryptedDataBytes, authKey, 0, aesEncryptionResult.EncryptedDataBytes.Length).HashBytes;
                         tag = hmacSha256.Take(_tagBytesLength).ToArray();
 
                         aesEncryptionResult.Salt = salt;
@@ -414,7 +418,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
-                var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInInputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
+                //var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInInputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
+                var hmacSha256 = new HMAC_SHA_256().ComputeHMAC(encryptedStringBytes, authKey, 0, (hasEncryptionDataAppendedInInputString ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length)).HashBytes;
                 var calcTag = hmacSha256.Take(_tagBytesLength).ToArray();
 
                 if (!CommonMethods.TagsMatch(calcTag, sentTag))
@@ -559,7 +564,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                         CommonMethods.AppendDataBytesToFile(encryptedFilePath, additionalData);
                     }
 
-                    var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey);
+                    //var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey);
+                    var hmacSha256 = new HMAC_SHA_256().ComputeFileHMAC(encryptedFilePath, authKey).HashBytes;
                     var tag = hmacSha256.Take(_tagBytesLength).ToArray();
 
                     if (appendEncryptionDataToOutputFile)
@@ -719,7 +725,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
                 byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
-                var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey, 0, (hasEncryptionDataAppendedInInputFile ? encryptedFileSize - _tagBytesLength : encryptedFileSize));
+                //var hmacSha256 = CommonMethods.ComputeHMACSHA256HashFromFile(encryptedFilePath, authKey, 0, (hasEncryptionDataAppendedInInputFile ? encryptedFileSize - _tagBytesLength : encryptedFileSize));
+                var hmacSha256 = new HMAC_SHA_256().ComputeFileHMAC(encryptedFilePath, authKey, 0, (hasEncryptionDataAppendedInInputFile ? encryptedFileSize - _tagBytesLength : encryptedFileSize)).HashBytes;
                 var calcTag = hmacSha256.Take(_tagBytesLength).ToArray();
 
                 if (!CommonMethods.TagsMatch(calcTag, sentTag))
