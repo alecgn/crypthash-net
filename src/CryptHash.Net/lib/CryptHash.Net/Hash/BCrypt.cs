@@ -13,9 +13,9 @@ namespace CryptHash.Net.Hash
 {
     public class BCrypt
     {
-        public GenericHashResult ComputeHash(string stringToBeHashed)
+        public GenericHashResult ComputeHash(string stringToComputeHash)
         {
-            if (string.IsNullOrWhiteSpace(stringToBeHashed))
+            if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
                 return new GenericHashResult()
                 {
@@ -26,7 +26,7 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                var hashedString = BCryptNet.BCrypt.HashPassword(stringToBeHashed);
+                var hashedString = BCryptNet.BCrypt.HashPassword(stringToComputeHash);
 
                 return new GenericHashResult()
                 {
@@ -45,9 +45,9 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult ComputeHash(string stringToBeHashed, string salt)
+        public GenericHashResult ComputeHash(string stringToComputeHash, string salt)
         {
-            if (string.IsNullOrWhiteSpace(stringToBeHashed))
+            if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
                 return new GenericHashResult()
                 {
@@ -58,7 +58,7 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                var hashedString = BCryptNet.BCrypt.HashPassword(stringToBeHashed, salt);
+                var hashedString = BCryptNet.BCrypt.HashPassword(stringToComputeHash, salt);
 
                 return new GenericHashResult()
                 {
@@ -77,9 +77,9 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult ComputeHash(string stringToBeHashed, string salt, bool enhancedEntropy, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
+        public GenericHashResult ComputeHash(string stringToComputeHash, string salt, bool enhancedEntropy, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
         {
-            if (string.IsNullOrWhiteSpace(stringToBeHashed))
+            if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
                 return new GenericHashResult()
                 {
@@ -90,7 +90,7 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                var hashedString = BCryptNet.BCrypt.HashPassword(stringToBeHashed, salt, enhancedEntropy, hashType);
+                var hashedString = BCryptNet.BCrypt.HashPassword(stringToComputeHash, salt, enhancedEntropy, hashType);
 
                 return new GenericHashResult()
                 {
@@ -109,9 +109,9 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult ComputeHash(string stringToBeHashed, int workFactor, bool enhancedEntropy = false)
+        public GenericHashResult ComputeHash(string stringToComputeHash, int workFactor, bool enhancedEntropy = false)
         {
-            if (string.IsNullOrWhiteSpace(stringToBeHashed))
+            if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
                 return new GenericHashResult()
                 {
@@ -122,7 +122,7 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                var hashedString = BCryptNet.BCrypt.HashPassword(stringToBeHashed, workFactor, enhancedEntropy);
+                var hashedString = BCryptNet.BCrypt.HashPassword(stringToComputeHash, workFactor, enhancedEntropy);
 
                 return new GenericHashResult()
                 {
@@ -141,9 +141,9 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public GenericHashResult VerifyHash(string stringToBeVerified, string hash, bool enhancedEntropy = false, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
+        public GenericHashResult VerifyHash(string stringToComputeHash, string hash, bool enhancedEntropy = false, BCryptNet.HashType hashType = BCryptNet.HashType.SHA384)
         {
-            if (string.IsNullOrWhiteSpace(stringToBeVerified))
+            if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
                 return new GenericHashResult()
                 {
@@ -163,7 +163,7 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                var match = BCryptNet.BCrypt.Verify(stringToBeVerified, hash, enhancedEntropy, hashType);
+                var match = BCryptNet.BCrypt.Verify(stringToComputeHash, hash, enhancedEntropy, hashType);
 
                 if (match)
                 {
