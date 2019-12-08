@@ -55,9 +55,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         /// <param name="plainString">The input plain string to encrypt.</param>
         /// <param name="password">The password string where the encryption key will be derived from.</param>
         /// <param name="associatedDataString">The encryption additional associated data string used in the authentication process together with the tag. It's not mandatory, leave empty or pass null to not use.</param>
-        /// <param name="appendEncryptionDataToOutputString">Flag to indicate if the encryption additional data required to decrypt will be appended to the output string. Enabling this option will not turn the encrypted data unsecure, but you'll have to provide that required info manually when you will do the decryption process.</param>
+        /// <param name="appendEncryptionDataToOutput">Flag to indicate if the encryption additional data required to decrypt will be appended to the output string. Enabling this option will not turn the encrypted data unsecure, but you'll have to provide that required info manually when you will do the decryption process.</param>
         /// <returns>AesEncryptionResult</returns>
-        public AesEncryptionResult EncryptString(string plainString, string password, string associatedDataString = null, bool appendEncryptionDataToOutputString = true)
+        public AesEncryptionResult EncryptString(string plainString, string password, string associatedDataString = null, bool appendEncryptionDataToOutput = true)
         {
             if (string.IsNullOrEmpty(plainString))
             {
@@ -81,7 +81,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = Encoding.UTF8.GetBytes(password);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutputString);
+            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutput);
         }
 
         /// <summary>
@@ -90,9 +90,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         /// <param name="plainString">The input plain string to encrypt.</param>
         /// <param name="secStrPassword">The SecureString with the password where the encryption key will be derived from.</param>
         /// <param name="associatedDataString">The encryption additional associated data string used in the authentication process together with the tag. It's not mandatory, leave empty or pass null to not use.</param>
-        /// <param name="appendEncryptionDataToOutputString">Flag to indicate if the encryption additional data required to decrypt will be appended to the output string. Enabling this option will not turn the encrypted data unsecure, but you'll have to provide that required info manually when you will do the decryption process.</param>
+        /// <param name="appendEncryptionDataToOutput">Flag to indicate if the encryption additional data required to decrypt will be appended to the output string. Enabling this option will not turn the encrypted data unsecure, but you'll have to provide that required info manually when you will do the decryption process.</param>
         /// <returns>AesEncryptionResult</returns>
-        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword, string associatedDataString = null, bool appendEncryptionDataToOutputString = true)
+        public AesEncryptionResult EncryptString(string plainString, SecureString secStrPassword, string associatedDataString = null, bool appendEncryptionDataToOutput = true)
         {
             if (string.IsNullOrWhiteSpace(plainString))
             {
@@ -116,7 +116,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutputString);
+            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutput);
         }
 
         /// <summary>
@@ -125,9 +125,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         /// <param name="plainStringBytes">The input byte array of the string to encrypt.</param>
         /// <param name="secStrPassword">The SecureString with the password where the encryption key will be derived from.</param>
         /// <param name="associatedDataString">The encryption additional associated data string used in the authentication process together with the tag. It's not mandatory, leave empty or pass null to not use.</param>
-        /// <param name="appendEncryptionDataToOutputString">Flag to indicate if the encryption additional data required to decrypt will be appended to the output string. Enabling this option will not turn the encrypted data unsecure, but you'll have to provide that required info manually when you will do the decryption process.</param>
+        /// <param name="appendEncryptionDataToOutput">Flag to indicate if the encryption additional data required to decrypt will be appended to the output string. Enabling this option will not turn the encrypted data unsecure, but you'll have to provide that required info manually when you will do the decryption process.</param>
         /// <returns>AesEncryptionResult</returns>
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword, string associatedDataString = null, bool appendEncryptionDataToOutputString = true)
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, SecureString secStrPassword, string associatedDataString = null, bool appendEncryptionDataToOutput = true)
         {
             if (plainStringBytes == null || plainStringBytes.Length <= 0)
             {
@@ -150,7 +150,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutputString);
+            return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutput);
         }
 
         /// <summary>
@@ -159,9 +159,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         /// <param name="plainStringBytes">The input byte array of the string to encrypt.</param>
         /// <param name="passwordBytes">The byte array of the password where the encryption key will be derived from.</param>
         /// <param name="associatedData">The byte array of the encryption additional associated data used in the authentication process together with the tag. It's not mandatory, leave empty or pass null to not use.</param>
-        /// <param name="appendEncryptionDataToOutputString">Flag to indicate if the encryption additional data required to decrypt will be appended to the output string. Enabling this option will not turn the encrypted data unsecure, but you'll have to provide that required info manually when you will do the decryption process.</param>
+        /// <param name="appendEncryptionDataToOutput">Flag to indicate if the encryption additional data required to decrypt will be appended to the output string. Enabling this option will not turn the encrypted data unsecure, but you'll have to provide that required info manually when you will do the decryption process.</param>
         /// <returns>AesEncryptionResult</returns>
-        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool appendEncryptionDataToOutputString = true)
+        public AesEncryptionResult EncryptString(byte[] plainStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool appendEncryptionDataToOutput = true)
         {
             if (plainStringBytes == null || plainStringBytes.Length == 0)
             {
@@ -204,7 +204,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     aesGcm.Encrypt(nonce, plainStringBytes, encryptedData, tag, associatedData);
                 }
 
-                if (appendEncryptionDataToOutputString)
+                if (appendEncryptionDataToOutput)
                 {
                     using (var ms = new MemoryStream())
                     {
@@ -254,9 +254,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         /// <param name="base64EncryptedString">The base64 encoded input string to decrypt.</param>
         /// <param name="password">The password string where the encryption key will be derived from.</param>
         /// <param name="associatedDataString">The encryption additional associated data string used in the authentication process together with the tag. It's not mandatory, leave empty or pass null to not use.</param>
-        /// <param name="hasEncryptionDataAppendedInInputString">Flag to indicate if the encryption additional data required to decrypt is present in the input base64 encoded encrypted string. If true, retrieves this info from it, otherwise use the manually provided data via parameters.</param>
+        /// <param name="hasEncryptionDataAppendedInInput">Flag to indicate if the encryption additional data required to decrypt is present in the input base64 encoded encrypted string. If true, retrieves this info from it, otherwise use the manually provided data via parameters.</param>
         /// <returns>AesEncryptionResult</returns>
-        public AesDecryptionResult DecryptString(string base64EncryptedString, string password, string associatedDataString = null, bool hasEncryptionDataAppendedInInputString = true,
+        public AesDecryptionResult DecryptString(string base64EncryptedString, string password, string associatedDataString = null, bool hasEncryptionDataAppendedInInput = true,
             byte[] tag = null, byte[] salt = null, byte[] nonce = null)
         {
             if (string.IsNullOrEmpty(base64EncryptedString))
@@ -281,7 +281,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = Encoding.UTF8.GetBytes(password);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString, tag, salt, nonce);
+            return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInput, tag, salt, nonce);
         }
 
         /// <summary>
@@ -290,12 +290,12 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         /// <param name="base64EncryptedString">The base64 encoded input string to decrypt.</param>
         /// <param name="secStrPassword">The SecureString of the password where the encryption key will be derived from.</param>
         /// <param name="associatedDataString">The encryption additional associated data string used in the authentication process together with the tag. It's not mandatory, leave empty or pass null to not use.</param>
-        /// <param name="hasEncryptionDataAppendedInInputString">Flag to indicate if the encryption additional data required to decrypt is present in the input base64 encoded encrypted string. If true, retrieves this info from it, otherwise use the manually provided data via parameters.</param>
-        /// <param name="tag">The previously generated byte array of the authentication tag. Leave empty or pass null if hasEncryptionDataAppendedInInputString = true.</param>
-        /// <param name="salt">The previously generated byte array of the salt used with the password to derive the decryption key. Leave empty or pass null if hasEncryptionDataAppendedInInputString = true.</param>
-        /// <param name="nonce">The previously generated byte array of the Nonce. Leave empty or pass null if hasEncryptionDataAppendedInInputString = true.</param>
+        /// <param name="hasEncryptionDataAppendedInInput">Flag to indicate if the encryption additional data required to decrypt is present in the input base64 encoded encrypted string. If true, retrieves this info from it, otherwise use the manually provided data via parameters.</param>
+        /// <param name="tag">The previously generated byte array of the authentication tag. Leave empty or pass null if hasEncryptionDataAppendedInInput = true.</param>
+        /// <param name="salt">The previously generated byte array of the salt used with the password to derive the decryption key. Leave empty or pass null if hasEncryptionDataAppendedInInput = true.</param>
+        /// <param name="nonce">The previously generated byte array of the Nonce. Leave empty or pass null if hasEncryptionDataAppendedInInput = true.</param>
         /// <returns>AesEncryptionResult</returns>
-        public AesDecryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInInputString = true,
+        public AesDecryptionResult DecryptString(string base64EncryptedString, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInInput = true,
             byte[] tag = null, byte[] salt = null, byte[] nonce = null)
         {
             if (string.IsNullOrWhiteSpace(base64EncryptedString))
@@ -320,7 +320,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString, tag, salt, nonce);
+            return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInput, tag, salt, nonce);
         }
 
         /// <summary>
@@ -329,12 +329,12 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         /// <param name="encryptedStringBytes">The byte array of the input string to decrypt.</param>
         /// <param name="secStrPassword">The SecureString of the password where the encryption key will be derived from.</param>
         /// <param name="associatedDataString">The encryption additional associated data string used in the authentication process together with the tag. It's not mandatory, leave empty or pass null to not use.</param>
-        /// <param name="hasEncryptionDataAppendedInInputString">Flag to indicate if the encryption additional data required to decrypt is present in the input base64 encoded encrypted string. If true, retrieves this info from it, otherwise use the manually provided data via parameters.</param>
-        /// <param name="tag">The previously generated byte array of the authentication tag. Leave empty or pass null if hasEncryptionDataAppendedInInputString = true.</param>
-        /// <param name="salt">The previously generated byte array of the salt used with the password to derive the decryption key. Leave empty or pass null if hasEncryptionDataAppendedInInputString = true.</param>
-        /// <param name="nonce">The previously generated byte array of the Nonce. Leave empty or pass null if hasEncryptionDataAppendedInInputString = true.</param>
+        /// <param name="hasEncryptionDataAppendedInInput">Flag to indicate if the encryption additional data required to decrypt is present in the input base64 encoded encrypted string. If true, retrieves this info from it, otherwise use the manually provided data via parameters.</param>
+        /// <param name="tag">The previously generated byte array of the authentication tag. Leave empty or pass null if hasEncryptionDataAppendedInInput = true.</param>
+        /// <param name="salt">The previously generated byte array of the salt used with the password to derive the decryption key. Leave empty or pass null if hasEncryptionDataAppendedInInput = true.</param>
+        /// <param name="nonce">The previously generated byte array of the Nonce. Leave empty or pass null if hasEncryptionDataAppendedInInput = true.</param>
         /// <returns>AesEncryptionResult</returns>
-        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInInputString = true,
+        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, SecureString secStrPassword, string associatedDataString = null, bool hasEncryptionDataAppendedInInput = true,
             byte[] tag = null, byte[] salt = null, byte[] nonce = null)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length <= 0)
@@ -358,7 +358,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
             var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
 
-            return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInputString, tag, salt, nonce);
+            return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInput, tag, salt, nonce);
         }
 
         /// <summary>
@@ -367,12 +367,12 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         /// <param name="encryptedStringBytes">The byte array of the input string to decrypt.</param>
         /// <param name="passwordBytes">The byte array of the password where the encryption key will be derived from.</param>
         /// <param name="associatedData">The byte array of the encryption additional associated data used in the authentication process together with the tag. It's not mandatory, leave empty or pass null to not use.</param>
-        /// <param name="hasEncryptionDataAppendedInInputString">Flag to indicate if the encryption additional data required to decrypt is present in the input base64 encoded encrypted string. If true, retrieves this info from it, otherwise use the manually provided data via parameters.</param>
-        /// <param name="tag">The previously generated byte array of the authentication tag. Leave empty or pass null if hasEncryptionDataAppendedInInputString = true.</param>
-        /// <param name="salt">The previously generated byte array of the salt used with the password to derive the decryption key. Leave empty or pass null if hasEncryptionDataAppendedInInputString = true.</param>
-        /// <param name="nonce">The previously generated byte array of the Nonce. Leave empty or pass null if hasEncryptionDataAppendedInInputString = true.</param>
+        /// <param name="hasEncryptionDataAppendedInInput">Flag to indicate if the encryption additional data required to decrypt is present in the input base64 encoded encrypted string. If true, retrieves this info from it, otherwise use the manually provided data via parameters.</param>
+        /// <param name="tag">The previously generated byte array of the authentication tag. Leave empty or pass null if hasEncryptionDataAppendedInInput = true.</param>
+        /// <param name="salt">The previously generated byte array of the salt used with the password to derive the decryption key. Leave empty or pass null if hasEncryptionDataAppendedInInput = true.</param>
+        /// <param name="nonce">The previously generated byte array of the Nonce. Leave empty or pass null if hasEncryptionDataAppendedInInput = true.</param>
         /// <returns>AesEncryptionResult</returns>
-        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInInputString = true,
+        public AesDecryptionResult DecryptString(byte[] encryptedStringBytes, byte[] passwordBytes, byte[] associatedData = null, bool hasEncryptionDataAppendedInInput = true,
             byte[] tag = null, byte[] salt = null, byte[] nonce = null)
         {
             if (encryptedStringBytes == null || encryptedStringBytes.Length == 0)
@@ -415,7 +415,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             {
                 byte[] encryptedStringBytesWithEncryptionData = null;
 
-                if (hasEncryptionDataAppendedInInputString)
+                if (hasEncryptionDataAppendedInInput)
                 {
                     tag = new byte[_tagBytesLength];
                     Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength), tag, 0, tag.Length);
@@ -431,11 +431,11 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                 }
 
                 byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
-                byte[] decryptedData = new byte[(hasEncryptionDataAppendedInInputString ? encryptedStringBytesWithEncryptionData.Length : encryptedStringBytes.Length)];
+                byte[] decryptedData = new byte[(hasEncryptionDataAppendedInInput ? encryptedStringBytesWithEncryptionData.Length : encryptedStringBytes.Length)];
 
                 using (var aesGcm = new AesGcm(derivedKey))
                 {
-                    aesGcm.Decrypt(nonce, (hasEncryptionDataAppendedInInputString ? encryptedStringBytesWithEncryptionData : encryptedStringBytes), tag, decryptedData, associatedData);
+                    aesGcm.Decrypt(nonce, (hasEncryptionDataAppendedInInput ? encryptedStringBytesWithEncryptionData : encryptedStringBytes), tag, decryptedData, associatedData);
                 }
 
                 return new AesDecryptionResult()

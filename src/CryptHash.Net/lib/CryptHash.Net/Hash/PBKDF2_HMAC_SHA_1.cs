@@ -8,15 +8,15 @@ namespace CryptHash.Net.Hash
     //[Obsolete("This class is obsolete. Use PBKDF2.cs class instead.")]
     public class PBKDF2_HMAC_SHA_1
     {
-        private static readonly int _hashBitSize = 160;
+        private static readonly int _hashBitSize = HMACOutputLengthDictionary.Instance[Enums.HMACAlgorithm.HMACSHA1];
         private static readonly int _hashBytesLength = (_hashBitSize / 8);
 
         private static readonly int _saltBitSize = 128;
         private static readonly int _saltBytesLength = (_saltBitSize / 8);
 
-        private static readonly int _iterations = 100000;
+        private const int _iterations = 100000;
 
-        public PBKDF2HashResult ComputeHash(string stringToComputeHash, byte[] salt = null)
+        public PBKDF2HashResult ComputeHash(string stringToComputeHash, byte[] salt = null, int iterationsForKeyDerivation = _iterations)
         {
             if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
@@ -35,7 +35,7 @@ namespace CryptHash.Net.Hash
             {
                 using (var rfc2898DeriveBytes = new Rfc2898DeriveBytes(stringToComputeHash, salt))
                 {
-                    rfc2898DeriveBytes.IterationCount = _iterations;
+                    rfc2898DeriveBytes.IterationCount = iterationsForKeyDerivation;
                     hash = rfc2898DeriveBytes.GetBytes(_hashBytesLength);
                 }
 
@@ -49,7 +49,7 @@ namespace CryptHash.Net.Hash
                     Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
                     HashString = $"{Convert.ToBase64String(hashBytes)}",
                     HashBytes = hashBytes,
-                    Iterations = _iterations,
+                    Iterations = iterationsForKeyDerivation,
                     Salt = salt,
                     PRF = Enums.HMACAlgorithm.HMACSHA1
                 };
@@ -63,7 +63,7 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public PBKDF2HashResult VerifyHash(string stringToBeVerified, string hash)
+        public PBKDF2HashResult VerifyHash(string stringToBeVerified, string hash, int iterationsForKeyDerivation = _iterations)
         {
             if (string.IsNullOrWhiteSpace(stringToBeVerified))
             {
@@ -100,7 +100,7 @@ namespace CryptHash.Net.Hash
             var hashBytes = new byte[_hashBytesLength];
             Array.Copy(hashWithSaltBytes, _saltBytesLength, hashBytes, 0, _hashBytesLength);
 
-            var result = ComputeHash(stringToBeVerified, saltBytes);
+            var result = ComputeHash(stringToBeVerified, saltBytes, iterationsForKeyDerivation);
 
             if (string.Equals(result.HashString, hash))
             {
@@ -110,7 +110,7 @@ namespace CryptHash.Net.Hash
                     Message = MessageDictionary.Instance["Hash.Match"],
                     HashString = hash,
                     HashBytes = result.HashBytes,
-                    Iterations = _iterations,
+                    Iterations = result.Iterations,
                     Salt = result.Salt,
                     PRF = result.PRF
                 };

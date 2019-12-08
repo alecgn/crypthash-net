@@ -18,7 +18,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         {
             var appendEncryptionData = true;
 
-            var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
+            var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutput: appendEncryptionData);
 
             Assert.IsTrue(aesEncryptionResult.Success, aesEncryptionResult.Message);
         }
@@ -28,7 +28,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         {
             var appendEncryptionData = false;
 
-            var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
+            var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutput: appendEncryptionData);
 
             Assert.IsTrue(aesEncryptionResult.Success, aesEncryptionResult.Message);
         }
@@ -40,11 +40,11 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
             var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
-            var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
+            var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutput: appendEncryptionData);
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes128cbcHmacSha256.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, hasEncryptionDataAppendedInInputString: appendEncryptionData);
+                aesDecryptionResult = _aes128cbcHmacSha256.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, hasEncryptionDataAppendedInInput: appendEncryptionData);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;
@@ -62,12 +62,12 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
             var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
-            var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
+            var aesEncryptionResult = _aes128cbcHmacSha256.EncryptString(_testString, _password, appendEncryptionDataToOutput: appendEncryptionData);
 
             if (aesEncryptionResult.Success)
             {
                 aesDecryptionResult = _aes128cbcHmacSha256.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password),
-                    hasEncryptionDataAppendedInInputString: appendEncryptionData, aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
+                    hasEncryptionDataAppendedInInput: appendEncryptionData, aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;

@@ -12,10 +12,10 @@ namespace CryptHash.Net.Hash
     public class HMAC_MD5 : HMACBase
     {
         /// <summary>
-        /// Computes the HMACMD5 of an input byte array using a 128 bit key.
+        /// Computes the HMACMD5 of an input byte array using a key.
         /// </summary>
         /// <param name="bytesToComputeHMAC">The input byte array to compute the HMAC.</param>
-        /// <param name="key">The 128 bit key byte array. Leave empty or pass null to auto-generate a secure random key. The key will be present in the HMACHashResult return.</param>
+        /// <param name="key">The input key byte array. Leave empty or pass null to auto-generate a secure random key. The key will be present in the HMACHashResult return.</param>
         /// <param name="offset">The offset into the byte array from wich to begin reading data.</param>
         /// <param name="count">The number of bytes in the array to read after the offset.</param>
         /// <returns>HMACHashResult</returns>
@@ -25,10 +25,10 @@ namespace CryptHash.Net.Hash
         }
 
         /// <summary>
-        /// Computes the HMACMD5 of an input string using a 128 bit key.
+        /// Computes the HMACMD5 of an input string using a key.
         /// </summary>
         /// <param name="stringToComputeHMAC">The input string to compute the HMAC.</param>
-        /// <param name="key">The 128 bit key byte array. Leave empty or pass null to auto-generate a secure random key. The key will be present in the HMACHashResult return.</param>
+        /// <param name="key">The input key byte array. Leave empty or pass null to auto-generate a secure random key. The key will be present in the HMACHashResult return.</param>
         /// <param name="offset">The offset into the byte array from wich to begin reading data.</param>
         /// <param name="count">The number of bytes in the array to read after the offset.</param>
         /// <returns>HMACHashResult</returns>
@@ -38,10 +38,10 @@ namespace CryptHash.Net.Hash
         }
 
         /// <summary>
-        /// Computes the HMACMD5 of an input file using a 128 bit key.
+        /// Computes the HMACMD5 of an input file using a key.
         /// </summary>
         /// <param name="filePathToComputeHMAC">The input file path to compute the HMAC.</param>
-        /// <param name="key">The 128 bit key byte array. Leave empty or pass null to auto-generate a secure random key. The key will be present in the HMACHashResult return.</param>
+        /// <param name="key">The input key byte array. Leave empty or pass null to auto-generate a secure random key. The key will be present in the HMACHashResult return.</param>
         /// <param name="offset">The offset into the FileStream from wich to begin reading data.</param>
         /// <param name="count">The number of bytes in the FileStream to read after the offset.</param>
         /// <returns>HMACHashResult</returns>
@@ -52,11 +52,11 @@ namespace CryptHash.Net.Hash
 
 
         /// <summary>
-        /// Verifies the HMACMD5 of an input byte array using a 128 bit key.
+        /// Verifies the HMACMD5 of an input byte array using a key.
         /// </summary>
         /// <param name="hmacBytes">The pre-computed HMACMD5 byte array.</param>
         /// <param name="bytesToVerifyHMAC">The input byte array to compute and verify the HMACMD5.</param>
-        /// <param name="key">The 128 bit key byte array.</param>
+        /// <param name="key">The input key byte array.</param>
         /// <param name="offset">The offset into the byte array from wich to begin reading data.</param>
         /// <param name="count">The number of bytes in the array to read after the offset.</param>
         /// <returns>HMACHashResult</returns>
@@ -66,11 +66,11 @@ namespace CryptHash.Net.Hash
         }
 
         /// <summary>
-        /// Verifies the HMACMD5 of an input string using a 128 bit key.
+        /// Verifies the HMACMD5 of an input string using a key.
         /// </summary>
         /// <param name="hmacHexString">The pre-computed HMACMD5 hexadecimal encoded string.</param>
         /// <param name="stringToVerifyHMAC">The input string to compute and verify the HMACMD5.</param>
-        /// <param name="key">The 128 bit key byte array.</param>
+        /// <param name="key">The input key byte array.</param>
         /// <param name="offset">The offset into the byte array from wich to begin reading data.</param>
         /// <param name="count">The number of bytes in the array to read after the offset.</param>
         /// <returns>HMACHashResult</returns>
@@ -80,11 +80,11 @@ namespace CryptHash.Net.Hash
         }
 
         /// <summary>
-        /// Verifies the HMACMD5 of an input file using a 128 bit key.
+        /// Verifies the HMACMD5 of an input file using a key.
         /// </summary>
         /// <param name="hmacHexString">The pre-computed HMACMD5 hexadecimal encoded string.</param>
         /// <param name="filePathToVerifyHMAC">The input file path to compute and verify the HMACMD5.</param>
-        /// <param name="key">The 128 bit key byte array.</param>
+        /// <param name="key">The input key byte array.</param>
         /// <param name="offset">The offset into the FileStream from wich to begin reading data.</param>
         /// <param name="count">The number of bytes in the FileStream to read after the offset.</param>
         /// <returns>HMACHashResult</returns>
@@ -94,11 +94,11 @@ namespace CryptHash.Net.Hash
         }
 
         /// <summary>
-        /// Verifies the HMACMD5 of an input file using a 128 bit key.
+        /// Verifies the HMACMD5 of an input file using a key.
         /// </summary>
         /// <param name="hmacBytes">The pre-computed HMACMD5 byte array.</param>
         /// <param name="filePathToVerifyHMAC">The input file path to compute and verify the HMACMD5.</param>
-        /// <param name="key">The 128 bit key byte array.</param>
+        /// <param name="key">The input key byte array.</param>
         /// <param name="offset">The offset into the FileStream from wich to begin reading data.</param>
         /// <param name="count">The number of bytes in the FileStream to read after the offset.</param>
         /// <returns>HMACHashResult</returns>

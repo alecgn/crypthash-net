@@ -31,15 +31,6 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            //if (key != null && key.Length != (HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8))
-            //{
-            //    //throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmHMACName}.", nameof(key));
-            //    return new HMACHashResult() {
-            //        Success = false,
-            //        Message = $"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({key.Length})."
-            //    };
-            //}
-
             if (key == null || key.Length == 0)
                 key = CommonMethods.GenerateRandomBytes(HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8);
 
@@ -106,16 +97,6 @@ namespace CryptHash.Net.Hash.Base
                     Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{filePathToComputeHMAC}\"."
                 };
             }
-
-            //if (key != null && key.Length != (HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8))
-            //{
-            //    //throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmName}.", nameof(key));
-            //    return new HMACHashResult()
-            //    {
-            //        Success = false,
-            //        Message = $"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({key.Length})."
-            //    };
-            //}
 
             if (key == null || key.Length == 0)
                 key = CommonMethods.GenerateRandomBytes(HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8);
