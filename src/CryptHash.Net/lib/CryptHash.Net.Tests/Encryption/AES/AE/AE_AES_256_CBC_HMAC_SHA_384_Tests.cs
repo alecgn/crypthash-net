@@ -164,5 +164,27 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             Assert.IsTrue((aesEncryptionResult.Success && aesDecryptionResult.Success && testFileStringContentRead.Equals(_testString)), errorMessage);
         }
+
+        [TestMethod]
+        public void Test_Encrypt_Decrypt_String_without_password()
+        {
+            var aesDecryptionResult = new AesDecryptionResult();
+            string errorMessage = "";
+
+            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(Encoding.UTF8.GetBytes(_testString));
+
+            if (aesEncryptionResult.Success)
+            {
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBytes, aesEncryptionResult.Key, aesEncryptionResult.IV,
+                    aesEncryptionResult.AuthenticationKey, aesEncryptionResult.Tag);
+
+                if (!aesDecryptionResult.Success)
+                    errorMessage = aesDecryptionResult.Message;
+            }
+            else
+                errorMessage = aesEncryptionResult.Message;
+
+            Assert.IsTrue((aesEncryptionResult.Success && aesDecryptionResult.Success && aesDecryptionResult.DecryptedDataString.Equals(_testString)), errorMessage);
+        }
     }
 }
