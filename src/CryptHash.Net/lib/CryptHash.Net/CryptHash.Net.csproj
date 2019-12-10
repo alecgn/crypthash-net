@@ -9,11 +9,11 @@
     <PackageIcon>crypthash-icon-new.png</PackageIcon>
     <RepositoryUrl>https://github.com/alecgn/crypthash-net</RepositoryUrl>
     <PackageTags>encryption decryption cryptography aes aes128 aes192 aes256 aes128cbc aes192cbc aes256cbc aes256gcm aescbc aesgcm aescbc128 aescbc192 aescbc256 aesgcm256 cbc gcm hash md5 sha1 sha256 sha384 sha512 hmacmd5 hmac-md5 hmacsha1 hmac-sha1 hmacsha256 hmac-sha256 hmacsha384 hmac-sha384 hmacsha512 hmac-sha512 pbkdf2 bcrypt argon2 argon2id c# c-sharp security password authentication authenticated</PackageTags>
-    <AssemblyVersion>3.3.2</AssemblyVersion>
-    <FileVersion>3.3.2</FileVersion>
+    <AssemblyVersion>3.3.3</AssemblyVersion>
+    <FileVersion>3.3.3</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/alecgn/crypthash-net</PackageProjectUrl>
-    <Version>3.3.2</Version>
+    <Version>3.3.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
