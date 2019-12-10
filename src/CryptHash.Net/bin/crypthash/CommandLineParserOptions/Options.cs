@@ -58,7 +58,7 @@ namespace CryptHash.Net.CLI.CommandLineParser
         public string AssociatedData { get; set; }
     }
 
-    [Verb("hash", HelpText = "String and file hashing (MD5, SHA1, SHA256, SHA384, SHA512, PBKDF2 and BCrypt).")]
+    [Verb("hash", HelpText = "String and file hash (MD5, SHA1, SHA256, SHA384, SHA512, PBKDF2 and BCrypt).")]
     public class HashOptions
     {
         [Option('t', "input-type", Required = true, HelpText = "Input type (\"string\" or \"file\").")]
@@ -67,10 +67,57 @@ namespace CryptHash.Net.CLI.CommandLineParser
         [Option('a', "algorithm", Required = true, HelpText = "Algorithm (\"md5\", \"sha1\", \"sha256\", \"sha384\", \"sha512\", \"pbkdf2\" and \"bcrypt\").")]
         public string Algorithm { get; set; }
 
-        [Option('i', "input", Required = true, HelpText = "Input to be hashed (string or file path).")]
-        public string InputToBeHashed { get; set; }
+        [Option('i', "input", Required = true, HelpText = "Input to compute hash (string or file path).")]
+        public string InputToComputeHash { get; set; }
 
         [Option('c', "compare-hash", Default = null, HelpText = "Previously generated hash for comparation with computed hash.")]
+        public string CompareHash { get; set; }
+    }
+
+    [Verb("hmac", HelpText = "String and file HMAC (HMAC-MD5, HMAC-SHA1, HMAC-SHA256, HMAC-SHA384 and HMAC-SHA512).")]
+    public class HMACOptions
+    {
+        [Option('t', "input-type", Required = true, HelpText = "Input type (\"string\" or \"file\").")]
+        public string InputType { get; set; }
+
+        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (\"hmacmd5\", \"hmacsha1\", \"hmacsha256\", \"hmacsha384\" and \"hmacsha512\").")]
+        public string Algorithm { get; set; }
+
+        [Option('i', "input", Required = true, HelpText = "Input to compute HMAC (string or file path).")]
+        public string InputToComputeHMAC { get; set; }
+
+        [Option('k', "key", Default = null, HelpText = "Input key.")]
+        public string Key { get; set; }
+
+        [Option('c', "compare-hmac", Default = null, HelpText = "Previously generated HMAC for comparation with computed HMAC.")]
+        public string CompareHash { get; set; }
+    }
+
+    [Verb("argon2id", HelpText = "Argon2id string hash.")]
+    public class Argon2idHashOptions
+    {
+        [Option('i', "input", Required = true, HelpText = "Input string to compute Argon2id hash.")]
+        public string InputToComputeHash { get; set; }
+
+        [Option("iterations", Required = true, HelpText = "Number of iterations.")]
+        public int Iterations { get; set; }
+
+        [Option('m', "memory-size", Required = true, HelpText = "Memory size in kilobytes.")]
+        public int MemorySize { get; set; }
+
+        [Option('s', "salt", Default = null, HelpText = "Salt.")]
+        public string Salt { get; set; }
+
+        [Option('a', "associated-data", Default = null, HelpText = "Associated data.")]
+        public string AssociatedData { get; set; }
+
+        [Option('d', "degree-of-parallelism", Default = 0, HelpText = "Degree of parallelism (number of processor's cores to use).")]
+        public int DegreeOfParallelism { get; set; }
+
+        [Option('b', "amount-bytes-to-return", Required = true, HelpText = "Amount bytes to return.")]
+        public int AmountBytesToReturn { get; set; }
+
+        [Option('c', "compare-hash", Default = null, HelpText = "Previously generated HMAC for comparation with computed HMAC.")]
         public string CompareHash { get; set; }
     }
 }

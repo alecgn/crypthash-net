@@ -38,11 +38,16 @@ namespace CryptHash.Net.Hash.Base
 
             try
             {
+                using (var sw = new StreamWriter(@"C:\Temp\teste.txt"))
+                {
+                    sw.WriteLine(hmacAlgorithm.ToString());
+                }
+
                 using (var hmac = System.Security.Cryptography.HMAC.Create(hmacAlgorithm.ToString()))
                 {
                     hmac.Key = key;
-                    offset = (offset == 0 ? 0 : offset);
-                    count = (count == 0 ? 0 : count);
+                    //offset = (offset == 0 ? 0 : offset);
+                    count = (count == 0 ? bytesToComputeHMAC.Length : count);
 
                     byte[] hash = hmac.ComputeHash(bytesToComputeHMAC, offset, count);
 
@@ -109,7 +114,7 @@ namespace CryptHash.Net.Hash.Base
 
                 using (var fStream = new FileStream(filePathToComputeHMAC, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-                    offset = (offset == 0 ? 0 : offset);
+                    //offset = (offset == 0 ? 0 : offset);
                     count = (count == 0 ? fStream.Length : count);
                     fStream.Position = offset;
                     byte[] buffer = new byte[(1024 * 4)];

@@ -37,8 +37,8 @@ namespace CryptHash.Net.Hash.Base
             {
                 using (var hashAlg = System.Security.Cryptography.HashAlgorithm.Create(hashAlgorithm.ToString()))
                 {
-                    offset = (offset == 0 ? 0 : offset);
-                    count = (count == 0 ? 0 : count);
+                    //offset = (offset == 0 ? 0 : offset);
+                    count = (count == 0 ? bytesToComputeHash.Length : count);
 
                     byte[] hash = hashAlg.ComputeHash(bytesToComputeHash, offset, count);
 
@@ -100,7 +100,7 @@ namespace CryptHash.Net.Hash.Base
 
                 using (var fStream = new FileStream(filePathToComputeHash, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-                    offset = (offset == 0 ? 0 : offset);
+                    //offset = (offset == 0 ? 0 : offset);
                     count = (count == 0 ? fStream.Length : count);
                     fStream.Position = offset;
                     byte[] buffer = new byte[(1024 * 4)];

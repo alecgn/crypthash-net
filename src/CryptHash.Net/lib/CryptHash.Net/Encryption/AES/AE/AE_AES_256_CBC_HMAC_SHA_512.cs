@@ -231,6 +231,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                         aesEncryptionResult.Salt = salt;
                         aesEncryptionResult.Tag = tag;
+                        aesEncryptionResult.AuthenticationKey = authKey;
                     }
                 }
 
@@ -501,6 +502,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     aesDecryptionResult.DecryptedDataString = Encoding.UTF8.GetString(aesDecryptionResult.DecryptedDataBytes);
                     aesDecryptionResult.Salt = salt;
                     aesDecryptionResult.Tag = sentTag;
+                    aesDecryptionResult.AuthenticationKey = authKey;
                 }
 
                 return aesDecryptionResult;
@@ -685,6 +687,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                     aesEncryptionResult.Salt = salt;
                     aesEncryptionResult.Tag = tag;
+                    aesEncryptionResult.AuthenticationKey = authKey;
                 }
 
                 return aesEncryptionResult;
@@ -855,6 +858,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 {
                     aesDecryptionResult.Salt = salt;
                     aesDecryptionResult.Tag = sentTag;
+                    aesDecryptionResult.AuthenticationKey = authKey;
                 }
 
                 return aesDecryptionResult;
