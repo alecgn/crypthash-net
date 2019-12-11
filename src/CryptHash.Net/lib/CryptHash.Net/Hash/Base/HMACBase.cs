@@ -11,6 +11,7 @@ using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
 using CryptHash.Net.Hash.HashResults;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace CryptHash.Net.Hash.Base
 {
@@ -43,7 +44,7 @@ namespace CryptHash.Net.Hash.Base
                     sw.WriteLine(hmacAlgorithm.ToString());
                 }
 
-                using (var hmac = System.Security.Cryptography.HMAC.Create(hmacAlgorithm.ToString()))
+                using (var hmac = (HMAC)CryptoConfig.CreateFromName(hmacAlgorithm.ToString()))
                 {
                     hmac.Key = key;
                     //offset = (offset == 0 ? 0 : offset);
@@ -120,7 +121,7 @@ namespace CryptHash.Net.Hash.Base
                     byte[] buffer = new byte[(1024 * 4)];
                     long amount = (count - offset);
 
-                    using (var hmac = System.Security.Cryptography.HMAC.Create(hmacAlgorithm.ToString()))
+                    using (var hmac = (HMAC)CryptoConfig.CreateFromName(hmacAlgorithm.ToString()))
                     {
                         hmac.Key = key;
                         int percentageDone = 0;
