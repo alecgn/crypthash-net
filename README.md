@@ -40,7 +40,7 @@ From this version (3.x.x) onwards, any new implementations will be planned so as
 
 Publish it yourself using the following dotnet client command-line:
 
->**dotnet publish -c Release -r \<RID\> /p:PublishSingleFile=true /p:PublishTrimmed=true**
+>**dotnet publish -c Release -r \<RID\> /p:PublishSingleFile=true**
 --------------------------------------------------
 **WINDOWS RIDs**
 
