@@ -11,6 +11,7 @@ using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
 using CryptHash.Net.Hash.HashResults;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace CryptHash.Net.Hash.Base
 {
@@ -35,7 +36,7 @@ namespace CryptHash.Net.Hash.Base
 
             try
             {
-                using (var hashAlg = System.Security.Cryptography.HashAlgorithm.Create(hashAlgorithm.ToString()))
+                using (var hashAlg = (HashAlgorithm)CryptoConfig.CreateFromName(hashAlgorithm.ToString()))
                 {
                     //offset = (offset == 0 ? 0 : offset);
                     count = (count == 0 ? bytesToComputeHash.Length : count);
@@ -106,7 +107,7 @@ namespace CryptHash.Net.Hash.Base
                     byte[] buffer = new byte[(1024 * 4)];
                     long amount = (count - offset);
 
-                    using (var hashAlg = System.Security.Cryptography.HashAlgorithm.Create(hashAlgorithm.ToString()))
+                    using (var hashAlg = (HashAlgorithm)CryptoConfig.CreateFromName(hashAlgorithm.ToString()))
                     {
                         int percentageDone = 0;
 
