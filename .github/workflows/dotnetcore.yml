@@ -15,3 +15,6 @@ jobs:
         dotnet-version: 3.1.100
     - name: Build with dotnet
       run: dotnet build --configuration Release src/CryptHash.Net/CryptHash.Net.sln
+    
+    - name: Test with dotnet
+      run: dotnet test --configuration Release src/CryptHash.Net/lib/CryptHash.Net.Tests/CryptHash.Net.Tests.csproj
