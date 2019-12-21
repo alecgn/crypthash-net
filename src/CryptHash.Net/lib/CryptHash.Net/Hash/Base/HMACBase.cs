@@ -39,11 +39,6 @@ namespace CryptHash.Net.Hash.Base
 
             try
             {
-                using (var sw = new StreamWriter(@"C:\Temp\teste.txt"))
-                {
-                    sw.WriteLine(hmacAlgorithm.ToString());
-                }
-
                 using (var hmac = (HMAC)CryptoConfig.CreateFromName(hmacAlgorithm.ToString()))
                 {
                     hmac.Key = key;
