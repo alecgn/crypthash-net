@@ -3,9 +3,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>3.3.5</Version>
-    <AssemblyVersion>3.3.5</AssemblyVersion>
-    <FileVersion>3.3.5</FileVersion>
+    <Version>3.3.6</Version>
+    <AssemblyVersion>3.3.6</AssemblyVersion>
+    <FileVersion>3.3.6</FileVersion>
     <Authors>Alessandro Cagliostro Goncalves Neves</Authors>
     <Description>crypthash is a .NET Core 3.1 multiplatform console utility (designed to run in Windows, Linux and Mac) for text and files symmetric (AES_128_CBC / AES_192_CBC / AES_256_CBC / AES_256_GCM) authenticated encryption/decryption, and text/files hashing (MD5, SHA1, SHA256, SHA384, SHA512, HMAC-MD5, HMAC-SHA1, HMAC-SHA256, HMAC-SHA384, HMAC-SHA512, PBKDF2, BCrypt and Argon2id).</Description>
     <Copyright>Alessandro Cagliostro Goncalves Neves, 2019</Copyright>
