@@ -33,7 +33,7 @@ Other encryption/hashing algorithms will be implemented in the future.
 
 NuGet package: https://www.nuget.org/packages/CryptHash.Net
 
-Compiled console utility binaries (single file self-contained / no framework dependent) for Windows (x86/x64/ARM), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v3.3.5.  When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".  For usage help, call the program without patameters or pass the "--help" parameter.  
+Compiled console utility binaries (single file self-contained / no framework dependent) for Windows (x86/x64/ARM), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v3.4.0.  When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".  For usage help, call the program without patameters or pass the "--help" parameter.  
 
 **WARNING:** PER SEMANTIC VERSIONING, THE ABOVE RELEASE (3.x.x) IS NOT COMPATIBLE WITH PREVIOUS RELEASES (1.x.x and 2.x.x), AND AS SUCH MIGHT NOT PROPERLY DECRYPT DATA YOU ENCRYPTED WITH PREVIOUS VERSIONS.
 From this version (3.x.x) onwards, any new implementations will be planned so as to maintain compatibility and stability. There should be no more breaking-changes, as the project's architecture and design are already well defined. If there is a need to make a breaking-change going forward then a method for properly decryting data you encryted with version 3.x.x will be provided.
