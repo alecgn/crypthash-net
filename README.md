@@ -1,9 +1,9 @@
 # CryptHash.NET 
-[![Build status (crypthash-net)](https://github.com/alecgn/crypthash-net/workflows/build/badge.svg)](https://github.com/alecgn/crypthash-net/actions?query=workflow%3Abuild) [![Nuget version (CryptHash.Net)](https://img.shields.io/nuget/v/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) [![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) [![Tests status (crypthash-net)](https://img.shields.io/appveyor/tests/alecgn/crypthash-net)](https://ci.appveyor.com/project/alecgn/crypthash-net)
+[![Build status (crypthash-net)](https://github.com/alecgn/crypthash-net/workflows/build/badge.svg)] [![Nuget version (CryptHash.Net)](https://img.shields.io/nuget/v/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) [![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) [![Tests status (crypthash-net)](https://img.shields.io/appveyor/tests/alecgn/crypthash-net)](https://ci.appveyor.com/project/alecgn/crypthash-net)
 
-### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption and hashing.
+### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption, hashing and encoding/decoding.
 
-The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
+The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, text/files hashing and text encoding/decoding. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
 
 The multi-target libray can be used in projects with any .NET implementation like **.NET Framework**, **.NET Core**, **Mono**, **Xamarin**, etc. Verify the .NET Standard compatibility table here: https://github.com/dotnet/standard/blob/master/docs/versions.md
 
@@ -29,7 +29,11 @@ Currently supported hash algorithms are:
 * **BCrypt**  
 * **Argon2id**
 
-Other encryption/hashing algorithms will be implemented in the future.
+Currently supported encoding types are:  
+* **Base64**  
+* **Hexadecimal**  
+
+Other encryption/hashing/encoding algorithms will be implemented in the future.
 
 NuGet package: https://www.nuget.org/packages/CryptHash.Net
 
