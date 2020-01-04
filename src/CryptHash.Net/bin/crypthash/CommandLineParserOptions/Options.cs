@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -119,5 +119,25 @@ namespace CryptHash.Net.CLI.CommandLineParser
 
         [Option('c', "compare-hash", Default = null, HelpText = "Previously generated HMAC for comparation with computed HMAC.")]
         public string CompareHash { get; set; }
+    }
+
+    [Verb("encode", HelpText = "String encode (Base64 and Hexadecimal).")]
+    public class EncodeOptions
+    {
+        [Option('t', "encode-type", Required = true, HelpText = "Encode type (\"base64\" or \"hex\").")]
+        public string EncodeType { get; set; }
+
+        [Option('i', "input", Required = true, HelpText = "Input string to encode.")]
+        public string InputToEncode { get; set; }
+    }
+
+    [Verb("decode", HelpText = "String decode (Base64 and Hexadecimal).")]
+    public class DecodeOptions
+    {
+        [Option('t', "decode-type", Required = true, HelpText = "Decode type (\"base64\" or \"hex\").")]
+        public string DecodeType { get; set; }
+
+        [Option('i', "input", Required = true, HelpText = "Input string to decode.")]
+        public string InputToDecode { get; set; }
     }
 }

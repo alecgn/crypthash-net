@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -77,9 +77,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                 };
             }
 
-            var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
-            var passwordBytes = Encoding.UTF8.GetBytes(password);
-            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+            var plainStringBytes = System.Text.Encoding.UTF8.GetBytes(plainString);
+            var passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
+            var associatedDataBytes = (associatedDataString == null ? null : System.Text.Encoding.UTF8.GetBytes(associatedDataString));
 
             return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutput);
         }
@@ -112,9 +112,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                 };
             }
 
-            var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
+            var plainStringBytes = System.Text.Encoding.UTF8.GetBytes(plainString);
             var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
-            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+            var associatedDataBytes = (associatedDataString == null ? null : System.Text.Encoding.UTF8.GetBytes(associatedDataString));
 
             return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutput);
         }
@@ -148,7 +148,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
 
             var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
-            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+            var associatedDataBytes = (associatedDataString == null ? null : System.Text.Encoding.UTF8.GetBytes(associatedDataString));
 
             return EncryptString(plainStringBytes, passwordBytes, associatedDataBytes, appendEncryptionDataToOutput);
         }
@@ -278,8 +278,8 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
 
             var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
-            var passwordBytes = Encoding.UTF8.GetBytes(password);
-            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+            var passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
+            var associatedDataBytes = (associatedDataString == null ? null : System.Text.Encoding.UTF8.GetBytes(associatedDataString));
 
             return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInput, tag, salt, nonce);
         }
@@ -316,9 +316,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                 };
             }
 
-            var plainStringBytes = Encoding.UTF8.GetBytes(base64EncryptedString);
+            var plainStringBytes = System.Text.Encoding.UTF8.GetBytes(base64EncryptedString);
             var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
-            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+            var associatedDataBytes = (associatedDataString == null ? null : System.Text.Encoding.UTF8.GetBytes(associatedDataString));
 
             return DecryptString(plainStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInput, tag, salt, nonce);
         }
@@ -356,7 +356,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
 
             var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
-            var associatedDataBytes = (associatedDataString == null ? null : Encoding.UTF8.GetBytes(associatedDataString));
+            var associatedDataBytes = (associatedDataString == null ? null : System.Text.Encoding.UTF8.GetBytes(associatedDataString));
 
             return DecryptString(encryptedStringBytes, passwordBytes, associatedDataBytes, hasEncryptionDataAppendedInInput, tag, salt, nonce);
         }
@@ -443,7 +443,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     Success = true,
                     Message = MessageDictionary.Instance["Decryption.DecryptSuccess"],
                     DecryptedDataBytes = decryptedData,
-                    DecryptedDataString = Encoding.UTF8.GetString(decryptedData),
+                    DecryptedDataString = System.Text.Encoding.UTF8.GetString(decryptedData),
                     Tag = tag,
                     Key = derivedKey,
                     Nonce = nonce,

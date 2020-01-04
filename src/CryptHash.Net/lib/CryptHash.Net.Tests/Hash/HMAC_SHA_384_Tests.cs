@@ -1,4 +1,10 @@
-﻿using CryptHash.Net.Hash;
+﻿/*
+ *      Alessandro Cagliostro, 2020
+ *      
+ *      https://github.com/alecgn
+ */
+
+using CryptHash.Net.Hash;
 using CryptHash.Net.Hash.HashResults;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

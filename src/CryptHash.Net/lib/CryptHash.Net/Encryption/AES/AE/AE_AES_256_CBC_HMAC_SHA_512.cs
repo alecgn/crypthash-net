@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -87,8 +87,8 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
-            var passwordBytes = Encoding.UTF8.GetBytes(password);
+            var plainStringBytes = System.Text.Encoding.UTF8.GetBytes(plainString);
+            var passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
 
             return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutput);
         }
@@ -120,7 +120,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            var plainStringBytes = Encoding.UTF8.GetBytes(plainString);
+            var plainStringBytes = System.Text.Encoding.UTF8.GetBytes(plainString);
             var passwordBytes = CommonMethods.ConvertSecureStringToByteArray(secStrPassword);
 
             return EncryptString(plainStringBytes, passwordBytes, appendEncryptionDataToOutput);
@@ -335,7 +335,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             }
 
             var encryptedStringBytes = Convert.FromBase64String(base64EncryptedString);
-            var passwordBytes = Encoding.UTF8.GetBytes(password);
+            var passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
 
             return DecryptString(encryptedStringBytes, passwordBytes, hasEncryptionDataAppendedInInput, sentTag, salt, IV);
         }
@@ -499,7 +499,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                 if (aesDecryptionResult.Success)
                 {
-                    aesDecryptionResult.DecryptedDataString = Encoding.UTF8.GetString(aesDecryptionResult.DecryptedDataBytes);
+                    aesDecryptionResult.DecryptedDataString = System.Text.Encoding.UTF8.GetString(aesDecryptionResult.DecryptedDataBytes);
                     aesDecryptionResult.Salt = salt;
                     aesDecryptionResult.Tag = sentTag;
                     aesDecryptionResult.AuthenticationKey = authKey;
@@ -555,7 +555,7 @@ namespace CryptHash.Net.Encryption.AES.AE
 
                 if (aesDecryptionResult.Success)
                 {
-                    aesDecryptionResult.DecryptedDataString = Encoding.UTF8.GetString(aesDecryptionResult.DecryptedDataBytes);
+                    aesDecryptionResult.DecryptedDataString = System.Text.Encoding.UTF8.GetString(aesDecryptionResult.DecryptedDataBytes);
                     aesDecryptionResult.Tag = sentTag;
                     aesDecryptionResult.AuthenticationKey = authenticationKey;
                 }
@@ -597,7 +597,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            var passwordBytes = Encoding.UTF8.GetBytes(password);
+            var passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
 
             return EncryptFile(sourceFilePath, encryptedFilePath, passwordBytes, deleteSourceFile, appendEncryptionDataToOutputFile);
         }
@@ -731,7 +731,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                 };
             }
 
-            var passwordBytes = Encoding.UTF8.GetBytes(password);
+            var passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
 
             return DecryptFile(encryptedFilePath, decryptedFilePath, passwordBytes, deleteSourceFile, hasEncryptionDataAppendedInInputFile, sentTag, salt, IV);
         }

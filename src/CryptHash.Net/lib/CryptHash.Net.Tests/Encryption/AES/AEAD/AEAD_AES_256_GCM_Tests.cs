@@ -1,4 +1,10 @@
-﻿using CryptHash.Net.Encryption.AES.AE;
+﻿/*
+ *      Alessandro Cagliostro, 2020
+ *      
+ *      https://github.com/alecgn
+ */
+
+using CryptHash.Net.Encryption.AES.AE;
 using CryptHash.Net.Encryption.AES.AEAD;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -70,7 +76,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), null, hasEncryptionDataAppendedInInput: appendEncryptionData,
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, System.Text.Encoding.UTF8.GetBytes(_password), null, hasEncryptionDataAppendedInInput: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.Nonce);
 
                 if (!aesDecryptionResult.Success)
@@ -94,7 +100,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AEAD
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password), Encoding.UTF8.GetBytes(associatedData), hasEncryptionDataAppendedInInput: appendEncryptionData,
+                aesDecryptionResult = _aes256gcm.DecryptString(aesEncryptionResult.EncryptedDataBytes, System.Text.Encoding.UTF8.GetBytes(_password), System.Text.Encoding.UTF8.GetBytes(associatedData), hasEncryptionDataAppendedInInput: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.Nonce);
 
                 if (!aesDecryptionResult.Success)

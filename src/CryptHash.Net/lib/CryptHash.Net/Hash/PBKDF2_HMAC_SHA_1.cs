@@ -1,4 +1,10 @@
-﻿using CryptHash.Net.Util;
+﻿/*
+ *      Alessandro Cagliostro, 2020
+ *      
+ *      https://github.com/alecgn
+ */
+
+using CryptHash.Net.Util;
 using CryptHash.Net.Hash.HashResults;
 using System;
 using System.Security.Cryptography;

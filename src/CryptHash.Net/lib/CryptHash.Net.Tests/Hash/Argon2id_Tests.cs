@@ -1,4 +1,10 @@
-﻿using CryptHash.Net.Hash;
+﻿/*
+ *      Alessandro Cagliostro, 2020
+ *      
+ *      https://github.com/alecgn
+ */
+
+using CryptHash.Net.Hash;
 using CryptHash.Net.Hash.HashResults;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -19,7 +25,7 @@ namespace CryptHash.Net.Tests.Hash
             Argon2idHashResult verifyResult = new Argon2idHashResult();
             var errorMessage = "";
 
-            byte[] testStringBytes = Encoding.UTF8.GetBytes(_testString);
+            byte[] testStringBytes = System.Text.Encoding.UTF8.GetBytes(_testString);
             int iterations = 4;
             int kbMemorySize = 1024;
             int degreeOfParallelism = 0; // auto-generate based on number of the processor's cores
@@ -52,13 +58,13 @@ namespace CryptHash.Net.Tests.Hash
             Argon2idHashResult verifyResult = new Argon2idHashResult();
             var errorMessage = "";
 
-            byte[] testStringBytes = Encoding.UTF8.GetBytes(_testString);
+            byte[] testStringBytes = System.Text.Encoding.UTF8.GetBytes(_testString);
             int iterations = 4;
             int kbMemorySize = 1024;
             int degreeOfParallelism = 0; // auto-generate based on number of the processor's cores
             int amountBytesToReturn = 16;
             byte[] salt = null; // auto-generate
-            byte[] associatedData = Encoding.UTF8.GetBytes("0f8fad5b-d9cb-469f-a165-70867728950e");
+            byte[] associatedData = System.Text.Encoding.UTF8.GetBytes("0f8fad5b-d9cb-469f-a165-70867728950e");
             byte[] knownSecret = null;
 
             var hashResult = _argon2id.ComputeHash(testStringBytes, iterations, kbMemorySize, degreeOfParallelism, amountBytesToReturn, salt,

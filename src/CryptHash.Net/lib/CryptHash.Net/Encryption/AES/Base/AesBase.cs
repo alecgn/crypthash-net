@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -225,7 +225,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 Success = true,
                 Message = MessageDictionary.Instance["Decryption.DecryptSuccess"],
                 DecryptedDataBytes = decryptedData,
-                DecryptedDataString = Encoding.UTF8.GetString(decryptedData),
+                DecryptedDataString = System.Text.Encoding.UTF8.GetString(decryptedData),
                 Key = _key,
                 IV = _IV,
                 AesCipherMode = (AesCipherMode)cipherMode,

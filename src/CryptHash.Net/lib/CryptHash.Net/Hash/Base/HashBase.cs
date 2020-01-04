@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -48,7 +48,7 @@ namespace CryptHash.Net.Hash.Base
                         Success = true,
                         Message = MessageDictionary.Instance["Hash.Compute.Success"],
                         HashBytes = hash,
-                        HashString = CommonMethods.ConvertByteArrayToHexString(hash)
+                        HashString = Encoding.Hexadecimal.ToHexString(hash)
                     };
                 }
             }
@@ -76,7 +76,7 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            var stringToComputeHashBytes = Encoding.UTF8.GetBytes(stringToComputeHash);
+            var stringToComputeHashBytes = System.Text.Encoding.UTF8.GetBytes(stringToComputeHash);
             
             return ComputeHash(hashAlgorithm, stringToComputeHashBytes, offset, count);
         }
@@ -145,7 +145,7 @@ namespace CryptHash.Net.Hash.Base
                 {
                     Success = true,
                     Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
-                    HashString = CommonMethods.ConvertByteArrayToHexString(hash),
+                    HashString = Encoding.Hexadecimal.ToHexString(hash),
                     HashBytes = hash
                 };
             }
@@ -181,8 +181,8 @@ namespace CryptHash.Net.Hash.Base
         internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string stringToVerifyHash,
             int offset = 0, int count = 0)
         {
-            var hashBytes = CommonMethods.ConvertHexStringToByteArray(hashHexString);
-            var stringToVerifyHashBytes = Encoding.UTF8.GetBytes(stringToVerifyHash);
+            var hashBytes = Encoding.Hexadecimal.ToByteArray(hashHexString);
+            var stringToVerifyHashBytes = System.Text.Encoding.UTF8.GetBytes(stringToVerifyHash);
 
             return VerifyHash(hashAlgorithm, hashBytes, stringToVerifyHashBytes, offset, count);
         }
@@ -190,7 +190,7 @@ namespace CryptHash.Net.Hash.Base
         internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string filePathToVerifyHash,
             long offset = 0, long count = 0)
         {
-            var hashBytes = CommonMethods.ConvertHexStringToByteArray(hashHexString);
+            var hashBytes = Encoding.Hexadecimal.ToByteArray(hashHexString);
 
             return VerifyFileHash(hashAlgorithm, hashBytes, filePathToVerifyHash, offset, count);
         }

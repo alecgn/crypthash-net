@@ -1,4 +1,10 @@
-﻿//using CryptHash.Net.Hash.HashResults;
+﻿/*
+ *      Alessandro Cagliostro, 2020
+ *      
+ *      https://github.com/alecgn
+ */
+
+//using CryptHash.Net.Hash.HashResults;
 
 //namespace CryptHash.Net.Hash
 //{

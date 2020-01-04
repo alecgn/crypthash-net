@@ -1,4 +1,10 @@
-﻿using CryptHash.Net.Encryption.AES.AE;
+﻿/*
+ *      Alessandro Cagliostro, 2020
+ *      
+ *      https://github.com/alecgn
+ */
+
+using CryptHash.Net.Encryption.AES.AE;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -66,7 +72,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password),
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBytes, System.Text.Encoding.UTF8.GetBytes(_password),
                     hasEncryptionDataAppendedInInput: appendEncryptionData, aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (!aesDecryptionResult.Success)
@@ -149,7 +155,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha384.DecryptFile(testFilePath, testFilePath, Encoding.UTF8.GetBytes(_password), false, hasEncryptionDataAppendedInInputFile: appendEncryptionData,
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptFile(testFilePath, testFilePath, System.Text.Encoding.UTF8.GetBytes(_password), false, hasEncryptionDataAppendedInInputFile: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (aesDecryptionResult.Success)
@@ -171,7 +177,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
             var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
-            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(Encoding.UTF8.GetBytes(_testString));
+            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(System.Text.Encoding.UTF8.GetBytes(_testString));
 
             if (aesEncryptionResult.Success)
             {

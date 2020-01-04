@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *
  *      https://github.com/alecgn
  */
@@ -11,6 +11,7 @@ using CommandLine;
 using CommandLine.Text;
 using CryptHash.Net.CLI.CommandLineParser;
 using CryptHash.Net.CLI.ConsoleUtil;
+using CryptHash.Net.Encoding;
 using CryptHash.Net.Encryption.AES.AE;
 using CryptHash.Net.Encryption.AES.AEAD;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
@@ -39,7 +40,7 @@ namespace CryptHash.Net.CLI
         private static void ProcessArgs(string[] args)
         {
 
-            var parserResult = Parser.Default.ParseArguments<CryptOptions, DecryptOptions, HashOptions, HMACOptions, Argon2idHashOptions>(args);
+            var parserResult = Parser.Default.ParseArguments<CryptOptions, DecryptOptions, HashOptions, HMACOptions, Argon2idHashOptions, EncodeOptions, DecodeOptions>(args);
 
             var exitCode = parserResult.MapResult(
                 (CryptOptions opts) => RunCryptOptionsAndReturnExitCode(opts),
@@ -47,6 +48,8 @@ namespace CryptHash.Net.CLI
                 (HashOptions opts) => RunHashOptionsAndReturnExitCode(opts),
                 (HMACOptions opts) => RunHMACOptionsAndReturnExitCode(opts),
                 (Argon2idHashOptions opts) => RunArgon2idHashOptionsAndReturnExitCode(opts),
+                (EncodeOptions opts) => RunEncodeOptionsAndReturnExitCode(opts),
+                (DecodeOptions opts) => RunDecodeOptionsAndReturnExitCode(opts),
                 errors => HandleParseError(errors, parserResult)
             );
 
@@ -407,19 +410,19 @@ namespace CryptHash.Net.CLI
                         switch (hmacOptions.Algorithm.ToLower())
                         {
                             case "hmacmd5":
-                                hmacResult = new HMAC_MD5().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                hmacResult = new HMAC_MD5().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 break;
                             case "hmacsha1":
-                                hmacResult = new HMAC_SHA_1().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                hmacResult = new HMAC_SHA_1().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 break;
                             case "hmacsha256":
-                                hmacResult = new HMAC_SHA_256().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                hmacResult = new HMAC_SHA_256().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 break;
                             case "hmacsha384":
-                                hmacResult = new HMAC_SHA_384().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                hmacResult = new HMAC_SHA_384().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 break;
                             case "hmacsha512":
-                                hmacResult = new HMAC_SHA_512().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                hmacResult = new HMAC_SHA_512().ComputeHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 break;
                             default:
                                 hmacResult = new HMACHashResult() { Success = false, Message = $"Unknown algorithm \"{hmacOptions.Algorithm}\"." };
@@ -437,7 +440,7 @@ namespace CryptHash.Net.CLI
                                     var hmacMd5 = new HMAC_MD5();
                                     hmacMd5.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hmacResult = hmacMd5.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                    hmacResult = hmacMd5.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 }
                                 break;
                             case "hmacsha1":
@@ -446,7 +449,7 @@ namespace CryptHash.Net.CLI
                                     var hmacSha1 = new HMAC_SHA_1();
                                     hmacSha1.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hmacResult = hmacSha1.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                    hmacResult = hmacSha1.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 }
                                 break;
                             case "hmacsha256":
@@ -455,7 +458,7 @@ namespace CryptHash.Net.CLI
                                     var hmacSha256 = new HMAC_SHA_256();
                                     hmacSha256.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hmacResult = hmacSha256.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                    hmacResult = hmacSha256.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 }
                                 break;
                             case "hmacsha384":
@@ -464,7 +467,7 @@ namespace CryptHash.Net.CLI
                                     var hmacSha384 = new HMAC_SHA_384();
                                     hmacSha384.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hmacResult = hmacSha384.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                    hmacResult = hmacSha384.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 }
                                 break;
                             case "hmacsha512":
@@ -473,7 +476,7 @@ namespace CryptHash.Net.CLI
                                     var hmacSha512 = new HMAC_SHA_512();
                                     hmacSha512.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hmacResult = hmacSha512.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : Encoding.UTF8.GetBytes(hmacOptions.Key)));
+                                    hmacResult = hmacSha512.ComputeFileHMAC(hmacOptions.InputToComputeHMAC, (string.IsNullOrWhiteSpace(hmacOptions.Key) ? null : System.Text.Encoding.UTF8.GetBytes(hmacOptions.Key)));
                                 }
                                 break;
                             default:
@@ -526,9 +529,9 @@ namespace CryptHash.Net.CLI
 
         private static ExitCode RunArgon2idHashOptionsAndReturnExitCode(Argon2idHashOptions argon2idHashOptions)
         {
-            var argon2idHashResult = new Argon2id().ComputeHash(Encoding.UTF8.GetBytes(argon2idHashOptions.InputToComputeHash), argon2idHashOptions.Iterations, 
-                argon2idHashOptions.MemorySize, argon2idHashOptions.DegreeOfParallelism, argon2idHashOptions.AmountBytesToReturn, Encoding.UTF8.GetBytes(argon2idHashOptions.Salt),
-                Encoding.UTF8.GetBytes(argon2idHashOptions.AssociatedData));            
+            var argon2idHashResult = new Argon2id().ComputeHash(System.Text.Encoding.UTF8.GetBytes(argon2idHashOptions.InputToComputeHash), argon2idHashOptions.Iterations, 
+                argon2idHashOptions.MemorySize, argon2idHashOptions.DegreeOfParallelism, argon2idHashOptions.AmountBytesToReturn, System.Text.Encoding.UTF8.GetBytes(argon2idHashOptions.Salt),
+                System.Text.Encoding.UTF8.GetBytes(argon2idHashOptions.AssociatedData));            
 
             if (argon2idHashResult.Success && !string.IsNullOrWhiteSpace(argon2idHashOptions.CompareHash))
             {
@@ -553,6 +556,78 @@ namespace CryptHash.Net.CLI
             else
             {
                 Console.WriteLine(argon2idHashResult.Message);
+
+                return ExitCode.Error;
+            }
+        }
+
+        private static ExitCode RunEncodeOptionsAndReturnExitCode(EncodeOptions encodeOptions)
+        {
+            string encodedString = null;
+            string errorMsg = null;
+
+            switch (encodeOptions.EncodeType.ToLower())
+            {
+                case "base64":
+                    {
+                        encodedString = Base64.ToBase64String(encodeOptions.InputToEncode);
+                    }
+                    break;
+                case "hex":
+                    {
+                        encodedString = Hexadecimal.ToHexString(encodeOptions.InputToEncode);
+                    }
+                    break;
+                default:
+                    errorMsg = $"Unknown encode type \"{encodeOptions.EncodeType}\".";
+                    break;
+            }
+
+            if (string.IsNullOrWhiteSpace(errorMsg))
+            {
+                Console.WriteLine(encodedString);
+
+                return ExitCode.Sucess;
+            }
+            else
+            {
+                Console.WriteLine(errorMsg);
+
+                return ExitCode.Error;
+            }
+        }
+
+        private static ExitCode RunDecodeOptionsAndReturnExitCode(DecodeOptions decodeOptions)
+        {
+            string decodedString = null;
+            string errorMsg = null;
+
+            switch (decodeOptions.DecodeType.ToLower())
+            {
+                case "base64":
+                    {
+                        decodedString = Base64.ToString(decodeOptions.InputToDecode);
+                    }
+                    break;
+                case "hex":
+                    {
+                        decodedString = Hexadecimal.ToString(decodeOptions.InputToDecode);
+                    }
+                    break;
+                default:
+                    errorMsg = $"Unknown decode type \"{decodeOptions.DecodeType}\".";
+                    break;
+            }
+
+            if (string.IsNullOrWhiteSpace(errorMsg))
+            {
+                Console.WriteLine(decodedString);
+
+                return ExitCode.Sucess;
+            }
+            else
+            {
+                Console.WriteLine(errorMsg);
 
                 return ExitCode.Error;
             }
