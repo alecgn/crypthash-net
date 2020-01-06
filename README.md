@@ -17,7 +17,7 @@ Currently symmetric encryption algorithms are:
 * **AES 256 bits** in **CBC Mode** with **HMACSHA512 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
 * **AES 256 bits** in **GCM Mode** with **Authentication** and **Associated Data** (**AEAD**).
 
-Currently supported hash algorithms are:  
+Currently supported hash/KDF algorithms are:  
 * **MD5**  
 * **SHA1**  
 * **SHA256**  
