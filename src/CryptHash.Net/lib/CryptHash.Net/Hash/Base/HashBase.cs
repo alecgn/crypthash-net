@@ -46,7 +46,7 @@ namespace CryptHash.Net.Hash.Base
                     result = new GenericHashResult()
                     {
                         Success = true,
-                        Message = MessageDictionary.Instance["Hash.Compute.Success"],
+                        Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
                         HashBytes = hash,
                         HashString = Encoding.Hexadecimal.ToHexString(hash)
                     };
