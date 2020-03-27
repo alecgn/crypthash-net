@@ -9,18 +9,18 @@
     <PackageIcon>crypthash-icon-new.png</PackageIcon>
     <RepositoryUrl>https://github.com/alecgn/crypthash-net</RepositoryUrl>
     <PackageTags>encryption decryption cryptography aes aes128 aes192 aes256 aes128cbc aes192cbc aes256cbc aes128gcm aes256gcm aescbc aesgcm aescbc128 aescbc192 aescbc256 aesgcm128 aesgcm256 cbc gcm hash md5 sha1 sha256 sha384 sha512 hmacmd5 hmac-md5 hmacsha1 hmac-sha1 hmacsha256 hmac-sha256 hmacsha384 hmac-sha384 hmacsha512 hmac-sha512 pbkdf2 bcrypt argon2 argon2id c# c-sharp security password authentication authenticated base64 hex hexadecimal encode decode</PackageTags>
-    <AssemblyVersion>3.5.0</AssemblyVersion>
-    <FileVersion>3.5.0</FileVersion>
+    <AssemblyVersion>3.5.1</AssemblyVersion>
+    <FileVersion>3.5.1</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/alecgn/crypthash-net</PackageProjectUrl>
-    <Version>3.5.0</Version>
-    <PackageReleaseNotes>Added AES_128_GCM support.</PackageReleaseNotes>
+    <Version>3.5.1</Version>
+    <PackageReleaseNotes>Updated dependencies.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="3.2.1" />
+    <PackageReference Include="BCrypt.Net-Next" Version="3.3.3" />
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="3.1.3" />
     <None Include="Icon\crypthash-icon-new.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
