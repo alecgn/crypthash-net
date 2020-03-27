@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -13,7 +13,7 @@ namespace CryptHash.Net.Hash
 {
     public class Argon2id
     {
-        public Argon2idHashResult ComputeHash(byte[] stringToBeHashedBytes, int iterations, int kBmemorySize, int degreeOfParallelism, int amountBytesToReturn, 
+        public Argon2idHashResult ComputeHash(byte[] stringToComputeHashBytes, int iterations, int kBmemorySize, int degreeOfParallelism, int amountBytesToReturn, 
             byte[] salt = null, byte[] associatedData = null, byte[] knownSecret = null)
         {
             try
@@ -21,7 +21,7 @@ namespace CryptHash.Net.Hash
                 salt = salt ?? CommonMethods.GenerateSalt(); // generate a 128 bits salt, if not provided
                 degreeOfParallelism = (degreeOfParallelism <= 0 ? Environment.ProcessorCount : degreeOfParallelism);
 
-                using (var argon2id = new Konscious.Security.Cryptography.Argon2id(stringToBeHashedBytes) {
+                using (var argon2id = new Konscious.Security.Cryptography.Argon2id(stringToComputeHashBytes) {
                     Salt = salt,
                     DegreeOfParallelism = degreeOfParallelism,
                     Iterations = iterations,
@@ -56,12 +56,12 @@ namespace CryptHash.Net.Hash
             }
         }
 
-        public Argon2idHashResult VerifyHash(byte[] hash, byte[] stringToBeHashedBytes, int iterations, int kBmemorySize, int degreeOfParallelism, int amountBytesToReturn,
+        public Argon2idHashResult VerifyHash(byte[] hash, byte[] stringToComputeHashBytes, int iterations, int kBmemorySize, int degreeOfParallelism, int amountBytesToReturn,
             byte[] salt = null, byte[] associatedData = null, byte[] knownSecret = null)
         {
             try
             {
-                var newHash = ComputeHash(stringToBeHashedBytes, iterations, kBmemorySize, degreeOfParallelism, amountBytesToReturn, salt, associatedData, knownSecret);
+                var newHash = ComputeHash(stringToComputeHashBytes, iterations, kBmemorySize, degreeOfParallelism, amountBytesToReturn, salt, associatedData, knownSecret);
 
                 return new Argon2idHashResult()
                 {

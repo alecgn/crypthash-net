@@ -1,11 +1,14 @@
 # CryptHash.NET 
-[![Build status (crypthash-net)](https://travis-ci.org/alecgn/crypthash-net.svg?branch=master)](https://travis-ci.org/alecgn/crypthash-net) [![Nuget version (CryptHash.Net)](https://img.shields.io/nuget/v/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) [![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) [![Tests status (crypthash-net)](https://img.shields.io/appveyor/tests/alecgn/crypthash-net)](https://ci.appveyor.com/project/alecgn/crypthash-net)
+[![Build status (crypthash-net)](https://github.com/alecgn/crypthash-net/workflows/build/badge.svg)](#)
+[![Nuget version (CryptHash.Net)](https://img.shields.io/nuget/v/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) 
+[![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) 
+[![Tests status (crypthash-net)](https://img.shields.io/appveyor/tests/alecgn/crypthash-net)](https://ci.appveyor.com/project/alecgn/crypthash-net)
 
-### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption and hashing.
+### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption, hashing and encoding/decoding.
 
-The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, and text/files hashing. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
+The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, text/files hashing and text encoding/decoding. File checksum functionality is also available, you can verify the integrity of downloaded files from the internet with the source supplied hash.
 
-The multi-target libray can be used in projects with any .NET implementation like **.NET Framework**, **.NET Core**, **Mono**, **Xamarin**, etc. Verify the .NET Standard compatibility table here: https://github.com/dotnet/standard/blob/master/docs/versions.md
+The multi-target libray (.NET Standard 2.0/2.1) can be used in projects with any .NET implementation like **.NET Framework**, **.NET Core**, **Mono**, **Xamarin**, etc. Verify the .NET Standard compatibility table here: https://github.com/dotnet/standard/blob/master/docs/versions.md
 
 Currently symmetric encryption algorithms are:  
 * **AES 128 bits** in **CBC Mode** with **HMACSHA256 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.  
@@ -14,22 +17,30 @@ Currently symmetric encryption algorithms are:
 * **AES 256 bits** in **CBC Mode** with **HMACSHA512 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
 * **AES 256 bits** in **GCM Mode** with **Authentication** and **Associated Data** (**AEAD**).
 
-Currently supported hash algorithms are:  
+Currently supported hash/KDF algorithms are:  
 * **MD5**  
 * **SHA1**  
 * **SHA256**  
 * **SHA384**  
 * **SHA512**  
+* **HMAC-MD5**  
+* **HMAC-SHA1**  
+* **HMAC-SHA256**  
+* **HMAC-SHA384**  
+* **HMAC-SHA512**  
 * **PBKDF2**  
 * **BCrypt**  
 * **Argon2id**
 
-Other encryption/hashing algorithms will be implemented in the future.
+Currently supported encoding types are:  
+* **Base64**  
+* **Hexadecimal**  
+
+Other encryption/hashing/encoding algorithms will be implemented in the future.
 
 NuGet package: https://www.nuget.org/packages/CryptHash.Net
 
-Compiled console utility and library binaries (self-contained / no framework dependent) for Windows (x86/x64/ARM), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v3.2.0.  When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".  
-Additionally in the above release link there're a Windows x64 and a Linux x64 versions native compiled using CoreRT, wich runs much faster than the other versions.
+Compiled console utility binaries (single file self-contained / no framework dependent) for Windows (x86/x64/ARM), Linux (x64/ARM -> Raspberry Pi) and Mac (x64): https://github.com/alecgn/crypthash-net/releases/tag/v3.4.0.  When running on Linux or Mac, don't forget to navigate to the program's folder and "**chmod +x crypthash**".  For usage help, call the program without patameters or pass the "--help" parameter.  
 
 **WARNING:** PER SEMANTIC VERSIONING, THE ABOVE RELEASE (3.x.x) IS NOT COMPATIBLE WITH PREVIOUS RELEASES (1.x.x and 2.x.x), AND AS SUCH MIGHT NOT PROPERLY DECRYPT DATA YOU ENCRYPTED WITH PREVIOUS VERSIONS.
 From this version (3.x.x) onwards, any new implementations will be planned so as to maintain compatibility and stability. There should be no more breaking-changes, as the project's architecture and design are already well defined. If there is a need to make a breaking-change going forward then a method for properly decryting data you encryted with version 3.x.x will be provided.

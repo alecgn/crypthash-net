@@ -1,4 +1,10 @@
-﻿using CryptHash.Net.Encryption.AES.AE;
+﻿/*
+ *      Alessandro Cagliostro, 2020
+ *      
+ *      https://github.com/alecgn
+ */
+
+using CryptHash.Net.Encryption.AES.AE;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -18,7 +24,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         {
             var appendEncryptionData = true;
 
-            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
+            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(_testString, _password, appendEncryptionDataToOutput: appendEncryptionData);
 
             Assert.IsTrue(aesEncryptionResult.Success, aesEncryptionResult.Message);
         }
@@ -28,7 +34,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
         {
             var appendEncryptionData = false;
 
-            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
+            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(_testString, _password, appendEncryptionDataToOutput: appendEncryptionData);
 
             Assert.IsTrue(aesEncryptionResult.Success, aesEncryptionResult.Message);
         }
@@ -40,11 +46,11 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
             var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
-            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
+            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(_testString, _password, appendEncryptionDataToOutput: appendEncryptionData);
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, hasEncryptionDataAppendedInInputString: appendEncryptionData);
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBase64String, _password, hasEncryptionDataAppendedInInput: appendEncryptionData);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;
@@ -62,12 +68,12 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
             var aesDecryptionResult = new AesDecryptionResult();
             string errorMessage = "";
 
-            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(_testString, _password, appendEncryptionDataToOutputString: appendEncryptionData);
+            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(_testString, _password, appendEncryptionDataToOutput: appendEncryptionData);
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBytes, Encoding.UTF8.GetBytes(_password),
-                    hasEncryptionDataAppendedInInputString: appendEncryptionData, aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBytes, System.Text.Encoding.UTF8.GetBytes(_password),
+                    hasEncryptionDataAppendedInInput: appendEncryptionData, aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (!aesDecryptionResult.Success)
                     errorMessage = aesDecryptionResult.Message;
@@ -149,7 +155,7 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
 
             if (aesEncryptionResult.Success)
             {
-                aesDecryptionResult = _aes256cbcHmacSha384.DecryptFile(testFilePath, testFilePath, Encoding.UTF8.GetBytes(_password), false, hasEncryptionDataAppendedInInputFile: appendEncryptionData,
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptFile(testFilePath, testFilePath, System.Text.Encoding.UTF8.GetBytes(_password), false, hasEncryptionDataAppendedInInputFile: appendEncryptionData,
                     aesEncryptionResult.Tag, aesEncryptionResult.Salt, aesEncryptionResult.IV);
 
                 if (aesDecryptionResult.Success)
@@ -163,6 +169,28 @@ namespace CryptHash.Net.Tests.Encryption.AES.AE
                 errorMessage = aesEncryptionResult.Message;
 
             Assert.IsTrue((aesEncryptionResult.Success && aesDecryptionResult.Success && testFileStringContentRead.Equals(_testString)), errorMessage);
+        }
+
+        [TestMethod]
+        public void Test_Encrypt_Decrypt_String_without_password()
+        {
+            var aesDecryptionResult = new AesDecryptionResult();
+            string errorMessage = "";
+
+            var aesEncryptionResult = _aes256cbcHmacSha384.EncryptString(System.Text.Encoding.UTF8.GetBytes(_testString));
+
+            if (aesEncryptionResult.Success)
+            {
+                aesDecryptionResult = _aes256cbcHmacSha384.DecryptString(aesEncryptionResult.EncryptedDataBytes, aesEncryptionResult.Key, aesEncryptionResult.IV,
+                    aesEncryptionResult.AuthenticationKey, aesEncryptionResult.Tag);
+
+                if (!aesDecryptionResult.Success)
+                    errorMessage = aesDecryptionResult.Message;
+            }
+            else
+                errorMessage = aesEncryptionResult.Message;
+
+            Assert.IsTrue((aesEncryptionResult.Success && aesDecryptionResult.Success && aesDecryptionResult.DecryptedDataString.Equals(_testString)), errorMessage);
         }
     }
 }

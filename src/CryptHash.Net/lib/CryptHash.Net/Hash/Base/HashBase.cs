@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -11,6 +11,7 @@ using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
 using CryptHash.Net.Hash.HashResults;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace CryptHash.Net.Hash.Base
 {
@@ -19,7 +20,8 @@ namespace CryptHash.Net.Hash.Base
         public event OnHashProgressHandler OnHashProgress;
 
 
-        internal GenericHashResult ComputeHash(Enums.HashAlgorithm hashAlgorithm, byte[] bytesToComputeHash)
+        internal GenericHashResult ComputeHash(Enums.HashAlgorithm hashAlgorithm, byte[] bytesToComputeHash,
+            int offset = 0, int count = 0)
         {
             if (bytesToComputeHash == null || bytesToComputeHash.Length <= 0)
             {
@@ -30,59 +32,23 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            string hashAlgorithmName;
-
-            switch (hashAlgorithm)
-            {
-                case Enums.HashAlgorithm.MD5:
-                    {
-                        hashAlgorithmName = "MD5";
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA1:
-                    {
-                        hashAlgorithmName = "SHA1";
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA256:
-                    {
-                        hashAlgorithmName = "SHA256";
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA384:
-                    {
-                        hashAlgorithmName = "SHA384";
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA512:
-                    {
-                        hashAlgorithmName = "SHA512";
-                    }
-                    break;
-                case Enums.HashAlgorithm.BCrypt:
-                default:
-                    {
-                        return new GenericHashResult()
-                        {
-                            Success = false,
-                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hashAlgorithm.ToString()}\"."
-                        };
-                    }
-            }
-
             GenericHashResult result = null;
 
             try
             {
-                using (var hashAlg = System.Security.Cryptography.HashAlgorithm.Create(hashAlgorithmName))
+                using (var hashAlg = (HashAlgorithm)CryptoConfig.CreateFromName(hashAlgorithm.ToString()))
                 {
-                    byte[] hash = hashAlg.ComputeHash(bytesToComputeHash);
+                    //offset = (offset == 0 ? 0 : offset);
+                    count = (count == 0 ? bytesToComputeHash.Length : count);
+
+                    byte[] hash = hashAlg.ComputeHash(bytesToComputeHash, offset, count);
 
                     result = new GenericHashResult()
                     {
                         Success = true,
-                        Message = MessageDictionary.Instance["Hash.Compute.Success"],
-                        HashBytes = hash
+                        Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
+                        HashBytes = hash,
+                        HashString = Encoding.Hexadecimal.ToHexString(hash)
                     };
                 }
             }
@@ -98,7 +64,8 @@ namespace CryptHash.Net.Hash.Base
             return result;
         }
 
-        internal GenericHashResult ComputeHash(Enums.HashAlgorithm hashAlgorithm, string stringToComputeHash)
+        internal GenericHashResult ComputeHash(Enums.HashAlgorithm hashAlgorithm, string stringToComputeHash,
+            int offset = 0, int count = 0)
         {
             if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
@@ -109,16 +76,13 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            var bytesToBeHashed = Encoding.UTF8.GetBytes(stringToComputeHash);
-            var result = ComputeHash(hashAlgorithm, bytesToBeHashed);
-
-            if (result.Success)
-                result.HashString = CommonMethods.ConvertByteArrayToHexString(result.HashBytes);
-
-            return result;
+            var stringToComputeHashBytes = System.Text.Encoding.UTF8.GetBytes(stringToComputeHash);
+            
+            return ComputeHash(hashAlgorithm, stringToComputeHashBytes, offset, count);
         }
 
-        internal GenericHashResult ComputeFileHash(Enums.HashAlgorithm hashAlgorithm, string filePathToComputeHash)
+        internal GenericHashResult ComputeFileHash(Enums.HashAlgorithm hashAlgorithm, string filePathToComputeHash, 
+            long offset = 0, long count = 0)
         {
             if (!File.Exists(filePathToComputeHash))
             {
@@ -129,46 +93,6 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            string hashAlgorithmName;
-
-            switch (hashAlgorithm)
-            {
-                case Enums.HashAlgorithm.MD5:
-                    {
-                        hashAlgorithmName = "MD5";
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA1:
-                    {
-                        hashAlgorithmName = "SHA1";
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA256:
-                    {
-                        hashAlgorithmName = "SHA256";
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA384:
-                    {
-                        hashAlgorithmName = "SHA384";
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA512:
-                    {
-                        hashAlgorithmName = "SHA512";
-                    }
-                    break;
-                case Enums.HashAlgorithm.BCrypt:
-                default:
-                    {
-                        return new GenericHashResult()
-                        {
-                            Success = false,
-                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hashAlgorithm.ToString()}\"."
-                        };
-                    }
-            }
-
             GenericHashResult result = null;
 
             try
@@ -177,13 +101,13 @@ namespace CryptHash.Net.Hash.Base
 
                 using (var fStream = new FileStream(filePathToComputeHash, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-                    var startPosition = 0;
-                    var endPosition = fStream.Length;
-                    fStream.Position = startPosition;
+                    //offset = (offset == 0 ? 0 : offset);
+                    count = (count == 0 ? fStream.Length : count);
+                    fStream.Position = offset;
                     byte[] buffer = new byte[(1024 * 4)];
-                    long amount = (endPosition - startPosition);
+                    long amount = (count - offset);
 
-                    using (var hashAlg = System.Security.Cryptography.HashAlgorithm.Create(hashAlgorithmName))
+                    using (var hashAlg = (HashAlgorithm)CryptoConfig.CreateFromName(hashAlgorithm.ToString()))
                     {
                         int percentageDone = 0;
 
@@ -200,7 +124,7 @@ namespace CryptHash.Net.Hash.Base
                                 else
                                     hashAlg.TransformFinalBlock(buffer, 0, bytesRead);
 
-                                var tmpPercentageDone = (int)(fStream.Position * 100 / endPosition);
+                                var tmpPercentageDone = (int)(fStream.Position * 100 / count);
 
                                 if (tmpPercentageDone != percentageDone)
                                 {
@@ -221,7 +145,7 @@ namespace CryptHash.Net.Hash.Base
                 {
                     Success = true,
                     Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
-                    HashString = CommonMethods.ConvertByteArrayToHexString(hash),
+                    HashString = Encoding.Hexadecimal.ToHexString(hash),
                     HashBytes = hash
                 };
             }
@@ -237,17 +161,11 @@ namespace CryptHash.Net.Hash.Base
             return result;
         }
 
-        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, string base64HashString, string stringToVerifyHash)
-        {
-            var hashBytes = Convert.FromBase64String(base64HashString);
-            var stringToVerifyHashBytes = Encoding.UTF8.GetBytes(stringToVerifyHash);
 
-            return VerifyHash(hashAlgorithm, hashBytes, stringToVerifyHashBytes);
-        }
-
-        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, byte[] bytesToVerifyHash)
+        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, byte[] bytesToVerifyHash,
+            int offset = 0, int count = 0)
         {
-            var hashResult = ComputeHash(hashAlgorithm, bytesToVerifyHash);
+            var hashResult = ComputeHash(hashAlgorithm, bytesToVerifyHash, offset, count);
 
             if (hashResult.Success)
             {
@@ -260,16 +178,27 @@ namespace CryptHash.Net.Hash.Base
             return hashResult;
         }
 
-        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string base64HashString, string filePathToVerifyHash)
+        internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string stringToVerifyHash,
+            int offset = 0, int count = 0)
         {
-            var hashBytes = Convert.FromBase64String(base64HashString);
+            var hashBytes = Encoding.Hexadecimal.ToByteArray(hashHexString);
+            var stringToVerifyHashBytes = System.Text.Encoding.UTF8.GetBytes(stringToVerifyHash);
 
-            return VerifyFileHash(hashAlgorithm, hashBytes, filePathToVerifyHash);
+            return VerifyHash(hashAlgorithm, hashBytes, stringToVerifyHashBytes, offset, count);
         }
 
-        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, string filePathToVerifyHash)
+        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string filePathToVerifyHash,
+            long offset = 0, long count = 0)
         {
-            var hashResult = ComputeFileHash(hashAlgorithm, filePathToVerifyHash);
+            var hashBytes = Encoding.Hexadecimal.ToByteArray(hashHexString);
+
+            return VerifyFileHash(hashAlgorithm, hashBytes, filePathToVerifyHash, offset, count);
+        }
+
+        internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, byte[] hashBytes, string filePathToVerifyHash,
+            long offset = 0, long count = 0)
+        {
+            var hashResult = ComputeFileHash(hashAlgorithm, filePathToVerifyHash, offset, count);
 
             if (hashResult.Success)
             {

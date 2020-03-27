@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -11,39 +11,93 @@ namespace CryptHash.Net.Hash.Hash
 {
     public class SHA1 : HashBase
     {
-        public GenericHashResult ComputeHash(byte[] bytesToComputeHash)
+        /// <summary>
+        /// Computes the SHA1 hash of an input byte array.
+        /// </summary>
+        /// <param name="bytesToComputeHash">The input byte array to compute the SHA1 hash.</param>
+        /// <param name="offset">The offset into the byte array from wich to begin reading data.</param>
+        /// <param name="count">The number of bytes in the array to read after the offset.</param>
+        /// <returns>GenericHashResult</returns>
+        public GenericHashResult ComputeHash(byte[] bytesToComputeHash, int offset = 0, int count = 0)
         {
-            return base.ComputeHash(Enums.HashAlgorithm.SHA1, bytesToComputeHash);
+            return base.ComputeHash(Enums.HashAlgorithm.SHA1, bytesToComputeHash, offset, count);
         }
 
-        public GenericHashResult ComputeHash(string stringToComputeHash)
+
+        /// <summary>
+        /// Computes the SHA1 hash of an input string.
+        /// </summary>
+        /// <param name="stringToComputeHash">The input string to compute the SHA1 hash.</param>
+        /// <param name="offset">The offset into the byte array from wich to begin reading data.</param>
+        /// <param name="count">The number of bytes in the array to read after the offset.</param>
+        /// <returns>GenericHashResult</returns>
+        public GenericHashResult ComputeHash(string stringToComputeHash, int offset = 0, int count = 0)
         {
-            return base.ComputeHash(Enums.HashAlgorithm.SHA1, stringToComputeHash);
+            return base.ComputeHash(Enums.HashAlgorithm.SHA1, stringToComputeHash, offset, count);
         }
 
-        public GenericHashResult ComputeFileHash(string filePathToComputeHash)
+        /// <summary>
+        /// Computes the SHA1 hash of an input file.
+        /// </summary>
+        /// <param name="filePathToComputeHash">The input file path to compute the SHA1 hash.</param>
+        /// <param name="offset">The offset into the FileStream from wich to begin reading data.</param>
+        /// <param name="count">The number of bytes in the FileStream to read after the offset.</param>
+        /// <returns>GenericHashResult</returns>
+        public GenericHashResult ComputeFileHash(string filePathToComputeHash, long offset = 0, long count = 0)
         {
-            return base.ComputeFileHash(Enums.HashAlgorithm.SHA1, filePathToComputeHash);
+            return base.ComputeFileHash(Enums.HashAlgorithm.SHA1, filePathToComputeHash, offset, count);
         }
 
-        public GenericHashResult VerifyHash(string base64HashString, string stringToVerifyHash)
+        /// <summary>
+        /// Verifies the SHA1 hash of an input byte array.
+        /// </summary>
+        /// <param name="hashBytes">The pre-computed SHA1 hash byte array.</param>
+        /// <param name="bytesToVerifyHash">The input byte array to compute and verify the SHA1 hash.</param>
+        /// <param name="offset">The offset into the byte array from wich to begin reading data.</param>
+        /// <param name="count">The number of bytes in the array to read after the offset.</param>
+        /// <returns>GenericHashResult</returns>
+        public GenericHashResult VerifyHash(byte[] hashBytes, byte[] bytesToVerifyHash, int offset = 0, int count = 0)
         {
-            return base.VerifyHash(Enums.HashAlgorithm.SHA1, base64HashString, stringToVerifyHash);
+            return base.VerifyHash(Enums.HashAlgorithm.SHA1, hashBytes, bytesToVerifyHash, offset, count);
         }
 
-        public GenericHashResult VerifyHash(byte[] hashBytes, byte[] bytesToVerifyHash)
+        /// <summary>
+        /// Verifies the SHA1 hash of an input string.
+        /// </summary>
+        /// <param name="hashHexString">The pre-computed SHA1 hash hexadecimal encoded string.</param>
+        /// <param name="stringToVerifyHash">The input string to compute and verify the SHA1 hash.</param>
+        /// <param name="offset">The offset into the byte array from wich to begin reading data.</param>
+        /// <param name="count">The number of bytes in the array to read after the offset.</param>
+        /// <returns>GenericHashResult</returns>
+        public GenericHashResult VerifyHash(string hashHexString, string stringToVerifyHash, int offset = 0, int count = 0)
         {
-            return base.VerifyHash(Enums.HashAlgorithm.SHA1, hashBytes, bytesToVerifyHash);
+            return base.VerifyHash(Enums.HashAlgorithm.SHA1, hashHexString, stringToVerifyHash, offset, count);
         }
 
-        public GenericHashResult VerifyFileHash(string base64HashString, string filePathToVerifyHash)
+        /// <summary>
+        /// Verifies the SHA1 of an input file.
+        /// </summary>
+        /// <param name="hashHexString">The pre-computed SHA1 hash hexadecimal encoded string.</param>
+        /// <param name="filePathToVerifyHash">The input file path to compute and verify the SHA1 hash.</param>
+        /// <param name="offset">The offset into the FileStream from wich to begin reading data.</param>
+        /// <param name="count">The number of bytes in the FileStream to read after the offset.</param>
+        /// <returns>GenericHashResult</returns>
+        public GenericHashResult VerifyFileHash(string hashHexString, string filePathToVerifyHash, long offset = 0, long count = 0)
         {
-            return base.VerifyFileHash(Enums.HashAlgorithm.SHA1, base64HashString, filePathToVerifyHash);
+            return base.VerifyFileHash(Enums.HashAlgorithm.SHA1, hashHexString, filePathToVerifyHash, offset, count);
         }
 
-        public GenericHashResult VerifyFileHash(byte[] hashBytes, string filePathToVerifyHash)
+        /// <summary>
+        /// Verifies the SHA1 of an input file.
+        /// </summary>
+        /// <param name="hashBytes">The pre-computed SHA1 hash byte array.</param>
+        /// <param name="filePathToVerifyHash">The input file path to compute and verify the SHA1 hash.</param>
+        /// <param name="offset">The offset into the FileStream from wich to begin reading data.</param>
+        /// <param name="count">The number of bytes in the FileStream to read after the offset.</param>
+        /// <returns>GenericHashResult</returns>
+        public GenericHashResult VerifyFileHash(byte[] hashBytes, string filePathToVerifyHash, long offset = 0, long count = 0)
         {
-            return base.VerifyFileHash(Enums.HashAlgorithm.SHA1, hashBytes, filePathToVerifyHash);
+            return base.VerifyFileHash(Enums.HashAlgorithm.SHA1, hashBytes, filePathToVerifyHash, offset, count);
         }
     }
 }

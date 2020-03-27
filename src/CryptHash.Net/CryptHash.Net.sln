@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bin", "bin", "{32203E19-E62
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "crypthash", "bin\crypthash\crypthash.csproj", "{D1ADED4E-2C11-4F18-8883-DA4613B09446}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptHash.Net.Tests", "lib\CryptHash.Net.Tests\CryptHash.Net.Tests.csproj", "{B4BD2E65-7A37-4027-88AD-30B217B42E02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptHash.Net.Tests", "lib\CryptHash.Net.Tests\CryptHash.Net.Tests.csproj", "{B4BD2E65-7A37-4027-88AD-30B217B42E02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

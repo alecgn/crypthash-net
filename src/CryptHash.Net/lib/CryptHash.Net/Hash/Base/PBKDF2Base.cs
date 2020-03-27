@@ -1,128 +1,164 @@
-﻿using CryptHash.Net.Util;
-using CryptHash.Net.Hash.HashResults;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System;
+﻿/*
+ *      Alessandro Cagliostro, 2020
+ *      
+ *      https://github.com/alecgn
+ */
 
-namespace CryptHash.Net.Hash
-{
-    public abstract class PBKDF2Base
-    {
-        private const int _hashBitSize = 256;
-        private const int _hashBytesLength = (_hashBitSize / 8);
+//using CryptHash.Net.Util;
+//using CryptHash.Net.Hash.HashResults;
+//using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+//using System;
 
-        private static readonly int _saltBitSize = 128;
-        private static readonly int _saltBytesLength = (_saltBitSize / 8);
+//namespace CryptHash.Net.Hash
+//{
+//    public abstract class PBKDF2Base
+//    {
+//        private static readonly int _saltBitSize = 128;
+//        private static readonly int _saltBytesLength = (_saltBitSize / 8);
 
-        private const int _iterations = 100000;
+//        private static readonly int _iterationsForKeyDerivationFunction = 100000;
 
-        private const KeyDerivationPrf _prf = KeyDerivationPrf.HMACSHA1;
+//        internal PBKDF2HashResult ComputeHash(Enums.HMACAlgorithm hmacAlgorithm, string stringToComputeHash, byte[] salt = null, 
+//            int iterationCount = 0)
+//        {
+//            if (string.IsNullOrWhiteSpace(stringToComputeHash))
+//            {
+//                return new PBKDF2HashResult()
+//                {
+//                    Success = false,
+//                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+//                };
+//            }
 
-        internal GenericHashResult ComputeHash(string stringToComputeHash, byte[] salt = null, KeyDerivationPrf prf = _prf, int iterationCount = _iterations,
-            int numBytesRequested = _hashBytesLength)
-        {
-            if (string.IsNullOrWhiteSpace(stringToComputeHash))
-            {
-                return new GenericHashResult()
-                {
-                    Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
-                };
-            }
+//            KeyDerivationPrf prf;
 
-            //salt = salt ?? CommonMethods.GenerateSalt(_saltBytesLength);
-            salt = salt ?? CommonMethods.GenerateSalt();
-            byte[] hash;
+//            switch (hmacAlgorithm)
+//            {
+//                case Enums.HMACAlgorithm.HMACSHA1:
+//                    {
+//                        prf = KeyDerivationPrf.HMACSHA1;
+//                    }
+//                    break;
+//                case Enums.HMACAlgorithm.HMACSHA256:
+//                    {
+//                        prf = KeyDerivationPrf.HMACSHA256;
+//                    }
+//                    break;
+//                case Enums.HMACAlgorithm.HMACSHA512:
+//                    {
+//                        prf = KeyDerivationPrf.HMACSHA512;
+//                    }
+//                    break;
+//                default:
+//                    {
+//                        return new PBKDF2HashResult()
+//                        {
+//                            Success = false,
+//                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hmacAlgorithm.ToString()}\"."
+//                        };
+//                    }
+//            }
 
-            try
-            {
-                hash = KeyDerivation.Pbkdf2(
-                    password: stringToComputeHash,
-                    salt: salt,
-                    prf: prf,
-                    iterationCount: iterationCount,
-                    numBytesRequested: numBytesRequested
-                );
+//            //salt = salt ?? CommonMethods.GenerateSalt(_saltBytesLength);
+//            salt = salt ?? CommonMethods.GenerateSalt();
+//            iterationCount = (iterationCount == 0 ? _iterationsForKeyDerivationFunction : iterationCount);
+//            byte[] hash;
 
-                var hashBytes = new byte[(_saltBytesLength + _hashBytesLength)];
-                Array.Copy(salt, 0, hashBytes, 0, _saltBytesLength);
-                Array.Copy(hash, 0, hashBytes, _saltBytesLength, _hashBytesLength);
+//            try
+//            {
+//                hash = KeyDerivation.Pbkdf2(
+//                    password: stringToComputeHash,
+//                    salt: salt,
+//                    prf: prf,
+//                    iterationCount: iterationCount,
+//                    numBytesRequested: HMACOutputLengthDictionary.Instance[hmacAlgorithm]
+//                );
 
-                return new GenericHashResult()
-                {
-                    Success = true,
-                    Message = MessageDictionary.Instance["Hash.Compute.Success"],
-                    HashString = Convert.ToBase64String(hashBytes),
-                    HashBytes = hashBytes
-                };
-            }
-            catch (Exception ex)
-            {
-                return new GenericHashResult()
-                {
-                    Success = false,
-                    Message = ex.ToString()
-                };
-            }
-        }
+//                var hashBytes = new byte[(_saltBytesLength + HMACOutputLengthDictionary.Instance[hmacAlgorithm])];
+//                Array.Copy(salt, 0, hashBytes, 0, _saltBytesLength);
+//                Array.Copy(hash, 0, hashBytes, _saltBytesLength, HMACOutputLengthDictionary.Instance[hmacAlgorithm]);
 
-        internal GenericHashResult VerifyHash(string stringToBeVerified, string hash, KeyDerivationPrf prf = _prf, int iterationCount = _iterations,
-            int numBytesRequested = _hashBytesLength)
-        {
-            if (string.IsNullOrWhiteSpace(stringToBeVerified))
-            {
-                return new GenericHashResult()
-                {
-                    Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
-                };
-            }
+//                return new PBKDF2HashResult()
+//                {
+//                    Success = true,
+//                    Message = MessageDictionary.Instance["Hash.Compute.Success"],
+//                    HashString = Convert.ToBase64String(hashBytes),
+//                    HashBytes = hashBytes,
+//                    Salt = salt,
+//                    PRF = hmacAlgorithm,
+//                    Iterations = iterationCount
+//                };
+//            }
+//            catch (Exception ex)
+//            {
+//                return new PBKDF2HashResult()
+//                {
+//                    Success = false,
+//                    Message = ex.ToString()
+//                };
+//            }
+//        }
 
-            if (string.IsNullOrWhiteSpace(hash))
-            {
-                return new GenericHashResult()
-                {
-                    Success = false,
-                    Message = MessageDictionary.Instance["Hash.VerificationHashRequired"]
-                };
-            }
+//        internal PBKDF2HashResult VerifyHash(Enums.HMACAlgorithm hmacAlgorithm, string stringToBeVerified, string hash, 
+//            int iterationCount = 0)
+//        {
+//            if (string.IsNullOrWhiteSpace(stringToBeVerified))
+//            {
+//                return new PBKDF2HashResult()
+//                {
+//                    Success = false,
+//                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+//                };
+//            }
 
-            var hashWithSaltBytes = Convert.FromBase64String(hash);
+//            if (string.IsNullOrWhiteSpace(hash))
+//            {
+//                return new PBKDF2HashResult()
+//                {
+//                    Success = false,
+//                    Message = MessageDictionary.Instance["Hash.VerificationHashRequired"]
+//                };
+//            }
 
-            if (hashWithSaltBytes.Length != (_saltBytesLength + _hashBytesLength))
-            {
-                return new GenericHashResult()
-                {
-                    Success = false,
-                    Message = MessageDictionary.Instance["Common.IncorrectInputLengthError"]
-                };
-            }
+//            var hashWithSaltBytes = Convert.FromBase64String(hash);
 
-            var saltBytes = new byte[_saltBytesLength];
-            Array.Copy(hashWithSaltBytes, 0, saltBytes, 0, _saltBytesLength);
+//            if (hashWithSaltBytes.Length != (_saltBytesLength + HMACOutputLengthDictionary.Instance[hmacAlgorithm]))
+//            {
+//                return new PBKDF2HashResult()
+//                {
+//                    Success = false,
+//                    Message = MessageDictionary.Instance["Common.IncorrectInputLengthError"]
+//                };
+//            }
 
-            var hashBytes = new byte[_hashBytesLength];
-            Array.Copy(hashWithSaltBytes, _saltBytesLength, hashBytes, 0, _hashBytesLength);
+//            var saltBytes = new byte[_saltBytesLength];
+//            Array.Copy(hashWithSaltBytes, 0, saltBytes, 0, _saltBytesLength);
 
-            var result = ComputeHash(stringToBeVerified, saltBytes, prf, iterationCount, numBytesRequested);
+//            var hashBytes = new byte[HMACOutputLengthDictionary.Instance[hmacAlgorithm]];
+//            Array.Copy(hashWithSaltBytes, _saltBytesLength, hashBytes, 0, HMACOutputLengthDictionary.Instance[hmacAlgorithm]);
 
-            if (string.Equals(result.HashString, hash))
-            {
-                return new GenericHashResult()
-                {
-                    Success = true,
-                    Message = MessageDictionary.Instance["Hash.Match"],
-                    HashString = hash,
-                    HashBytes = result.HashBytes
-                };
-            }
-            else
-            {
-                return new GenericHashResult()
-                {
-                    Success = false,
-                    Message = MessageDictionary.Instance["Hash.DoesNotMatch"]
-                };
-            }
-        }
-    }
-}
+//            var result = ComputeHash(hmacAlgorithm, stringToBeVerified, saltBytes, iterationCount);
+
+//            if (string.Equals(result.HashString, hash))
+//            {
+//                return new PBKDF2HashResult()
+//                {
+//                    Success = true,
+//                    Message = MessageDictionary.Instance["Hash.Match"],
+//                    HashString = hash,
+//                    HashBytes = result.HashBytes,
+//                    PRF = hmacAlgorithm,
+//                    Salt = saltBytes
+//                };
+//            }
+//            else
+//            {
+//                return new PBKDF2HashResult()
+//                {
+//                    Success = false,
+//                    Message = MessageDictionary.Instance["Hash.DoesNotMatch"]
+//                };
+//            }
+//        }
+//    }
+//}

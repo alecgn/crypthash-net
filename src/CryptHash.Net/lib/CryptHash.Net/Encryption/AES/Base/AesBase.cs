@@ -1,17 +1,16 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
 
-using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Encryption.AES.Enums;
 using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
+using System;
+using System.IO;
+using System.Security.Cryptography;
 
 namespace CryptHash.Net.Encryption.AES.Base
 {
@@ -20,11 +19,8 @@ namespace CryptHash.Net.Encryption.AES.Base
         #region events
 
         public event OnEncryptionMessageHandler OnEncryptionMessage;
-
         public event OnDecryptionMessageHandler OnDecryptionMessage;
-
         public event OnEncryptionProgressHandler OnEncryptionProgress;
-
         public event OnDecryptionProgressHandler OnDecryptionProgress;
 
         #endregion events
@@ -32,10 +28,8 @@ namespace CryptHash.Net.Encryption.AES.Base
 
         #region fields
 
-        private byte[] _key;
-        private byte[] _IV;
-        private CipherMode _cipherMode;
-        private PaddingMode _paddingMode;
+        private byte[] _key = null;
+        private byte[] _IV = null;
 
         #endregion fields
 
@@ -44,12 +38,10 @@ namespace CryptHash.Net.Encryption.AES.Base
 
         internal AesBase() { }
 
-        internal AesBase(byte[] key, byte[] IV, CipherMode cipherMode, PaddingMode paddingMode)
+        internal AesBase(byte[] key, byte[] IV)
         {
             _key = key;
             _IV = IV;
-            _cipherMode = cipherMode;
-            _paddingMode = paddingMode;
         }
 
         #endregion constructors
@@ -69,10 +61,8 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            _key = key;
-            _IV = IV;
-            _cipherMode = cipherMode;
-            _paddingMode = paddingMode;
+            _key = key ?? _key;
+            _IV = IV ?? _IV;
 
             byte[] encryptedData = null;
 
@@ -107,8 +97,8 @@ namespace CryptHash.Net.Encryption.AES.Base
                     else
                         aesManaged.IV = _IV;
 
-                    aesManaged.Mode = _cipherMode;
-                    aesManaged.Padding = _paddingMode;
+                    aesManaged.Mode = cipherMode;
+                    aesManaged.Padding = paddingMode;
 
                     using (var encryptor = aesManaged.CreateEncryptor(_key, _IV))
                     {
@@ -144,12 +134,12 @@ namespace CryptHash.Net.Encryption.AES.Base
                 EncryptedDataBase64String = Convert.ToBase64String(encryptedData),
                 Key = _key,
                 IV = _IV,
-                AesCipherMode = (AesCipherMode)_cipherMode,
-                PaddingMode = _paddingMode
+                AesCipherMode = (AesCipherMode)cipherMode,
+                PaddingMode = paddingMode
             };
         }
 
-        internal AesDecryptionResult DecryptWithMemoryStream(byte[] encryptedData, byte[] key, byte[] IV, CipherMode cipherMode = CipherMode.CBC,
+        internal AesDecryptionResult DecryptWithMemoryStream(byte[] encryptedData, byte[] key = null, byte[] IV = null, CipherMode cipherMode = CipherMode.CBC,
             PaddingMode paddingMode = PaddingMode.PKCS7)
         {
             if (encryptedData == null || encryptedData.Length == 0)
@@ -161,7 +151,10 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            if (key == null)
+            _key = key ?? _key;
+            _IV = IV ?? _IV;
+
+            if (_key == null)
             {
                 return new AesDecryptionResult()
                 {
@@ -170,7 +163,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            if (IV == null)
+            if (_IV == null)
             {
                 return new AesDecryptionResult()
                 {
@@ -178,11 +171,6 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Message = MessageDictionary.Instance["Decryption.NullIVError"]
                 };
             }
-
-            _key = key;
-            _IV = IV;
-            _cipherMode = cipherMode;
-            _paddingMode = paddingMode;
 
             byte[] decryptedData = null;
 
@@ -202,8 +190,8 @@ namespace CryptHash.Net.Encryption.AES.Base
                     }
 
                     aesManaged.IV = _IV;
-                    aesManaged.Mode = _cipherMode;
-                    aesManaged.Padding = _paddingMode;
+                    aesManaged.Mode = cipherMode;
+                    aesManaged.Padding = paddingMode;
 
                     using (var decryptor = aesManaged.CreateDecryptor(_key, _IV))
                     {
@@ -236,11 +224,11 @@ namespace CryptHash.Net.Encryption.AES.Base
                 Success = true,
                 Message = MessageDictionary.Instance["Decryption.DecryptSuccess"],
                 DecryptedDataBytes = decryptedData,
-                DecryptedDataString = Encoding.UTF8.GetString(decryptedData),
+                DecryptedDataString = System.Text.Encoding.UTF8.GetString(decryptedData),
                 Key = _key,
                 IV = _IV,
-                AesCipherMode = (AesCipherMode)_cipherMode,
-                PaddingMode = _paddingMode
+                AesCipherMode = (AesCipherMode)cipherMode,
+                PaddingMode = paddingMode
             };
         }
 
@@ -276,10 +264,8 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            _key = key;
-            _IV = IV;
-            _cipherMode = cipherMode;
-            _paddingMode = paddingMode;
+            _key = key ?? _key;
+            _IV = IV ?? _IV;
 
             bool pathsEqual = encryptedFilePath.Equals(sourceFilePath, StringComparison.InvariantCultureIgnoreCase);
 
@@ -314,8 +300,8 @@ namespace CryptHash.Net.Encryption.AES.Base
                     else
                         aesManaged.IV = _IV;
 
-                    aesManaged.Mode = _cipherMode;
-                    aesManaged.Padding = _paddingMode;
+                    aesManaged.Mode = cipherMode;
+                    aesManaged.Padding = paddingMode;
 
                     using (var encryptor = aesManaged.CreateEncryptor(_key, _IV))
                     {
@@ -373,8 +359,8 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Message = message,
                     Key = _key,
                     IV = _IV,
-                    AesCipherMode = (AesCipherMode)_cipherMode,
-                    PaddingMode = _paddingMode
+                    AesCipherMode = (AesCipherMode)cipherMode,
+                    PaddingMode = paddingMode
                 };
             }
             catch (Exception ex)
@@ -419,7 +405,10 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            if (key == null)
+            _key = key ?? _key;
+            _IV = IV ?? _IV;
+
+            if (_key == null)
             {
                 return new AesDecryptionResult()
                 {
@@ -428,7 +417,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            if (IV == null)
+            if (_IV == null)
             {
                 return new AesDecryptionResult()
                 {
@@ -446,11 +435,6 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            _key = key;
-            _IV = IV;
-            _cipherMode = cipherMode;
-            _paddingMode = paddingMode;
-
             bool pathsEqual = decryptedFilePath.Equals(encryptedFilePath, StringComparison.InvariantCultureIgnoreCase);
 
             try
@@ -459,8 +443,8 @@ namespace CryptHash.Net.Encryption.AES.Base
                 {
                     aesManaged.Key = _key;
                     aesManaged.IV = _IV;
-                    aesManaged.Mode = _cipherMode;
-                    aesManaged.Padding = _paddingMode;
+                    aesManaged.Mode = cipherMode;
+                    aesManaged.Padding = paddingMode;
 
                     using (FileStream decryptedFs = File.Open((pathsEqual ? decryptedFilePath + "_tmpdecrypt" : decryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
                     {
@@ -528,8 +512,8 @@ namespace CryptHash.Net.Encryption.AES.Base
                     Message = message,
                     Key = _key,
                     IV = _IV,
-                    AesCipherMode = (AesCipherMode)_cipherMode,
-                    PaddingMode = _paddingMode
+                    AesCipherMode = (AesCipherMode)cipherMode,
+                    PaddingMode = paddingMode
                 };
             }
             catch (Exception ex)

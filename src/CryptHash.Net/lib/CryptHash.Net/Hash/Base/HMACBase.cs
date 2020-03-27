@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -11,6 +11,7 @@ using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
 using CryptHash.Net.Hash.HashResults;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace CryptHash.Net.Hash.Base
 {
@@ -19,7 +20,8 @@ namespace CryptHash.Net.Hash.Base
         public event OnHashProgressHandler OnHashProgress;
 
 
-        internal HMACHashResult ComputeHMAC(Enums.HashAlgorithm hashAlgorithm, byte[] bytesToComputeHMAC, byte[] key = null)
+        internal HMACHashResult ComputeHMAC(Enums.HMACAlgorithm hmacAlgorithm, byte[] bytesToComputeHMAC, byte[] key = null,
+            int offset = 0, int count = 0)
         {
             if (bytesToComputeHMAC == null || bytesToComputeHMAC.Length <= 0)
             {
@@ -30,79 +32,29 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            string hashAlgorithmHMACName;
-            int hashAlgorithmHMACKeySize;
-
-            switch (hashAlgorithm)
-            {
-                case Enums.HashAlgorithm.MD5:
-                    {
-                        hashAlgorithmHMACName = "HMACMD5";
-                        hashAlgorithmHMACKeySize = 128;
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA1:
-                    {
-                        hashAlgorithmHMACName = "HMACSHA1";
-                        hashAlgorithmHMACKeySize = 160;
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA256:
-                    {
-                        hashAlgorithmHMACName = "HMACSHA256";
-                        hashAlgorithmHMACKeySize = 256;
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA384:
-                    {
-                        hashAlgorithmHMACName = "HMACSHA384";
-                        hashAlgorithmHMACKeySize = 384;
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA512:
-                    {
-                        hashAlgorithmHMACName = "HMACSHA512";
-                        hashAlgorithmHMACKeySize = 512;
-                    }
-                    break;
-                case Enums.HashAlgorithm.BCrypt:
-                default:
-                    {
-                        return new HMACHashResult()
-                        {
-                            Success = false,
-                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hashAlgorithm.ToString()}\"."
-                        };
-                    }
-            }
-
-            if (key != null && key.Length != hashAlgorithmHMACKeySize)
-            {
-                //throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmHMACName}.", nameof(key));
-                return new HMACHashResult() {
-                    Success = false,
-                    Message = $"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({key.Length})."
-                };
-            }
-
-            if (key == null)
-                key = CommonMethods.GenerateRandomBytes(hashAlgorithmHMACKeySize / 8);
+            if (key == null || key.Length == 0)
+                key = CommonMethods.GenerateRandomBytes(HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8);
 
             HMACHashResult result = null;
 
             try
             {
-                using (var hmac = System.Security.Cryptography.HMAC.Create(hashAlgorithmHMACName))
+                using (var hmac = (HMAC)CryptoConfig.CreateFromName(hmacAlgorithm.ToString()))
                 {
                     hmac.Key = key;
-                    byte[] hash = hmac.ComputeHash(bytesToComputeHMAC);
+                    //offset = (offset == 0 ? 0 : offset);
+                    count = (count == 0 ? bytesToComputeHMAC.Length : count);
+
+                    byte[] hash = hmac.ComputeHash(bytesToComputeHMAC, offset, count);
 
                     result = new HMACHashResult()
                     {
                         Success = true,
                         Message = MessageDictionary.Instance["HMAC.ComputeSuccess"],
                         HashBytes = hash,
-                        Key = key
+                        HashString = Encoding.Hexadecimal.ToHexString(hash),
+                        Key = key,
+                        PRF = hmacAlgorithm
                     };
                 }
             }
@@ -118,7 +70,8 @@ namespace CryptHash.Net.Hash.Base
             return result;
         }
 
-        internal HMACHashResult ComputeHMAC(Enums.HashAlgorithm hashAlgorithm, string stringToComputeHMAC, byte[] key = null)
+        internal HMACHashResult ComputeHMAC(Enums.HMACAlgorithm hmacAlgorithm, string stringToComputeHMAC, byte[] key = null,
+            int offset = 0, int count = 0)
         {
             if (string.IsNullOrWhiteSpace(stringToComputeHMAC))
             {
@@ -129,16 +82,13 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            var bytesToBeHashed = Encoding.UTF8.GetBytes(stringToComputeHMAC);
-            var result = ComputeHMAC(hashAlgorithm, bytesToBeHashed, key);
-
-            if (result.Success)
-                result.HashString = CommonMethods.ConvertByteArrayToHexString(result.HashBytes);
-
-            return result;
+            var stringToComputeHMACBytes = System.Text.Encoding.UTF8.GetBytes(stringToComputeHMAC);
+            
+            return ComputeHMAC(hmacAlgorithm, stringToComputeHMACBytes, key, offset, count);
         }
 
-        internal HMACHashResult ComputeFileHMAC(Enums.HashAlgorithm hashAlgorithm, string filePathToComputeHMAC, byte[] key = null)
+        internal HMACHashResult ComputeFileHMAC(Enums.HMACAlgorithm hmacAlgorithm, string filePathToComputeHMAC, byte[] key = null, 
+            long offset = 0, long count = 0)
         {
             if (!File.Exists(filePathToComputeHMAC))
             {
@@ -149,64 +99,8 @@ namespace CryptHash.Net.Hash.Base
                 };
             }
 
-            string hashAlgorithmName;
-            int hashAlgorithmHMACKeySize;
-
-            switch (hashAlgorithm)
-            {
-                case Enums.HashAlgorithm.MD5:
-                    {
-                        hashAlgorithmName = "HMACMD5";
-                        hashAlgorithmHMACKeySize = 128;
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA1:
-                    {
-                        hashAlgorithmName = "HMACSHA1";
-                        hashAlgorithmHMACKeySize = 160;
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA256:
-                    {
-                        hashAlgorithmName = "HMACSHA256";
-                        hashAlgorithmHMACKeySize = 256;
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA384:
-                    {
-                        hashAlgorithmName = "HMACSHA384";
-                        hashAlgorithmHMACKeySize = 384;
-                    }
-                    break;
-                case Enums.HashAlgorithm.SHA512:
-                    {
-                        hashAlgorithmName = "HMACSHA512";
-                        hashAlgorithmHMACKeySize = 512;
-                    }
-                    break;
-                case Enums.HashAlgorithm.BCrypt:
-                default:
-                    {
-                        return new HMACHashResult()
-                        {
-                            Success = false,
-                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hashAlgorithm.ToString()}\"."
-                        };
-                    }
-            }
-
-            if (key != null && key.Length != hashAlgorithmHMACKeySize)
-            {
-                //throw new ArgumentException($"Key size invalid for algorithm {hashAlgorithmName}.", nameof(key));
-                return new HMACHashResult()
-                {
-                    Success = false,
-                    Message = $"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({key.Length})."
-                };
-            }
-
-            if (key == null)
-                key = CommonMethods.GenerateRandomBytes(hashAlgorithmHMACKeySize / 8);
+            if (key == null || key.Length == 0)
+                key = CommonMethods.GenerateRandomBytes(HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8);
 
             HMACHashResult result = null;
 
@@ -216,13 +110,13 @@ namespace CryptHash.Net.Hash.Base
 
                 using (var fStream = new FileStream(filePathToComputeHMAC, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-                    var startPosition = 0;
-                    var endPosition = fStream.Length;
-                    fStream.Position = startPosition;
+                    //offset = (offset == 0 ? 0 : offset);
+                    count = (count == 0 ? fStream.Length : count);
+                    fStream.Position = offset;
                     byte[] buffer = new byte[(1024 * 4)];
-                    long amount = (endPosition - startPosition);
+                    long amount = (count - offset);
 
-                    using (var hmac = System.Security.Cryptography.HMAC.Create(hashAlgorithmName))
+                    using (var hmac = (HMAC)CryptoConfig.CreateFromName(hmacAlgorithm.ToString()))
                     {
                         hmac.Key = key;
                         int percentageDone = 0;
@@ -240,7 +134,7 @@ namespace CryptHash.Net.Hash.Base
                                 else
                                     hmac.TransformFinalBlock(buffer, 0, bytesRead);
 
-                                var tmpPercentageDone = (int)(fStream.Position * 100 / endPosition);
+                                var tmpPercentageDone = (int)(fStream.Position * 100 / count);
 
                                 if (tmpPercentageDone != percentageDone)
                                 {
@@ -261,7 +155,7 @@ namespace CryptHash.Net.Hash.Base
                 {
                     Success = true,
                     Message = MessageDictionary.Instance["HMAC.ComputeSuccess"],
-                    HashString = CommonMethods.ConvertByteArrayToHexString(hash),
+                    HashString = Encoding.Hexadecimal.ToHexString(hash),
                     HashBytes = hash,
                     Key = key
                 };
@@ -278,17 +172,11 @@ namespace CryptHash.Net.Hash.Base
             return result;
         }
 
-        internal HMACHashResult VerifyHMAC(Enums.HashAlgorithm hashAlgorithm, string base64HMACString, string stringToVerifyHMAC, byte[] key)
-        {
-            var hmacBytes = Convert.FromBase64String(base64HMACString);
-            var stringToVerifyHMACBytes = Encoding.UTF8.GetBytes(stringToVerifyHMAC);
 
-            return VerifyHMAC(hashAlgorithm, hmacBytes, stringToVerifyHMACBytes, key);
-        }
-
-        internal HMACHashResult VerifyHMAC(Enums.HashAlgorithm hashAlgorithm, byte[] hmacBytes, byte[] bytesToVerifyHMAC, byte[] key)
+        internal HMACHashResult VerifyHMAC(Enums.HMACAlgorithm hmacAlgorithm, byte[] hmacBytes, byte[] bytesToVerifyHMAC, byte[] key,
+            int offset = 0, int count = 0)
         {
-            var hmacResult = ComputeHMAC(hashAlgorithm, bytesToVerifyHMAC, key);
+            var hmacResult = ComputeHMAC(hmacAlgorithm, bytesToVerifyHMAC, key, offset, count);
 
             if (hmacResult.Success)
             {
@@ -301,16 +189,27 @@ namespace CryptHash.Net.Hash.Base
             return hmacResult;
         }
 
-        internal HMACHashResult VerifyFileHMAC(Enums.HashAlgorithm hashAlgorithm, string base64HMACString, string filePathToVerifyHMAC, byte[] key)
+        internal HMACHashResult VerifyHMAC(Enums.HMACAlgorithm hmacAlgorithm, string hmacHexString, string stringToVerifyHMAC, byte[] key,
+            int offset = 0, int count = 0)
         {
-            var hmacBytes = Convert.FromBase64String(base64HMACString);
+            var hmacBytes = Encoding.Hexadecimal.ToByteArray(hmacHexString);
+            var stringToVerifyHMACBytes = System.Text.Encoding.UTF8.GetBytes(stringToVerifyHMAC);
 
-            return VerifyFileHMAC(hashAlgorithm, hmacBytes, filePathToVerifyHMAC, key);
+            return VerifyHMAC(hmacAlgorithm, hmacBytes, stringToVerifyHMACBytes, key, offset, count);
         }
 
-        internal HMACHashResult VerifyFileHMAC(Enums.HashAlgorithm hashAlgorithm, byte[] hmacBytes, string filePathToVerifyHMAC, byte[] key)
+        internal HMACHashResult VerifyFileHMAC(Enums.HMACAlgorithm hmacAlgorithm, string hmacHexString, string filePathToVerifyHMAC, byte[] key,
+            long offset = 0, long count = 0)
         {
-            var hmacResult = ComputeFileHMAC(hashAlgorithm, filePathToVerifyHMAC, key);
+            var hmacBytes = Encoding.Hexadecimal.ToByteArray(hmacHexString);
+
+            return VerifyFileHMAC(hmacAlgorithm, hmacBytes, filePathToVerifyHMAC, key, offset, count);
+        }
+
+        internal HMACHashResult VerifyFileHMAC(Enums.HMACAlgorithm hmacAlgorithm, byte[] hmacBytes, string filePathToVerifyHMAC, byte[] key,
+            long offset = 0, long count = 0)
+        {
+            var hmacResult = ComputeFileHMAC(hmacAlgorithm, filePathToVerifyHMAC, key, offset, count);
 
             if (hmacResult.Success)
             {

@@ -1,26 +1,32 @@
-﻿using CryptHash.Net.Util;
+﻿/*
+ *      Alessandro Cagliostro, 2020
+ *      
+ *      https://github.com/alecgn
+ */
+
+using CryptHash.Net.Util;
 using CryptHash.Net.Hash.HashResults;
 using System;
 using System.Security.Cryptography;
 
 namespace CryptHash.Net.Hash
 {
-    [Obsolete("This class is obsolete. Use PBKDF2.cs class instead.")]
+    //[Obsolete("This class is obsolete. Use PBKDF2.cs class instead.")]
     public class PBKDF2_HMAC_SHA_1
     {
-        private static readonly int _hashBitSize = 160;
+        private static readonly int _hashBitSize = HMACOutputLengthDictionary.Instance[Enums.HMACAlgorithm.HMACSHA1];
         private static readonly int _hashBytesLength = (_hashBitSize / 8);
 
         private static readonly int _saltBitSize = 128;
         private static readonly int _saltBytesLength = (_saltBitSize / 8);
 
-        private static readonly int _iterations = 100000;
+        private const int _iterations = 100000;
 
-        public GenericHashResult ComputeHash(string stringToBeHashed, byte[] salt = null)
+        public PBKDF2HashResult ComputeHash(string stringToComputeHash, byte[] salt = null, int iterationsForKeyDerivation = _iterations)
         {
-            if (string.IsNullOrWhiteSpace(stringToBeHashed))
+            if (string.IsNullOrWhiteSpace(stringToComputeHash))
             {
-                return new GenericHashResult()
+                return new PBKDF2HashResult()
                 {
                     Success = false,
                     Message = MessageDictionary.Instance["Hash.InputRequired"]
@@ -33,9 +39,9 @@ namespace CryptHash.Net.Hash
 
             try
             {
-                using (var rfc2898DeriveBytes = new Rfc2898DeriveBytes(stringToBeHashed, salt))
+                using (var rfc2898DeriveBytes = new Rfc2898DeriveBytes(stringToComputeHash, salt))
                 {
-                    rfc2898DeriveBytes.IterationCount = _iterations;
+                    rfc2898DeriveBytes.IterationCount = iterationsForKeyDerivation;
                     hash = rfc2898DeriveBytes.GetBytes(_hashBytesLength);
                 }
 
@@ -43,28 +49,31 @@ namespace CryptHash.Net.Hash
                 Array.Copy(salt, 0, hashBytes, 0, _saltBytesLength);
                 Array.Copy(hash, 0, hashBytes, _saltBytesLength, _hashBytesLength);
 
-                return new GenericHashResult()
+                return new PBKDF2HashResult()
                 {
                     Success = true,
                     Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
                     HashString = $"{Convert.ToBase64String(hashBytes)}",
-                    HashBytes = hashBytes
+                    HashBytes = hashBytes,
+                    Iterations = iterationsForKeyDerivation,
+                    Salt = salt,
+                    PRF = Enums.HMACAlgorithm.HMACSHA1
                 };
             }
             catch (Exception ex)
             {
-                return new GenericHashResult() { 
+                return new PBKDF2HashResult() { 
                     Success = false,
                     Message = ex.ToString()
                 };
             }
         }
 
-        public GenericHashResult VerifyHash(string stringToBeVerified, string hash)
+        public PBKDF2HashResult VerifyHash(string stringToBeVerified, string hash, int iterationsForKeyDerivation = _iterations)
         {
             if (string.IsNullOrWhiteSpace(stringToBeVerified))
             {
-                return new GenericHashResult()
+                return new PBKDF2HashResult()
                 {
                     Success = false,
                     Message = MessageDictionary.Instance["Hash.InputRequired"]
@@ -73,7 +82,7 @@ namespace CryptHash.Net.Hash
 
             if (string.IsNullOrWhiteSpace(hash))
             {
-                return new GenericHashResult()
+                return new PBKDF2HashResult()
                 {
                     Success = false,
                     Message = MessageDictionary.Instance["Hash.InputRequired"]
@@ -84,10 +93,10 @@ namespace CryptHash.Net.Hash
 
             if (hashWithSaltBytes.Length != (_saltBytesLength + _hashBytesLength))
             {
-                return new GenericHashResult()
+                return new PBKDF2HashResult()
                 {
                     Success = false,
-                    Message = ["Common.IncorrectInputLengthError"]
+                    Message = MessageDictionary.Instance["Common.IncorrectInputLengthError"]
                 };
             }
 
@@ -97,21 +106,24 @@ namespace CryptHash.Net.Hash
             var hashBytes = new byte[_hashBytesLength];
             Array.Copy(hashWithSaltBytes, _saltBytesLength, hashBytes, 0, _hashBytesLength);
 
-            var result = ComputeHash(stringToBeVerified, saltBytes);
+            var result = ComputeHash(stringToBeVerified, saltBytes, iterationsForKeyDerivation);
 
             if (string.Equals(result.HashString, hash))
             {
-                return new GenericHashResult()
+                return new PBKDF2HashResult()
                 {
                     Success = true,
                     Message = MessageDictionary.Instance["Hash.Match"],
                     HashString = hash,
-                    HashBytes = result.HashBytes
+                    HashBytes = result.HashBytes,
+                    Iterations = result.Iterations,
+                    Salt = result.Salt,
+                    PRF = result.PRF
                 };
             }
             else
             {
-                return new GenericHashResult()
+                return new PBKDF2HashResult()
                 {
                     Success = false,
                     Message = MessageDictionary.Instance["Hash.DoesNotMatch"]

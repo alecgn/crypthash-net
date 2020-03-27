@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2019
+ *      Alessandro Cagliostro, 2020
  *      
  *      https://github.com/alecgn
  */
@@ -21,6 +21,7 @@ namespace CryptHash.Net.Encryption.AES.EncryptionResults
         public AesCipherMode AesCipherMode { get; set; }
         public PaddingMode PaddingMode { get; set; }
         public byte[] Salt { get; set; }
+        public byte[] AuthenticationKey { get; set; }
         public byte[] Tag { get; set; }
     }
 }
