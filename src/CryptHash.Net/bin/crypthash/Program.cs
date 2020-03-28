@@ -78,6 +78,9 @@ namespace CryptHash.Net.CLI
                             case "aes128gcm":
                                 aesEncryptionResult = new AEAD_AES_128_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password, cryptOptions.AssociatedData);
                                 break;
+                            case "aes192gcm":
+                                aesEncryptionResult = new AEAD_AES_192_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password, cryptOptions.AssociatedData);
+                                break;
                             case "aes256gcm":
                                     aesEncryptionResult = new AEAD_AES_256_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password, cryptOptions.AssociatedData);
                                 break;
@@ -128,6 +131,7 @@ namespace CryptHash.Net.CLI
                                 }
                                 break;
                             case "aes128gcm":
+                            case "aes192gcm":
                             case "aes256gcm":
                                 aesEncryptionResult = new AesEncryptionResult() { Success = false, Message = $"Algorithm \"{cryptOptions.Algorithm}\" currently not available for file encryption." };
                                 break;
@@ -177,6 +181,9 @@ namespace CryptHash.Net.CLI
                                 break;
                             case "aes128gcm":
                                 aesDecryptionResult = new AEAD_AES_128_GCM().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password, decryptOptions.AssociatedData);
+                                break;
+                            case "aes192gcm":
+                                aesDecryptionResult = new AEAD_AES_192_GCM().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password, decryptOptions.AssociatedData);
                                 break;
                             case "aes256gcm":
                                 aesDecryptionResult = new AEAD_AES_256_GCM().DecryptString(decryptOptions.InputToBeDecrypted, decryptOptions.Password, decryptOptions.AssociatedData);
@@ -228,6 +235,7 @@ namespace CryptHash.Net.CLI
                                 }
                                 break;
                             case "aes128gcm":
+                            case "aes192gcm":
                             case "aes256gcm":
                                 aesDecryptionResult = new AesDecryptionResult() { Success = false, Message = $"Algorithm \"{decryptOptions.Algorithm}\" currently not available for file decryption." };
                                 break;

@@ -10,18 +10,18 @@ using System.Security;
 #if NETSTANDARD2_1
 namespace CryptHash.Net.Encryption.AES.AEAD
 {
-    public class AEAD_AES_128_GCM : AesGcmBase
+    public class AEAD_AES_192_GCM : AesGcmBase
     {
         #region fields
 
-        private static readonly int _keyBitSize = 128;
+        private static readonly int _keyBitSize = 192;
 
         #endregion private fields
 
 
         #region constructors
 
-        public AEAD_AES_128_GCM() : base(_keyBitSize) { }
+        public AEAD_AES_192_GCM() : base(_keyBitSize) { }
 
         #endregion constructors
 
@@ -31,7 +31,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         #region string encryption
 
         /// <summary>
-        /// Encrypts an input string using AES with a 128 bits key in GCM authenticated mode, deriving the key from a provided password string.
+        /// Encrypts an input string using AES with a 192 bits key in GCM authenticated mode, deriving the key from a provided password string.
         /// </summary>
         /// <param name="plainString">The input plain string to encrypt.</param>
         /// <param name="password">The password string where the encryption key will be derived from.</param>
@@ -44,7 +44,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         }
 
         /// <summary>
-        /// Encrypts an input string using AES with a 128 bits key in GCM authenticated mode, deriving the key from a provided SecureString with the password.
+        /// Encrypts an input string using AES with a 192 bits key in GCM authenticated mode, deriving the key from a provided SecureString with the password.
         /// </summary>
         /// <param name="plainString">The input plain string to encrypt.</param>
         /// <param name="secStrPassword">The SecureString with the password where the encryption key will be derived from.</param>
@@ -57,7 +57,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         }
 
         /// <summary>
-        /// Encrypts an input byte array of the string using AES with a 128 bits key in GCM authenticated mode, deriving the key from a provided SecureString with the password.
+        /// Encrypts an input byte array of the string using AES with a 192 bits key in GCM authenticated mode, deriving the key from a provided SecureString with the password.
         /// </summary>
         /// <param name="plainStringBytes">The input byte array of the string to encrypt.</param>
         /// <param name="secStrPassword">The SecureString with the password where the encryption key will be derived from.</param>
@@ -70,7 +70,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         }
 
         /// <summary>
-        /// Encrypts an input byte array of the string using AES with a 128 bits key in GCM authenticated mode, deriving the key from a provided byte array of the password.
+        /// Encrypts an input byte array of the string using AES with a 192 bits key in GCM authenticated mode, deriving the key from a provided byte array of the password.
         /// </summary>
         /// <param name="plainStringBytes">The input byte array of the string to encrypt.</param>
         /// <param name="passwordBytes">The byte array of the password where the encryption key will be derived from.</param>
@@ -88,7 +88,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         #region string decryption
 
         /// <summary>
-        /// Decrypts a base64 encoded input string using AES with a 128 bits key in GCM authenticated mode, deriving the key from a provided password string.
+        /// Decrypts a base64 encoded input string using AES with a 192 bits key in GCM authenticated mode, deriving the key from a provided password string.
         /// </summary>
         /// <param name="base64EncryptedString">The base64 encoded input string to decrypt.</param>
         /// <param name="password">The password string where the encryption key will be derived from.</param>
@@ -102,7 +102,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         }
 
         /// <summary>
-        /// Decrypts a base64 encoded input string using AES with a 128 bits key in GCM authenticated mode, deriving the key from a provided password string.
+        /// Decrypts a base64 encoded input string using AES with a 192 bits key in GCM authenticated mode, deriving the key from a provided password string.
         /// </summary>
         /// <param name="base64EncryptedString">The base64 encoded input string to decrypt.</param>
         /// <param name="secStrPassword">The SecureString of the password where the encryption key will be derived from.</param>
@@ -119,7 +119,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         }
 
         /// <summary>
-        /// Decrypts a base64 encoded input string using AES with a 128 bits key in GCM authenticated mode, deriving the key from a provided password string.
+        /// Decrypts a base64 encoded input string using AES with a 192 bits key in GCM authenticated mode, deriving the key from a provided password string.
         /// </summary>
         /// <param name="encryptedStringBytes">The byte array of the input string to decrypt.</param>
         /// <param name="secStrPassword">The SecureString of the password where the encryption key will be derived from.</param>
@@ -136,7 +136,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         }
 
         /// <summary>
-        /// Decrypts a base64 encoded input string using AES with a 128 bits key in GCM authenticated mode, deriving the key from a provided password string.
+        /// Decrypts a base64 encoded input string using AES with a 192 bits key in GCM authenticated mode, deriving the key from a provided password string.
         /// </summary>
         /// <param name="encryptedStringBytes">The byte array of the input string to decrypt.</param>
         /// <param name="passwordBytes">The byte array of the password where the encryption key will be derived from.</param>

@@ -8,13 +8,13 @@ using CommandLine;
 
 namespace CryptHash.Net.CLI.CommandLineParser
 {
-    [Verb("crypt", HelpText = "String and file encryption (Authenticated AES 128/192/256 CBC and AES 128/256 GCM).")]
+    [Verb("crypt", HelpText = "String and file encryption (Authenticated AES 128/192/256 CBC/GCM).")]
     public class CryptOptions
     {
         [Option('t', "input-type", Required = true, HelpText = "Input type (\"string\" or \"file\").")]
         public string InputType { get; set; }
 
-        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (\"aes128cbc\", \"aes192cbc\", \"aes256cbc\", \"aes128gcm\" and \"aes256gcm\").")]
+        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (\"aes128cbc\", \"aes192cbc\", \"aes256cbc\", \"aes128gcm\", \"aes192gcm\" and \"aes256gcm\").")]
         public string Algorithm { get; set; }
 
         [Option('i', "input", Required = true, HelpText = "Input to be encrypted (string or file path).")]
@@ -29,17 +29,17 @@ namespace CryptHash.Net.CLI.CommandLineParser
         [Option('d', "delete-source-file", Default = false, HelpText = "Delete source file after encryption (only for \"file\" input type).")]
         public bool DeleteSourceFile { get; set; }
 
-        [Option("associated-data", Default = null, HelpText = "Associated Data (only for \"AES128GCM\" and \"AES256GCM\"  AEAD encryption algorithm).")]
+        [Option("associated-data", Default = null, HelpText = "Associated Data (only for \"AES128GCM\", \"AES192GCM\" and \"AES256GCM\"  AEAD encryption algorithm).")]
         public string AssociatedData { get; set; }
     }
 
-    [Verb("decrypt", HelpText = "String and file decryption (Authenticated AES 128/192/256 CBC and AES 128/256 GCM).")]
+    [Verb("decrypt", HelpText = "String and file decryption (Authenticated AES 128/192/256 CBC/GCM).")]
     public class DecryptOptions
     {
         [Option('t', "input-type", Required = true, HelpText = "Input type (\"string\" or \"file\").")]
         public string InputType { get; set; }
 
-        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (\"aes128cbc\", \"aes192cbc\", \"aes256cbc\", \"aes128gcm\" and \"aes256gcm\").")]
+        [Option('a', "algorithm", Required = true, HelpText = "Algorithm (\"aes128cbc\", \"aes192cbc\", \"aes256cbc\", \"aes128gcm\", \"aes192gcm\" and \"aes256gcm\").")]
         public string Algorithm { get; set; }
 
         [Option('i', "input", Required = true, HelpText = "Input to be decrypted (string or file path).")]
@@ -54,7 +54,7 @@ namespace CryptHash.Net.CLI.CommandLineParser
         [Option('d', "delete-encrypted-file", Default = false, HelpText = "Delete encrypted file after decryption (only for \"file\" input type).")]
         public bool DeleteEncryptedFile { get; set; }
 
-        [Option("associated-data", Default = null, HelpText = "Associated Data (only for \"AES128GCM\" and \"AES256GCM\" AEAD encryption algorithm).")]
+        [Option("associated-data", Default = null, HelpText = "Associated Data (only for \"AES128GCM\", \"AES192GCM\" and \"AES256GCM\" AEAD encryption algorithm).")]
         public string AssociatedData { get; set; }
     }
 

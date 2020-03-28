@@ -68,7 +68,7 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         #endregion constructors
 
 
-        #region public methods
+        #region internal methods
 
         #region string encryption
         internal AesEncryptionResult EncryptString(string plainString, string password, string associatedDataString = null, bool appendEncryptionDataToOutput = true)
@@ -410,9 +410,9 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             }
         }
 
-#endregion string decryption
+        #endregion string decryption
 
-#endregion public methods
+        #endregion internal methods
     }
 }
 #endif
