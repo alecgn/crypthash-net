@@ -6,7 +6,8 @@
 
 ### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption, hashing and encoding/decoding.
 
-The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, text/files hashing and text encoding/decoding. File checksum functionality is also available, you can calculate and verify the integrity of downloaded files from the internet with the source supplied hash, with a progress event notifier for big files.
+The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, text/files hashing and text encoding/decoding. File checksum functionality is also available, you can calculate and verify the integrity of downloaded files from the internet with the source supplied hash.  
+Both file encryption and hash (HMAC inclusive) has a progress event notifier for big files processing.
 
 The multi-target libray (.NET Standard 2.0/2.1) can be used in projects with any .NET implementation like **.NET Framework**, **.NET Core**, **Mono**, **Xamarin**, etc. Verify the .NET Standard compatibility table here: https://github.com/dotnet/standard/blob/master/docs/versions.md
 
