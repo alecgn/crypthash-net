@@ -39,7 +39,7 @@ Currently supported encoding types are:
 * **Base64**  
 * **Hexadecimal**  
 
-Other encryption/hashing/encoding algorithms will be implemented in the future.
+Other encryption/hashing/kdf/encoding algorithms will be implemented in the future.
 
 NuGet package: https://www.nuget.org/packages/CryptHash.Net
 
