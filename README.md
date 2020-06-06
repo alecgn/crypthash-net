@@ -12,10 +12,10 @@ Both file encryption and hash (HMAC inclusive) have a progress event notifier fo
 The multi-target libray (.NET Standard 2.0/2.1) can be used in projects with any .NET implementation like **.NET Framework**, **.NET Core**, **Mono**, **Xamarin**, etc. Verify the .NET Standard compatibility table here: https://github.com/dotnet/standard/blob/master/docs/versions.md
 
 Currently symmetric encryption algorithms are:  
-* **AES 128 bits** in **CBC Mode** with **HMACSHA256 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.  
-* **AES 192 bits** in **CBC Mode** with **HMACSHA384 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
-* **AES 256 bits** in **CBC Mode** with **HMACSHA384 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
-* **AES 256 bits** in **CBC Mode** with **HMACSHA512 Authentication** and **Salt**, using the **Encrypt-then-MAC (EtM)** strategy.
+* **AES 128 bits** in **CBC Mode** with **HMACSHA256 Authentication**, using the **Encrypt-then-MAC (EtM)** strategy.  
+* **AES 192 bits** in **CBC Mode** with **HMACSHA384 Authentication**, using the **Encrypt-then-MAC (EtM)** strategy.
+* **AES 256 bits** in **CBC Mode** with **HMACSHA384 Authentication**, using the **Encrypt-then-MAC (EtM)** strategy.
+* **AES 256 bits** in **CBC Mode** with **HMACSHA512 Authentication**, using the **Encrypt-then-MAC (EtM)** strategy.
 * **AES 128 bits** in **GCM Mode** with **Authentication** and **Associated Data** (**AEAD**).
 * **AES 192 bits** in **GCM Mode** with **Authentication** and **Associated Data** (**AEAD**).
 * **AES 256 bits** in **GCM Mode** with **Authentication** and **Associated Data** (**AEAD**).
