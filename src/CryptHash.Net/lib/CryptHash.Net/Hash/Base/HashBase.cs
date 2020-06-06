@@ -36,7 +36,36 @@ namespace CryptHash.Net.Hash.Base
 
             try
             {
-                using (var hashAlg = (HashAlgorithm)CryptoConfig.CreateFromName(hashAlgorithm.ToString()))
+                HashAlgorithm hashAlg = null;
+
+#if CORERT
+                switch (hashAlgorithm)
+                {
+                    case Enums.HashAlgorithm.MD5:
+                        hashAlg = MD5.Create();
+                        break;
+                    case Enums.HashAlgorithm.SHA1:
+                        hashAlg = SHA1.Create();
+                        break;
+                    case Enums.HashAlgorithm.SHA256:
+                        hashAlg = SHA256.Create();
+                        break;
+                    case Enums.HashAlgorithm.SHA384:
+                        hashAlg = SHA384.Create();
+                        break;
+                    case Enums.HashAlgorithm.SHA512:
+                        hashAlg = SHA512.Create();
+                        break;
+                    case Enums.HashAlgorithm.BCrypt:
+                    default:
+                        break;
+                }
+
+#else
+                hashAlg = (HashAlgorithm)CryptoConfig.CreateFromName(hashAlgorithm.ToString());
+#endif
+
+                using (hashAlg)
                 {
                     //offset = (offset == 0 ? 0 : offset);
                     count = (count == 0 ? bytesToComputeHash.Length : count);
@@ -94,6 +123,33 @@ namespace CryptHash.Net.Hash.Base
             }
 
             GenericHashResult result = null;
+            HashAlgorithm hashAlg = null;
+
+#if CORERT
+            switch (hashAlgorithm)
+            {
+                case Enums.HashAlgorithm.MD5:
+                    hashAlg = MD5.Create();
+                    break;
+                case Enums.HashAlgorithm.SHA1:
+                    hashAlg = SHA1.Create();
+                    break;
+                case Enums.HashAlgorithm.SHA256:
+                    hashAlg = SHA256.Create();
+                    break;
+                case Enums.HashAlgorithm.SHA384:
+                    hashAlg = SHA384.Create();
+                    break;
+                case Enums.HashAlgorithm.SHA512:
+                    hashAlg = SHA512.Create();
+                    break;
+                case Enums.HashAlgorithm.BCrypt:
+                default:
+                    break;
+            }
+#else
+            hashAlg = (HashAlgorithm)CryptoConfig.CreateFromName(hashAlgorithm.ToString());
+#endif
 
             try
             {
@@ -107,7 +163,7 @@ namespace CryptHash.Net.Hash.Base
                     byte[] buffer = new byte[(1024 * 4)];
                     long amount = (count - offset);
 
-                    using (var hashAlg = (HashAlgorithm)CryptoConfig.CreateFromName(hashAlgorithm.ToString()))
+                    using (hashAlg)
                     {
                         int percentageDone = 0;
 
