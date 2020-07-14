@@ -591,7 +591,7 @@ namespace CryptHash.Net.CLI
                     break;
                 case "hex":
                     {
-                        encodedString = Hexadecimal.ToHexString(encodeOptions.InputToEncode);
+                        encodedString = HighPerformanceHexadecimal.ToHexString(encodeOptions.InputToEncode);
                     }
                     break;
                 default:
@@ -627,7 +627,7 @@ namespace CryptHash.Net.CLI
                     break;
                 case "hex":
                     {
-                        decodedString = Hexadecimal.ToString(decodeOptions.InputToDecode);
+                        decodedString = HighPerformanceHexadecimal.ToString(decodeOptions.InputToDecode);
                     }
                     break;
                 default:

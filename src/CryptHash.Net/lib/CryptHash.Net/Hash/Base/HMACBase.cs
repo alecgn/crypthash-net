@@ -52,7 +52,7 @@ namespace CryptHash.Net.Hash.Base
                         Success = true,
                         Message = MessageDictionary.Instance["HMAC.ComputeSuccess"],
                         HashBytes = hash,
-                        HashString = Encoding.Hexadecimal.ToHexString(hash),
+                        HashString = Encoding.HighPerformanceHexadecimal.ToHexString(hash),
                         Key = key,
                         PRF = hmacAlgorithm
                     };
@@ -155,7 +155,7 @@ namespace CryptHash.Net.Hash.Base
                 {
                     Success = true,
                     Message = MessageDictionary.Instance["HMAC.ComputeSuccess"],
-                    HashString = Encoding.Hexadecimal.ToHexString(hash),
+                    HashString = Encoding.HighPerformanceHexadecimal.ToHexString(hash),
                     HashBytes = hash,
                     Key = key
                 };
@@ -192,7 +192,7 @@ namespace CryptHash.Net.Hash.Base
         internal HMACHashResult VerifyHMAC(Enums.HMACAlgorithm hmacAlgorithm, string hmacHexString, string stringToVerifyHMAC, byte[] key,
             int offset = 0, int count = 0)
         {
-            var hmacBytes = Encoding.Hexadecimal.ToByteArray(hmacHexString);
+            var hmacBytes = Encoding.HighPerformanceHexadecimal.ToByteArray(hmacHexString);
             var stringToVerifyHMACBytes = System.Text.Encoding.UTF8.GetBytes(stringToVerifyHMAC);
 
             return VerifyHMAC(hmacAlgorithm, hmacBytes, stringToVerifyHMACBytes, key, offset, count);
@@ -201,7 +201,7 @@ namespace CryptHash.Net.Hash.Base
         internal HMACHashResult VerifyFileHMAC(Enums.HMACAlgorithm hmacAlgorithm, string hmacHexString, string filePathToVerifyHMAC, byte[] key,
             long offset = 0, long count = 0)
         {
-            var hmacBytes = Encoding.Hexadecimal.ToByteArray(hmacHexString);
+            var hmacBytes = Encoding.HighPerformanceHexadecimal.ToByteArray(hmacHexString);
 
             return VerifyFileHMAC(hmacAlgorithm, hmacBytes, filePathToVerifyHMAC, key, offset, count);
         }

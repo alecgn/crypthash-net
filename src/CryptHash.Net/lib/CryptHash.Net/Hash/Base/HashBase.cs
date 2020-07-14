@@ -77,7 +77,7 @@ namespace CryptHash.Net.Hash.Base
                         Success = true,
                         Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
                         HashBytes = hash,
-                        HashString = Encoding.Hexadecimal.ToHexString(hash)
+                        HashString = Encoding.HighPerformanceHexadecimal.ToHexString(hash)
                     };
                 }
             }
@@ -201,7 +201,7 @@ namespace CryptHash.Net.Hash.Base
                 {
                     Success = true,
                     Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
-                    HashString = Encoding.Hexadecimal.ToHexString(hash),
+                    HashString = Encoding.HighPerformanceHexadecimal.ToHexString(hash),
                     HashBytes = hash
                 };
             }
@@ -237,7 +237,7 @@ namespace CryptHash.Net.Hash.Base
         internal GenericHashResult VerifyHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string stringToVerifyHash,
             int offset = 0, int count = 0)
         {
-            var hashBytes = Encoding.Hexadecimal.ToByteArray(hashHexString);
+            var hashBytes = Encoding.HighPerformanceHexadecimal.ToByteArray(hashHexString);
             var stringToVerifyHashBytes = System.Text.Encoding.UTF8.GetBytes(stringToVerifyHash);
 
             return VerifyHash(hashAlgorithm, hashBytes, stringToVerifyHashBytes, offset, count);
@@ -246,7 +246,7 @@ namespace CryptHash.Net.Hash.Base
         internal GenericHashResult VerifyFileHash(Enums.HashAlgorithm hashAlgorithm, string hashHexString, string filePathToVerifyHash,
             long offset = 0, long count = 0)
         {
-            var hashBytes = Encoding.Hexadecimal.ToByteArray(hashHexString);
+            var hashBytes = Encoding.HighPerformanceHexadecimal.ToByteArray(hashHexString);
 
             return VerifyFileHash(hashAlgorithm, hashBytes, filePathToVerifyHash, offset, count);
         }
