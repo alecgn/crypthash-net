@@ -160,3 +160,9 @@ Publish it yourself using the following dotnet client command-line:
 
 **Complete RID LIST**
 (https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
+
+--------------------------------------------------
+
+Backed with ❤️ by JetBrains software:  
+  
+[![Rider](./img/icon-rider.svg)](https://www.jetbrains.com/?from=crypthash-net) [![ReSharper](./img/icon-resharper.svg)](https://www.jetbrains.com/?from=crypthash-net)
