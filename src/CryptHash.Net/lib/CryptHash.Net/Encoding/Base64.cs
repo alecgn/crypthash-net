@@ -25,7 +25,7 @@ namespace CryptHash.Net.Encoding
             if (byteArray == null || byteArray.Length <= 0)
                 return null;
 
-            return System.Convert.ToBase64String(byteArray);
+            return Convert.ToBase64String(byteArray);
         }
 
         public static string ToString(string base64String)
@@ -43,7 +43,7 @@ namespace CryptHash.Net.Encoding
             if (string.IsNullOrWhiteSpace(base64String))
                 return null;
 
-            return System.Convert.FromBase64String(base64String);
+            return Convert.FromBase64String(base64String);
         }
     }
 }

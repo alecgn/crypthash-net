@@ -4,9 +4,6 @@
  *      https://github.com/alecgn
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using CommandLine;
 using CommandLine.Text;
 using CryptHash.Net.CLI.CommandLineParser;
@@ -18,6 +15,8 @@ using CryptHash.Net.Encryption.AES.EncryptionResults;
 using CryptHash.Net.Hash;
 using CryptHash.Net.Hash.Hash;
 using CryptHash.Net.Hash.HashResults;
+using System;
+using System.Collections.Generic;
 
 namespace CryptHash.Net.CLI
 {
@@ -67,13 +66,13 @@ namespace CryptHash.Net.CLI
                         switch (cryptOptions.Algorithm.ToLower())
                         {
                             case "aes128cbc":
-                                    aesEncryptionResult = new AE_AES_128_CBC_HMAC_SHA_256().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
+                                aesEncryptionResult = new AE_AES_128_CBC_HMAC_SHA_256().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
                                 break;
                             case "aes192cbc":
-                                    aesEncryptionResult = new AE_AES_192_CBC_HMAC_SHA_384().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
+                                aesEncryptionResult = new AE_AES_192_CBC_HMAC_SHA_384().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
                                 break;
                             case "aes256cbc":
-                                    aesEncryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
+                                aesEncryptionResult = new AE_AES_256_CBC_HMAC_SHA_512().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password);
                                 break;
                             case "aes128gcm":
                                 aesEncryptionResult = new AEAD_AES_128_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password, cryptOptions.AssociatedData);
@@ -82,7 +81,7 @@ namespace CryptHash.Net.CLI
                                 aesEncryptionResult = new AEAD_AES_192_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password, cryptOptions.AssociatedData);
                                 break;
                             case "aes256gcm":
-                                    aesEncryptionResult = new AEAD_AES_256_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password, cryptOptions.AssociatedData);
+                                aesEncryptionResult = new AEAD_AES_256_GCM().EncryptString(cryptOptions.InputToBeEncrypted, cryptOptions.Password, cryptOptions.AssociatedData);
                                 break;
                             default:
                                 aesEncryptionResult = new AesEncryptionResult() { Success = false, Message = $"Unknown algorithm \"{cryptOptions.Algorithm}\"." };
@@ -100,7 +99,7 @@ namespace CryptHash.Net.CLI
                                     {
                                         var aes128 = new AE_AES_128_CBC_HMAC_SHA_256();
                                         aes128.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
-                                        aes128.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+                                        aes128.OnEncryptionMessage += (msg) => { progressBar.WriteLine(msg); };
 
                                         aesEncryptionResult = aes128.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
                                     }
@@ -112,7 +111,7 @@ namespace CryptHash.Net.CLI
                                     {
                                         var aes192 = new AE_AES_192_CBC_HMAC_SHA_384();
                                         aes192.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
-                                        aes192.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+                                        aes192.OnEncryptionMessage += (msg) => { progressBar.WriteLine(msg); };
 
                                         aesEncryptionResult = aes192.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
                                     }
@@ -124,7 +123,7 @@ namespace CryptHash.Net.CLI
                                     {
                                         var aes256 = new AE_AES_256_CBC_HMAC_SHA_512();
                                         aes256.OnEncryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
-                                        aes256.OnEncryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+                                        aes256.OnEncryptionMessage += (msg) => { progressBar.WriteLine(msg); };
 
                                         aesEncryptionResult = aes256.EncryptFile(cryptOptions.InputToBeEncrypted, cryptOptions.OutputFilePath, cryptOptions.Password, cryptOptions.DeleteSourceFile);
                                     }
@@ -204,7 +203,7 @@ namespace CryptHash.Net.CLI
                                     {
                                         var aes128 = new AE_AES_128_CBC_HMAC_SHA_256();
                                         aes128.OnDecryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
-                                        aes128.OnDecryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+                                        aes128.OnDecryptionMessage += (msg) => { progressBar.WriteLine(msg); };
 
                                         aesDecryptionResult = aes128.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
                                     }
@@ -216,7 +215,7 @@ namespace CryptHash.Net.CLI
                                     {
                                         var aes192 = new AE_AES_192_CBC_HMAC_SHA_384();
                                         aes192.OnDecryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
-                                        aes192.OnDecryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+                                        aes192.OnDecryptionMessage += (msg) => { progressBar.WriteLine(msg); };
 
                                         aesDecryptionResult = aes192.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
                                     }
@@ -228,7 +227,7 @@ namespace CryptHash.Net.CLI
                                     {
                                         var aes256 = new AE_AES_256_CBC_HMAC_SHA_512();
                                         aes256.OnDecryptionProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
-                                        aes256.OnDecryptionMessage += (msg) => { /*Console.WriteLine(msg);*/ progressBar.WriteLine(msg); };
+                                        aes256.OnDecryptionMessage += (msg) => { progressBar.WriteLine(msg); };
 
                                         aesDecryptionResult = aes256.DecryptFile(decryptOptions.InputToBeDecrypted, decryptOptions.OutputFilePath, decryptOptions.Password, decryptOptions.DeleteEncryptedFile);
                                     }
@@ -306,58 +305,58 @@ namespace CryptHash.Net.CLI
                         switch (hashOptions.Algorithm.ToLower())
                         {
                             case "md5":
-                                //hashResult = new MD5().HashFile(hashOptions.InputToBeHashed);
-
-                                using (var progressBar = new ProgressBar())
                                 {
-                                    var md5 = new MD5();
-                                    md5.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                    using (var progressBar = new ProgressBar())
+                                    {
+                                        var md5 = new MD5();
+                                        md5.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = md5.ComputeFileHash(hashOptions.InputToComputeHash);
+                                        hashResult = md5.ComputeFileHash(hashOptions.InputToComputeHash);
+                                    }
                                 }
                                 break;
                             case "sha1":
-                                //hashResult = new SHA1().HashFile(hashOptions.InputToBeHashed);
-
-                                using (var progressBar = new ProgressBar())
                                 {
-                                    var sha1 = new SHA1();
-                                    sha1.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                    using (var progressBar = new ProgressBar())
+                                    {
+                                        var sha1 = new SHA1();
+                                        sha1.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = sha1.ComputeFileHash(hashOptions.InputToComputeHash);
+                                        hashResult = sha1.ComputeFileHash(hashOptions.InputToComputeHash);
+                                    }
                                 }
                                 break;
                             case "sha256":
-                                //hashResult = new SHA256().HashFile(hashOptions.InputToBeHashed);
-
-                                using (var progressBar = new ProgressBar())
                                 {
-                                    var sha256 = new SHA256();
-                                    sha256.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                    using (var progressBar = new ProgressBar())
+                                    {
+                                        var sha256 = new SHA256();
+                                        sha256.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = sha256.ComputeFileHash(hashOptions.InputToComputeHash);
+                                        hashResult = sha256.ComputeFileHash(hashOptions.InputToComputeHash);
+                                    }
                                 }
                                 break;
                             case "sha384":
-                                //hashResult = new SHA384().HashFile(hashOptions.InputToBeHashed);
-
-                                using (var progressBar = new ProgressBar())
                                 {
-                                    var sha384 = new SHA384();
-                                    sha384.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                    using (var progressBar = new ProgressBar())
+                                    {
+                                        var sha384 = new SHA384();
+                                        sha384.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = sha384.ComputeFileHash(hashOptions.InputToComputeHash);
+                                        hashResult = sha384.ComputeFileHash(hashOptions.InputToComputeHash);
+                                    }
                                 }
                                 break;
                             case "sha512":
-                                //hashResult = new SHA512().HashFile(hashOptions.InputToBeHashed);
-
-                                using (var progressBar = new ProgressBar())
                                 {
-                                    var sha512 = new SHA512();
-                                    sha512.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
+                                    using (var progressBar = new ProgressBar())
+                                    {
+                                        var sha512 = new SHA512();
+                                        sha512.OnHashProgress += (percentageDone, message) => { progressBar.Report((double)percentageDone / 100); };
 
-                                    hashResult = sha512.ComputeFileHash(hashOptions.InputToComputeHash);
+                                        hashResult = sha512.ComputeFileHash(hashOptions.InputToComputeHash);
+                                    }
                                 }
                                 break;
                             case "pbkdf2":
@@ -545,9 +544,9 @@ namespace CryptHash.Net.CLI
 
         private static ExitCode RunArgon2idHashOptionsAndReturnExitCode(Argon2idHashOptions argon2idHashOptions)
         {
-            var argon2idHashResult = new Argon2id().ComputeHash(System.Text.Encoding.UTF8.GetBytes(argon2idHashOptions.InputToComputeHash), argon2idHashOptions.Iterations, 
+            var argon2idHashResult = new Argon2id().ComputeHash(System.Text.Encoding.UTF8.GetBytes(argon2idHashOptions.InputToComputeHash), argon2idHashOptions.Iterations,
                 argon2idHashOptions.MemorySize, argon2idHashOptions.DegreeOfParallelism, argon2idHashOptions.AmountBytesToReturn, System.Text.Encoding.UTF8.GetBytes(argon2idHashOptions.Salt),
-                System.Text.Encoding.UTF8.GetBytes(argon2idHashOptions.AssociatedData));            
+                System.Text.Encoding.UTF8.GetBytes(argon2idHashOptions.AssociatedData));
 
             if (argon2idHashResult.Success && !string.IsNullOrWhiteSpace(argon2idHashOptions.CompareHash))
             {

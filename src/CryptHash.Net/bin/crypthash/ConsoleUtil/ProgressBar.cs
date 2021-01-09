@@ -1,6 +1,6 @@
 ﻿/*
  *      Thanks to Daniel Wolf for this great console progress bar
- *      A little modification was made by me to fit progress bar to the window width
+ *      A little modification was made by me to fit the progress bar to the console width
  * 
  *      GitHub profile: https://github.com/DanielSWolf
  *      Source code available in: https://gist.github.com/DanielSWolf/0ab6a96899cc5377bf54
@@ -67,7 +67,8 @@ namespace CryptHash.Net.CLI.ConsoleUtil
         {
             lock (timer)
             {
-                if (disposed) return;
+                if (disposed)
+                    return;
 
                 int progressBlockCount = (int)(currentProgress * blockCount);
                 int percent = (int)(currentProgress * 100);
