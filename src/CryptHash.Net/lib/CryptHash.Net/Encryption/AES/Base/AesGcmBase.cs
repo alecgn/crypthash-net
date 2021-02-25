@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -60,9 +60,13 @@ namespace CryptHash.Net.Encryption.AES.AEAD
         internal AesGcmBase(int keyBitSize)
         {
             if (new int[] { 128, 192, 256 }.Contains(keyBitSize))
+            {
                 KeyBitSize = keyBitSize;
+            }
             else
+            {
                 throw new ArgumentException($"{MessageDictionary.Instance["Common.InvalidKeySizeError"]} ({keyBitSize}).", nameof(keyBitSize));
+            }
         }
 
         #endregion constructors
@@ -183,11 +187,11 @@ namespace CryptHash.Net.Encryption.AES.AEAD
             try
             {
                 //byte[] salt = CommonMethods.GenerateRandomBytes(_saltBytesLength);
-                byte[] salt = CommonMethods.GenerateSalt();
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
-                byte[] nonce = CommonMethods.GenerateRandomBytes(_nonceBytesLength);
-                byte[] tag = new byte[_tagBytesLength];
-                byte[] encryptedData = new byte[plainStringBytes.Length];
+                var salt = CommonMethods.GenerateSalt();
+                var derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
+                var nonce = CommonMethods.GenerateRandomBytes(_nonceBytesLength);
+                var tag = new byte[_tagBytesLength];
+                var encryptedData = new byte[plainStringBytes.Length];
 
                 using (var aesGcm = new AesGcm(derivedKey))
                 {
@@ -379,8 +383,8 @@ namespace CryptHash.Net.Encryption.AES.AEAD
                     Array.Copy(encryptedStringBytes, 0, encryptedStringBytesWithEncryptionData, 0, encryptedStringBytesWithEncryptionData.Length);
                 }
 
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
-                byte[] decryptedData = new byte[(hasEncryptionDataAppendedInInput ? encryptedStringBytesWithEncryptionData.Length : encryptedStringBytes.Length)];
+                var derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, _keyBytesLength, _iterationsForPBKDF2, HashAlgorithmName.SHA512);
+                var decryptedData = new byte[(hasEncryptionDataAppendedInInput ? encryptedStringBytesWithEncryptionData.Length : encryptedStringBytes.Length)];
 
                 using (var aesGcm = new AesGcm(derivedKey))
                 {

@@ -1,12 +1,12 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
 
-using System;
 using CryptHash.Net.Hash.HashResults;
 using CryptHash.Net.Util;
+using System;
 using BCryptNet = BCrypt.Net;
 
 namespace CryptHash.Net.Hash

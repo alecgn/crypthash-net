@@ -1,11 +1,11 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Util;
 using CryptHash.Net.Hash.HashResults;
+using CryptHash.Net.Util;
 using System;
 using System.Security.Cryptography;
 
@@ -62,7 +62,8 @@ namespace CryptHash.Net.Hash
             }
             catch (Exception ex)
             {
-                return new PBKDF2HashResult() { 
+                return new PBKDF2HashResult()
+                {
                     Success = false,
                     Message = ex.ToString()
                 };

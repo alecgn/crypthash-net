@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -68,7 +68,7 @@ namespace CryptHash.Net.Encryption.AES.Base
 
             try
             {
-                using (AesManaged aesManaged = new AesManaged())
+                using (var aesManaged = new AesManaged())
                 {
                     if (_key == null)
                     {
@@ -78,7 +78,9 @@ namespace CryptHash.Net.Encryption.AES.Base
                     else
                     {
                         if (aesManaged.ValidKeySize((_key.Length * 8)))
+                        {
                             aesManaged.Key = _key;
+                        }
                         else
                         {
                             return new AesEncryptionResult()
@@ -95,7 +97,9 @@ namespace CryptHash.Net.Encryption.AES.Base
                         _IV = aesManaged.IV;
                     }
                     else
+                    {
                         aesManaged.IV = _IV;
+                    }
 
                     aesManaged.Mode = cipherMode;
                     aesManaged.Padding = paddingMode;
@@ -176,10 +180,12 @@ namespace CryptHash.Net.Encryption.AES.Base
 
             try
             {
-                using (AesManaged aesManaged = new AesManaged())
+                using (var aesManaged = new AesManaged())
                 {
                     if (aesManaged.ValidKeySize((_key.Length * 8)))
+                    {
                         aesManaged.Key = _key;
+                    }
                     else
                     {
                         return new AesDecryptionResult()
@@ -267,7 +273,7 @@ namespace CryptHash.Net.Encryption.AES.Base
             _key = key ?? _key;
             _IV = IV ?? _IV;
 
-            bool pathsEqual = encryptedFilePath.Equals(sourceFilePath, StringComparison.InvariantCultureIgnoreCase);
+            var pathsEqual = encryptedFilePath.Equals(sourceFilePath, StringComparison.InvariantCultureIgnoreCase);
 
             try
             {
@@ -281,7 +287,9 @@ namespace CryptHash.Net.Encryption.AES.Base
                     else
                     {
                         if (aesManaged.ValidKeySize((_key.Length * 8)))
+                        {
                             aesManaged.Key = _key;
+                        }
                         else
                         {
                             return new AesEncryptionResult()
@@ -298,24 +306,26 @@ namespace CryptHash.Net.Encryption.AES.Base
                         _IV = aesManaged.IV;
                     }
                     else
+                    {
                         aesManaged.IV = _IV;
+                    }
 
                     aesManaged.Mode = cipherMode;
                     aesManaged.Padding = paddingMode;
 
                     using (var encryptor = aesManaged.CreateEncryptor(_key, _IV))
                     {
-                        using (FileStream sourceFs = File.Open(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (var sourceFs = File.Open(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
-                            using (FileStream encryptedFs = File.Open((pathsEqual ? encryptedFilePath + "_tmpcrypt" : encryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
+                            using (var encryptedFs = File.Open((pathsEqual ? encryptedFilePath + "_tmpcrypt" : encryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
                             {
-                                using (CryptoStream cs = new CryptoStream(encryptedFs, encryptor, CryptoStreamMode.Write))
+                                using (var cs = new CryptoStream(encryptedFs, encryptor, CryptoStreamMode.Write))
                                 {
                                     //plain.CopyTo(cs);
 
-                                    byte[] buffer = new byte[kBbufferSize * 1024];
+                                    var buffer = new byte[kBbufferSize * 1024];
                                     int read;
-                                    int percentageDone = 0;
+                                    var percentageDone = 0;
 
                                     while ((read = sourceFs.Read(buffer, 0, buffer.Length)) > 0)
                                     {
@@ -435,7 +445,7 @@ namespace CryptHash.Net.Encryption.AES.Base
                 };
             }
 
-            bool pathsEqual = decryptedFilePath.Equals(encryptedFilePath, StringComparison.InvariantCultureIgnoreCase);
+            var pathsEqual = decryptedFilePath.Equals(encryptedFilePath, StringComparison.InvariantCultureIgnoreCase);
 
             try
             {
@@ -446,27 +456,27 @@ namespace CryptHash.Net.Encryption.AES.Base
                     aesManaged.Mode = cipherMode;
                     aesManaged.Padding = paddingMode;
 
-                    using (FileStream decryptedFs = File.Open((pathsEqual ? decryptedFilePath + "_tmpdecrypt" : decryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
+                    using (var decryptedFs = File.Open((pathsEqual ? decryptedFilePath + "_tmpdecrypt" : decryptedFilePath), FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        using (FileStream encryptedFs = File.Open(encryptedFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (var encryptedFs = File.Open(encryptedFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
                             encryptedFs.Position = startPosition;
 
                             using (var decryptor = aesManaged.CreateDecryptor(_key, _IV))
                             {
-                                using (CryptoStream cs = new CryptoStream(decryptedFs, decryptor, CryptoStreamMode.Write))
+                                using (var cs = new CryptoStream(decryptedFs, decryptor, CryptoStreamMode.Write))
                                 {
                                     //encrypted.CopyTo(cs);
 
-                                    byte[] buffer = new byte[kBbufferSize * 1024];
-                                    long totalBytesToRead = ((endPosition == 0 ? encryptedFs.Length : endPosition) - startPosition);
-                                    long totalBytesNotRead = totalBytesToRead;
+                                    var buffer = new byte[kBbufferSize * 1024];
+                                    var totalBytesToRead = ((endPosition == 0 ? encryptedFs.Length : endPosition) - startPosition);
+                                    var totalBytesNotRead = totalBytesToRead;
                                     long totalBytesRead = 0;
-                                    int percentageDone = 0;
+                                    var percentageDone = 0;
 
                                     while (totalBytesNotRead > 0)
                                     {
-                                        int bytesRead = encryptedFs.Read(buffer, 0, (int)Math.Min(buffer.Length, totalBytesNotRead));
+                                        var bytesRead = encryptedFs.Read(buffer, 0, (int)Math.Min(buffer.Length, totalBytesNotRead));
 
                                         if (bytesRead > 0)
                                         {

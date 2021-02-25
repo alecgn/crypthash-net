@@ -1,15 +1,14 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
 
-using System;
-using System.IO;
-using System.Text;
+using CryptHash.Net.Hash.HashResults;
 using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
-using CryptHash.Net.Hash.HashResults;
+using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
@@ -33,7 +32,9 @@ namespace CryptHash.Net.Hash.Base
             }
 
             if (key == null || key.Length == 0)
+            {
                 key = CommonMethods.GenerateRandomBytes(HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8);
+            }
 
             HMACHashResult result = null;
 
@@ -45,7 +46,7 @@ namespace CryptHash.Net.Hash.Base
                     //offset = (offset == 0 ? 0 : offset);
                     count = (count == 0 ? bytesToComputeHMAC.Length : count);
 
-                    byte[] hash = hmac.ComputeHash(bytesToComputeHMAC, offset, count);
+                    var hash = hmac.ComputeHash(bytesToComputeHMAC, offset, count);
 
                     result = new HMACHashResult()
                     {
@@ -83,11 +84,11 @@ namespace CryptHash.Net.Hash.Base
             }
 
             var stringToComputeHMACBytes = System.Text.Encoding.UTF8.GetBytes(stringToComputeHMAC);
-            
+
             return ComputeHMAC(hmacAlgorithm, stringToComputeHMACBytes, key, offset, count);
         }
 
-        internal HMACHashResult ComputeFileHMAC(Enums.HMACAlgorithm hmacAlgorithm, string filePathToComputeHMAC, byte[] key = null, 
+        internal HMACHashResult ComputeFileHMAC(Enums.HMACAlgorithm hmacAlgorithm, string filePathToComputeHMAC, byte[] key = null,
             long offset = 0, long count = 0)
         {
             if (!File.Exists(filePathToComputeHMAC))
@@ -100,7 +101,9 @@ namespace CryptHash.Net.Hash.Base
             }
 
             if (key == null || key.Length == 0)
+            {
                 key = CommonMethods.GenerateRandomBytes(HMACOutputLengthDictionary.Instance[hmacAlgorithm] / 8);
+            }
 
             HMACHashResult result = null;
 
@@ -113,26 +116,30 @@ namespace CryptHash.Net.Hash.Base
                     //offset = (offset == 0 ? 0 : offset);
                     count = (count == 0 ? fStream.Length : count);
                     fStream.Position = offset;
-                    byte[] buffer = new byte[(1024 * 4)];
-                    long amount = (count - offset);
+                    var buffer = new byte[(1024 * 4)];
+                    var amount = (count - offset);
 
                     using (var hmac = (HMAC)CryptoConfig.CreateFromName(hmacAlgorithm.ToString()))
                     {
                         hmac.Key = key;
-                        int percentageDone = 0;
+                        var percentageDone = 0;
 
                         while (amount > 0)
                         {
-                            int bytesRead = fStream.Read(buffer, 0, (int)Math.Min(buffer.Length, amount));
+                            var bytesRead = fStream.Read(buffer, 0, (int)Math.Min(buffer.Length, amount));
 
                             if (bytesRead > 0)
                             {
                                 amount -= bytesRead;
 
                                 if (amount > 0)
+                                {
                                     hmac.TransformBlock(buffer, 0, bytesRead, buffer, 0);
+                                }
                                 else
+                                {
                                     hmac.TransformFinalBlock(buffer, 0, bytesRead);
+                                }
 
                                 var tmpPercentageDone = (int)(fStream.Position * 100 / count);
 
@@ -144,7 +151,9 @@ namespace CryptHash.Net.Hash.Base
                                 }
                             }
                             else
+                            {
                                 throw new InvalidOperationException();
+                            }
                         }
 
                         hash = hmac.Hash;

@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -19,7 +19,7 @@ namespace CryptHash.Net.Util
         {
             var randomBytes = new byte[length];
 
-            using (RNGCryptoServiceProvider rngCSP = new RNGCryptoServiceProvider())
+            using (var rngCSP = new RNGCryptoServiceProvider())
             {
                 rngCSP.GetBytes(randomBytes);
             }
@@ -29,7 +29,7 @@ namespace CryptHash.Net.Util
 
         public static byte[] Generate128BitKey()
         {
-            return GenerateRandomBytes(128/8);
+            return GenerateRandomBytes(128 / 8);
         }
 
         public static byte[] GenerateSalt(int saltLength = 0)
@@ -39,7 +39,7 @@ namespace CryptHash.Net.Util
 
         public static byte[] Generate256BitKey()
         {
-            return GenerateRandomBytes(256/8);
+            return GenerateRandomBytes(256 / 8);
         }
 
         public static byte[] GetHashedBytesFromPBKDF2(byte[] passwordBytes, byte[] saltBytes, int keyBytesLength, int iterations/*, HashAlgorithmName hashAlgorithmName*/)
@@ -70,8 +70,8 @@ namespace CryptHash.Net.Util
 
         public static byte[] ConvertSecureStringToByteArray(SecureString secString)
         {
-            byte[] byteArray = new byte[secString.Length];
-            IntPtr bstr = IntPtr.Zero;
+            var byteArray = new byte[secString.Length];
+            var bstr = IntPtr.Zero;
 
             RuntimeHelpers.ExecuteCodeWithGuaranteedCleanup(
                     delegate
@@ -101,13 +101,15 @@ namespace CryptHash.Net.Util
         public static void ClearFileAttributes(string filePath)
         {
             if (!File.Exists(filePath))
+            {
                 throw new FileNotFoundException($"{MessageDictionary.Instance["Common.FileNotFound"]} {filePath}.", nameof(filePath));
+            }
 
             File.SetAttributes(filePath, FileAttributes.Normal);
         }
 
 
-#region SHA256 methods
+        #region SHA256 methods
 
         //public static byte[] ComputeHMACSHA256HashFromFile(string filePath, byte[] authKey, int offset = 0)
         //{
@@ -194,10 +196,10 @@ namespace CryptHash.Net.Util
         //    return hash;
         //}
 
-#endregion SHA256 methods
+        #endregion SHA256 methods
 
 
-#region SHA384 methods
+        #region SHA384 methods
 
         //public static byte[] ComputeHMACSHA384HashFromFile(string filePath, byte[] authKey, int offset = 0)
         //{
@@ -284,10 +286,10 @@ namespace CryptHash.Net.Util
         //    return hash;
         //}
 
-#endregion SHA384 methods
+        #endregion SHA384 methods
 
 
-#region SHA512 methods
+        #region SHA512 methods
 
         //public static byte[] ComputeHMACSHA512HashFromFile(string filePath, byte[] authKey, int offset = 0)
         //{
@@ -374,12 +376,12 @@ namespace CryptHash.Net.Util
         //    return hash;
         //}
 
-#endregion SHA512 methods
+        #endregion SHA512 methods
 
 
         public static void AppendDataBytesToFile(string filePath, byte[] dataBytes)
         {
-            using (FileStream fs = File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.None))
+            using (var fs = File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.None))
             {
                 fs.Write(dataBytes, 0, dataBytes.Length);
             }
@@ -397,9 +399,9 @@ namespace CryptHash.Net.Util
                 throw new ArgumentException($"{MessageDictionary.Instance["Common.InvalidDataLengthError"]} ({dataLength}).", nameof(dataLength));
             }
 
-            byte[] dataBytes = new byte[dataLength];
+            var dataBytes = new byte[dataLength];
 
-            using (FileStream fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 fStream.Seek(offset, SeekOrigin.Begin);
                 fStream.Read(dataBytes, 0, dataLength);
@@ -412,7 +414,9 @@ namespace CryptHash.Net.Util
         public static bool TagsMatch(byte[] calcTag, byte[] sentTag)
         {
             if (calcTag.Length != sentTag.Length)
+            {
                 throw new ArgumentException(MessageDictionary.Instance["Common.IncorrectTagsLength"]);
+            }
 
             var result = true;
             var compare = 0;
@@ -423,7 +427,9 @@ namespace CryptHash.Net.Util
             }
 
             if (compare != 0)
+            {
                 result = false;
+            }
 
             return result;
         }

@@ -1,11 +1,11 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Util;
 using CryptHash.Net.Hash.HashResults;
+using CryptHash.Net.Util;
 using System;
 using System.Linq;
 
@@ -13,7 +13,7 @@ namespace CryptHash.Net.Hash
 {
     public class Argon2id
     {
-        public Argon2idHashResult ComputeHash(byte[] stringToComputeHashBytes, int iterations, int kBmemorySize, int degreeOfParallelism, int amountBytesToReturn, 
+        public Argon2idHashResult ComputeHash(byte[] stringToComputeHashBytes, int iterations, int kBmemorySize, int degreeOfParallelism, int amountBytesToReturn,
             byte[] salt = null, byte[] associatedData = null, byte[] knownSecret = null)
         {
             try
@@ -21,13 +21,15 @@ namespace CryptHash.Net.Hash
                 salt = salt ?? CommonMethods.GenerateSalt(); // generate a 128 bits salt, if not provided
                 degreeOfParallelism = (degreeOfParallelism <= 0 ? Environment.ProcessorCount : degreeOfParallelism);
 
-                using (var argon2id = new Konscious.Security.Cryptography.Argon2id(stringToComputeHashBytes) {
+                using (var argon2id = new Konscious.Security.Cryptography.Argon2id(stringToComputeHashBytes)
+                {
                     Salt = salt,
                     DegreeOfParallelism = degreeOfParallelism,
                     Iterations = iterations,
                     MemorySize = kBmemorySize,
                     AssociatedData = associatedData,
-                    KnownSecret = knownSecret })
+                    KnownSecret = knownSecret
+                })
                 {
                     var hashBytes = argon2id.GetBytes(amountBytesToReturn);
 

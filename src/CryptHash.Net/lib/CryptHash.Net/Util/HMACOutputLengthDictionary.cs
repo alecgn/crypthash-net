@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -24,23 +24,21 @@ namespace CryptHash.Net.Util
             [HMACAlgorithm.HMACSHA512] = 512
         };
 
-        public static HMACOutputLengthDictionary Instance { get { return _lazyHMACOutputLengthDictionary.Value; } }
+        public static HMACOutputLengthDictionary Instance => _lazyHMACOutputLengthDictionary.Value;
 
         private HMACOutputLengthDictionary() { }
 
         private int GetOutputLength(HMACAlgorithm key)
         {
-            int outputBytesLength;
 
-            if (!_dicHMACAlgorithmOutputLengths.TryGetValue(key, out outputBytesLength))
+            if (!_dicHMACAlgorithmOutputLengths.TryGetValue(key, out var outputBytesLength))
+            {
                 outputBytesLength = 0;
+            }
 
             return outputBytesLength;
         }
 
-        public int this[HMACAlgorithm key]
-        {
-            get { return GetOutputLength(key); }
-        }
+        public int this[HMACAlgorithm key] => GetOutputLength(key);
     }
 }

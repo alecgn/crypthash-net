@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -16,7 +16,9 @@ namespace CryptHash.Net.Encoding
         public static string ToHexString(string plainString)
         {
             if (string.IsNullOrWhiteSpace(plainString))
+            {
                 return null;
+            }
 
             var plainStringBytes = System.Text.Encoding.UTF8.GetBytes(plainString);
 
@@ -26,7 +28,9 @@ namespace CryptHash.Net.Encoding
         public static string ToHexString(byte[] byteArray)
         {
             if (byteArray == null || byteArray.Length <= 0)
+            {
                 return null;
+            }
 
             //var sb = new StringBuilder();
 
@@ -43,7 +47,9 @@ namespace CryptHash.Net.Encoding
         public static string ToString(string hexString)
         {
             if (string.IsNullOrWhiteSpace(hexString))
+            {
                 return null;
+            }
 
             var byteArray = ToByteArray(hexString);
 
@@ -53,10 +59,14 @@ namespace CryptHash.Net.Encoding
         public static byte[] ToByteArray(string hexString)
         {
             if (string.IsNullOrWhiteSpace(hexString))
+            {
                 return null;
+            }
 
             if (hexString.Length % 2 != 0)
+            {
                 throw new ArgumentException(MessageDictionary.Instance["Common.IncorrectHexadecimalString"], nameof(hexString));
+            }
 
             var byteArray = new byte[hexString.Length / 2];
             var i = 0;
@@ -72,8 +82,10 @@ namespace CryptHash.Net.Encoding
 
         private static IEnumerable<string> ChunkHexString(string hexString)
         {
-            for (int i = 0; i < hexString.Length; i += 2)
+            for (var i = 0; i < hexString.Length; i += 2)
+            {
                 yield return hexString.Substring(i, 2);
+            }
         }
     }
 }

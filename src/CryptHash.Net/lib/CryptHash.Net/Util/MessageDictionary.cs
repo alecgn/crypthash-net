@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -62,23 +62,21 @@ namespace CryptHash.Net.Util
             ["HMAC.ComputeSuccess"] = "Input HMAC computed succesfully.",
         };
 
-        public static MessageDictionary Instance { get { return _lazyMessageDictionary.Value; } }
+        public static MessageDictionary Instance => _lazyMessageDictionary.Value;
 
         private MessageDictionary() { }
 
         private string GetMessage(string key)
         {
-            string message;
 
-            if (!_cdicMessages.TryGetValue(key, out message))
+            if (!_cdicMessages.TryGetValue(key, out var message))
+            {
                 message = $"Unknown key \"{key}\" in OutputMessages Dictionary.\nAvailable keys: ({string.Join(", ", _cdicMessages.Select(i => $"\"{i.Key}\""))}).";
+            }
 
             return message;
         }
 
-        public string this[string key]
-        {
-            get { return GetMessage(key); }
-        }
+        public string this[string key] => GetMessage(key);
     }
 }

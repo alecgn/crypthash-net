@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -13,17 +13,21 @@ namespace CryptHash.Net.Encoding
         public static string ToBase64String(string plainString)
         {
             if (string.IsNullOrWhiteSpace(plainString))
+            {
                 return null;
+            }
 
             var plainStringBytes = System.Text.Encoding.UTF8.GetBytes(plainString);
-            
+
             return ToBase64String(plainStringBytes);
         }
 
         public static string ToBase64String(byte[] byteArray)
         {
             if (byteArray == null || byteArray.Length <= 0)
+            {
                 return null;
+            }
 
             return Convert.ToBase64String(byteArray);
         }
@@ -31,7 +35,9 @@ namespace CryptHash.Net.Encoding
         public static string ToString(string base64String)
         {
             if (string.IsNullOrWhiteSpace(base64String))
+            {
                 return null;
+            }
 
             var byteArray = Convert.FromBase64String(base64String);
 
@@ -41,7 +47,9 @@ namespace CryptHash.Net.Encoding
         public static byte[] ToByteArray(string base64String)
         {
             if (string.IsNullOrWhiteSpace(base64String))
+            {
                 return null;
+            }
 
             return Convert.FromBase64String(base64String);
         }

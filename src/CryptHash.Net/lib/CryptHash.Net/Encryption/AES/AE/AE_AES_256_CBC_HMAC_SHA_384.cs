@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -186,10 +186,10 @@ namespace CryptHash.Net.Encryption.AES.AE
             try
             {
                 //byte[] salt = CommonMethods.GenerateRandomBytes(_saltBytesLength);
-                byte[] salt = CommonMethods.GenerateSalt();
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
-                byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
-                byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
+                var salt = CommonMethods.GenerateSalt();
+                var derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
+                var cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
+                var authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
                 var aesEncryptionResult = base.EncryptWithMemoryStream(plainStringBytes, cryptKey, null, _cipherMode, _paddingMode);
 
@@ -468,9 +468,9 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Array.Copy(encryptedStringBytes, (encryptedStringBytes.Length - _tagBytesLength - _saltBytesLength - _IVBytesLength), IV, 0, IV.Length);
                 }
 
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
-                byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
-                byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
+                var derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
+                var cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
+                var authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
                 //var hmacSha384 = CommonMethods.ComputeHMACSHA384HashFromDataBytes(authKey, encryptedStringBytes, 0, (hasEncryptionDataAppendedInInput ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length));
                 var hmacSha384 = new HMAC_SHA_384().ComputeHMAC(encryptedStringBytes, authKey, 0, (hasEncryptionDataAppendedInInput ? (encryptedStringBytes.Length - _tagBytesLength) : encryptedStringBytes.Length)).HashBytes;
                 var calcTag = hmacSha384.Take(_tagBytesLength).ToArray();
@@ -652,11 +652,11 @@ namespace CryptHash.Net.Encryption.AES.AE
             try
             {
                 //byte[] salt = CommonMethods.GenerateRandomBytes(_saltBytesLength);
-                byte[] salt = CommonMethods.GenerateSalt();
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
+                var salt = CommonMethods.GenerateSalt();
+                var derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
 
-                byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
-                byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
+                var cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
+                var authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
                 var aesEncryptionResult = base.EncryptWithFileStream(sourceFilePath, encryptedFilePath, cryptKey, null, _cipherMode, _paddingMode, deleteSourceFile);
 
@@ -665,7 +665,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     if (appendEncryptionDataToOutputFile)
                     {
                         RaiseOnEncryptionMessage(MessageDictionary.Instance["Encryption.FileAdditionalDataWriting"]);
-                        byte[] additionalData = new byte[_IVBytesLength + _saltBytesLength];
+                        var additionalData = new byte[_IVBytesLength + _saltBytesLength];
 
                         Array.Copy(aesEncryptionResult.IV, 0, additionalData, 0, _IVBytesLength);
                         Array.Copy(salt, 0, additionalData, _IVBytesLength, _saltBytesLength);
@@ -819,7 +819,7 @@ namespace CryptHash.Net.Encryption.AES.AE
             {
                 if (hasEncryptionDataAppendedInInputFile)
                 {
-                    byte[] additionalData = new byte[_IVBytesLength + _saltBytesLength + _tagBytesLength];
+                    var additionalData = new byte[_IVBytesLength + _saltBytesLength + _tagBytesLength];
                     additionalData = CommonMethods.GetBytesFromFile(encryptedFilePath, additionalData.Length, (encryptedFileSize - additionalData.Length));
 
                     IV = new byte[_IVBytesLength];
@@ -831,9 +831,9 @@ namespace CryptHash.Net.Encryption.AES.AE
                     Array.Copy(additionalData, (_IVBytesLength + _saltBytesLength), sentTag, 0, _tagBytesLength);
                 }
 
-                byte[] derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
-                byte[] cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
-                byte[] authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
+                var derivedKey = CommonMethods.GetHashedBytesFromPBKDF2(passwordBytes, salt, (_keyBytesLength * 2), _iterationsForKeyDerivationFunction);
+                var cryptKey = derivedKey.Take(_keyBytesLength).ToArray();
+                var authKey = derivedKey.Skip(_keyBytesLength).Take(_keyBytesLength).ToArray();
 
                 //var hmacSha384 = CommonMethods.ComputeHMACSHA384HashFromFile(encryptedFilePath, authKey, 0, (hasEncryptionDataAppendedInInputFile ? encryptedFileSize - _tagBytesLength : encryptedFileSize));
                 var hmacSha384 = new HMAC_SHA_384().ComputeFileHMAC(encryptedFilePath, authKey, 0, (hasEncryptionDataAppendedInInputFile ? encryptedFileSize - _tagBytesLength : encryptedFileSize)).HashBytes;
@@ -848,7 +848,7 @@ namespace CryptHash.Net.Encryption.AES.AE
                     };
                 }
 
-                long endPosition = (hasEncryptionDataAppendedInInputFile ? (encryptedFileSize - _tagBytesLength - _saltBytesLength - _IVBytesLength) : encryptedFileSize);
+                var endPosition = (hasEncryptionDataAppendedInInputFile ? (encryptedFileSize - _tagBytesLength - _saltBytesLength - _IVBytesLength) : encryptedFileSize);
 
                 var aesDecryptionResult = base.DecryptWithFileStream(encryptedFilePath, decryptedFilePath, cryptKey, IV, _cipherMode, _paddingMode, deleteSourceFile, 4, 0, endPosition);
 

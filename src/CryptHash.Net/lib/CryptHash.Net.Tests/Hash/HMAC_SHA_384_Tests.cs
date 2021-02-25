@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -13,13 +13,13 @@ namespace CryptHash.Net.Tests.Hash
     [TestClass]
     public class HMAC_SHA_384_Tests
     {
-        HMAC_SHA_384 _hmacSha384 = new HMAC_SHA_384();
-        string _testString = "This is a test string!";
+        private readonly HMAC_SHA_384 _hmacSha384 = new HMAC_SHA_384();
+        private readonly string _testString = "This is a test string!";
 
         [TestMethod]
         public void ComputeAndVerifyHMAC_String()
         {
-            HMACHashResult verifyResult = new HMACHashResult();
+            var verifyResult = new HMACHashResult();
             var errorMessage = "";
 
             var hmacResult = _hmacSha384.ComputeHMAC(_testString);
@@ -29,11 +29,14 @@ namespace CryptHash.Net.Tests.Hash
                 verifyResult = _hmacSha384.VerifyHMAC(hmacResult.HashString, _testString, hmacResult.Key);
 
                 if (!verifyResult.Success)
+                {
                     errorMessage = verifyResult.Message;
+                }
             }
             else
+            {
                 errorMessage = hmacResult.Message;
-
+            }
 
             Assert.IsTrue((hmacResult.Success && verifyResult.Success), errorMessage);
         }

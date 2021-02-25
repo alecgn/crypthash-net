@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -11,13 +11,16 @@ using System.Security.Cryptography;
 
 namespace CryptHash.Net.Encryption.RSA.Base
 {
-    /*internal abstract*/ public class RSABase
+    /*internal abstract*/
+    public class RSABase
     {
         public static KeySizes KeySizes = new KeySizes(384, 16384, 8);
 
-        public static bool IsValidKeySize(int keySize) => (keySize >= KeySizes.MinSize && keySize <= KeySizes.MaxSize && keySize % KeySizes.SkipSize == 0);
+        public static bool IsValidKeySize(int keySize)
+        {
+            return (keySize >= KeySizes.MinSize && keySize <= KeySizes.MaxSize && keySize % KeySizes.SkipSize == 0);
+        }
 
-        
         public RSAEncryptionResult Encrypt(byte[] sourceData, int keySize, RSAParameters rsaParameters, bool doOAEPPadding = false)
         {
             if (!IsValidKeySize(keySize))
@@ -32,8 +35,8 @@ namespace CryptHash.Net.Encryption.RSA.Base
             byte[] encryptedData = null;
 
             try
-            {                
-                using (RSACryptoServiceProvider rsaCsp = new RSACryptoServiceProvider(keySize))
+            {
+                using (var rsaCsp = new RSACryptoServiceProvider(keySize))
                 {
                     rsaCsp.ImportParameters(rsaParameters);
                     encryptedData = rsaCsp.Encrypt(sourceData, doOAEPPadding);
@@ -72,7 +75,7 @@ namespace CryptHash.Net.Encryption.RSA.Base
 
             try
             {
-                using (RSACryptoServiceProvider rsaCsp = new RSACryptoServiceProvider(keySize))
+                using (var rsaCsp = new RSACryptoServiceProvider(keySize))
                 {
                     rsaCsp.ImportParameters(rsaParameters);
                     decryptedData = rsaCsp.Decrypt(encryptedData, doOAEPPadding);

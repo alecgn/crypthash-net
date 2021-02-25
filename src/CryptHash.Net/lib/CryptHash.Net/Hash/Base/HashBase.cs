@@ -1,15 +1,22 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
 
-using System;
+using
+/* Unmerged change from project 'CryptHash.Net (netstandard2.1)'
+Before:
 using System.IO;
 using System.Text;
+After:
+using System.Net.Hash.HashResults;
+*/
+CryptHash.Net.Hash.HashResults;
 using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
-using CryptHash.Net.Hash.HashResults;
+using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
@@ -70,7 +77,7 @@ namespace CryptHash.Net.Hash.Base
                     //offset = (offset == 0 ? 0 : offset);
                     count = (count == 0 ? bytesToComputeHash.Length : count);
 
-                    byte[] hash = hashAlg.ComputeHash(bytesToComputeHash, offset, count);
+                    var hash = hashAlg.ComputeHash(bytesToComputeHash, offset, count);
 
                     result = new GenericHashResult()
                     {
@@ -106,11 +113,11 @@ namespace CryptHash.Net.Hash.Base
             }
 
             var stringToComputeHashBytes = System.Text.Encoding.UTF8.GetBytes(stringToComputeHash);
-            
+
             return ComputeHash(hashAlgorithm, stringToComputeHashBytes, offset, count);
         }
 
-        internal GenericHashResult ComputeFileHash(Enums.HashAlgorithm hashAlgorithm, string filePathToComputeHash, 
+        internal GenericHashResult ComputeFileHash(Enums.HashAlgorithm hashAlgorithm, string filePathToComputeHash,
             long offset = 0, long count = 0)
         {
             if (!File.Exists(filePathToComputeHash))
@@ -160,25 +167,29 @@ namespace CryptHash.Net.Hash.Base
                     //offset = (offset == 0 ? 0 : offset);
                     count = (count == 0 ? fStream.Length : count);
                     fStream.Position = offset;
-                    byte[] buffer = new byte[(1024 * 4)];
-                    long amount = (count - offset);
+                    var buffer = new byte[(1024 * 4)];
+                    var amount = (count - offset);
 
                     using (hashAlg)
                     {
-                        int percentageDone = 0;
+                        var percentageDone = 0;
 
                         while (amount > 0)
                         {
-                            int bytesRead = fStream.Read(buffer, 0, (int)Math.Min(buffer.Length, amount));
+                            var bytesRead = fStream.Read(buffer, 0, (int)Math.Min(buffer.Length, amount));
 
                             if (bytesRead > 0)
                             {
                                 amount -= bytesRead;
 
                                 if (amount > 0)
+                                {
                                     hashAlg.TransformBlock(buffer, 0, bytesRead, buffer, 0);
+                                }
                                 else
+                                {
                                     hashAlg.TransformFinalBlock(buffer, 0, bytesRead);
+                                }
 
                                 var tmpPercentageDone = (int)(fStream.Position * 100 / count);
 
@@ -190,7 +201,9 @@ namespace CryptHash.Net.Hash.Base
                                 }
                             }
                             else
+                            {
                                 throw new InvalidOperationException();
+                            }
                         }
 
                         hash = hashAlg.Hash;

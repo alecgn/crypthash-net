@@ -1,5 +1,5 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
@@ -14,13 +14,13 @@ namespace CryptHash.Net.Tests.Hash
     [TestClass]
     public class SHA384_Tests
     {
-        SHA384 _sha384 = new SHA384();
-        string _testString = "This is a test string!";
+        private readonly SHA384 _sha384 = new SHA384();
+        private readonly string _testString = "This is a test string!";
 
         [TestMethod]
         public void ComputeAndVerifyHash_String()
         {
-            GenericHashResult verifyResult = new GenericHashResult();
+            var verifyResult = new GenericHashResult();
             var errorMessage = "";
 
             var hashResult = _sha384.ComputeHash(_testString);
@@ -30,11 +30,14 @@ namespace CryptHash.Net.Tests.Hash
                 verifyResult = _sha384.VerifyHash(hashResult.HashString, _testString);
 
                 if (!verifyResult.Success)
+                {
                     errorMessage = verifyResult.Message;
+                }
             }
             else
+            {
                 errorMessage = hashResult.Message;
-
+            }
 
             Assert.IsTrue((hashResult.Success && verifyResult.Success), errorMessage);
         }
@@ -42,7 +45,7 @@ namespace CryptHash.Net.Tests.Hash
         public void ComputeAndVerifyHash_File()
         {
             var testFilePath = Path.GetTempFileName();
-            GenericHashResult verifyResult = new GenericHashResult();
+            var verifyResult = new GenericHashResult();
             var errorMessage = "";
 
             File.WriteAllText(testFilePath, _testString);
@@ -54,10 +57,14 @@ namespace CryptHash.Net.Tests.Hash
                 verifyResult = _sha384.VerifyFileHash(hashResult.HashString, testFilePath);
 
                 if (!verifyResult.Success)
+                {
                     errorMessage = verifyResult.Message;
+                }
             }
             else
+            {
                 errorMessage = hashResult.Message;
+            }
 
             Assert.IsTrue((hashResult.Success && verifyResult.Success), errorMessage);
         }

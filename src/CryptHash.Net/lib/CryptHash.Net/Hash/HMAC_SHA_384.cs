@@ -1,11 +1,11 @@
 ﻿/*
- *      Alessandro Cagliostro, 2020
+ *      Alessandro Cagliostro, 2021
  *      
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Hash.HashResults;
 using CryptHash.Net.Hash.Base;
+using CryptHash.Net.Hash.HashResults;
 
 namespace CryptHash.Net.Hash
 {

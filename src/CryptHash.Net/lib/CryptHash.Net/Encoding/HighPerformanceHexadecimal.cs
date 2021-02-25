@@ -81,7 +81,9 @@ namespace CryptHash.Net.Encoding
         public static string ToHexString(string plainString, bool useHexIndicatorPrefix = false)
         {
             if (string.IsNullOrWhiteSpace(plainString))
+            {
                 return null;
+            }
 
             var plainStringBytes = System.Text.Encoding.UTF8.GetBytes(plainString);
 
@@ -93,23 +95,29 @@ namespace CryptHash.Net.Encoding
             fixed (int* hexRef = _toHexTable)
             fixed (byte* sourceRef = byteArray)
             {
-                byte* s = sourceRef;
-                int resultLen = (byteArray.Length << 1);
-                
-                if (useHexIndicatorPrefix)
-                    resultLen += 2;
+                var s = sourceRef;
+                var resultLen = (byteArray.Length << 1);
 
-                string result = new string(' ', resultLen);
+                if (useHexIndicatorPrefix)
+                {
+                    resultLen += 2;
+                }
+
+                var result = new string(' ', resultLen);
 
                 fixed (char* resultRef = result)
                 {
-                    int* pair = (int*)resultRef;
+                    var pair = (int*)resultRef;
 
                     if (useHexIndicatorPrefix)
+                    {
                         *pair++ = 7864368;
+                    }
 
                     while (*pair != 0)
+                    {
                         *pair++ = hexRef[*s++];
+                    }
 
                     return result;
                 }
@@ -119,7 +127,9 @@ namespace CryptHash.Net.Encoding
         public static string ToString(string hexString)
         {
             if (string.IsNullOrWhiteSpace(hexString))
+            {
                 return null;
+            }
 
             var byteArray = ToByteArray(hexString);
 
@@ -129,10 +139,14 @@ namespace CryptHash.Net.Encoding
         public static byte[] ToByteArray(string hexString)
         {
             if (string.IsNullOrWhiteSpace(hexString))
+            {
                 return null;
+            }
 
             if (hexString.Length % 2 != 0)
+            {
                 throw new ArgumentException(MessageDictionary.Instance["Common.IncorrectHexadecimalString"], nameof(hexString));
+            }
 
             int index = 0, len = hexString.Length >> 1;
 
@@ -141,25 +155,29 @@ namespace CryptHash.Net.Encoding
                 if (*(int*)sourceRef == 7864368)
                 {
                     if (hexString.Length == 2)
+                    {
                         throw new ArgumentException();
+                    }
 
                     index += 2;
                     len -= 1;
                 }
 
                 byte add = 0;
-                byte[] result = new byte[len];
+                var result = new byte[len];
                 fixed (byte* hiRef = _fromHexTable16)
                 fixed (byte* lowRef = _fromHexTable)
                 fixed (byte* resultRef = result)
                 {
-                    char* s = (char*)&sourceRef[index];
-                    byte* r = resultRef;
+                    var s = &sourceRef[index];
+                    var r = resultRef;
 
                     while (*s != 0)
                     {
                         if (*s > 102 || (*r = hiRef[*s++]) == 255 || *s > 102 || (add = lowRef[*s++]) == 255)
+                        {
                             throw new ArgumentException();
+                        }
 
                         *r++ += add;
                     }
