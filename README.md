@@ -1,7 +1,6 @@
 # CryptHash.NET 
-[![Build status (crypthash-net)](https://github.com/alecgn/crypthash-net/workflows/build/badge.svg)](#)
+[![Build and tests status (crypthash-net)](https://github.com/alecgn/crypthash-net/workflows/build-and-test/badge.svg)](#)
 [![Nuget version (CryptHash.Net)](https://img.shields.io/nuget/v/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) 
-[![Run tests (mssql-helpers)](https://github.com/alecgn/crypthash-net/workflows/run-tests/badge.svg)](#)
 [![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) 
 [![Tests status (crypthash-net)](https://img.shields.io/appveyor/tests/alecgn/crypthash-net)](https://ci.appveyor.com/project/alecgn/crypthash-net)
 
