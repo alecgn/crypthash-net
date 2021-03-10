@@ -13,7 +13,7 @@ After:
 using System.Net.Hash.HashResults;
 */
 CryptHash.Net.Hash.HashResults;
-using CryptHash.Net.Util;
+using CryptHash.Net.Resources;
 using CryptHash.Net.Util.EventHandlers;
 using System;
 using System.IO;
@@ -35,7 +35,7 @@ namespace CryptHash.Net.Hash.Base
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -82,7 +82,7 @@ namespace CryptHash.Net.Hash.Base
                     result = new GenericHashResult()
                     {
                         Success = true,
-                        Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
+                        Message = MessageStrings.Hash_ComputeSuccess,
                         HashBytes = hash,
                         HashString = Encoding.HighPerformanceHexadecimal.ToHexString(hash)
                     };
@@ -108,7 +108,7 @@ namespace CryptHash.Net.Hash.Base
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -125,7 +125,7 @@ namespace CryptHash.Net.Hash.Base
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{filePathToComputeHash}\"."
+                    Message = $"{MessageStrings.Common_FileNotFound} \"{filePathToComputeHash}\"."
                 };
             }
 
@@ -213,7 +213,7 @@ namespace CryptHash.Net.Hash.Base
                 result = new GenericHashResult()
                 {
                     Success = true,
-                    Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
+                    Message = MessageStrings.Hash_ComputeSuccess,
                     HashString = Encoding.HighPerformanceHexadecimal.ToHexString(hash),
                     HashBytes = hash
                 };
@@ -241,7 +241,7 @@ namespace CryptHash.Net.Hash.Base
                 var hashesMatch = hashResult.HashBytes.SequenceEqual(hashBytes);
 
                 hashResult.Success = hashesMatch;
-                hashResult.Message = $"{(hashesMatch ? MessageDictionary.Instance["Hash.Match"] : MessageDictionary.Instance["Hash.DoesNotMatch"])}";
+                hashResult.Message = $"{(hashesMatch ? MessageStrings.Hash_Match : MessageStrings.Hash_DoesNotMatch)}";
             }
 
             return hashResult;
@@ -274,7 +274,7 @@ namespace CryptHash.Net.Hash.Base
                 var hashesMatch = hashResult.HashBytes.SequenceEqual(hashBytes);
 
                 hashResult.Success = hashesMatch;
-                hashResult.Message = $"{(hashesMatch ? MessageDictionary.Instance["Hash.Match"] : MessageDictionary.Instance["Hash.DoesNotMatch"])}";
+                hashResult.Message = $"{(hashesMatch ? MessageStrings.Hash_Match : MessageStrings.Hash_DoesNotMatch)}";
             }
 
             return hashResult;

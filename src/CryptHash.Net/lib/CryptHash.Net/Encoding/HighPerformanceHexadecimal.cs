@@ -4,7 +4,7 @@
  *      https://www.codeproject.com/Tips/447938/High-performance-Csharp-byte-array-to-hex-string-t
  */
 
-using CryptHash.Net.Util;
+using CryptHash.Net.Resources;
 using System;
 
 namespace CryptHash.Net.Encoding
@@ -145,7 +145,7 @@ namespace CryptHash.Net.Encoding
 
             if (hexString.Length % 2 != 0)
             {
-                throw new ArgumentException(MessageDictionary.Instance["Common.IncorrectHexadecimalString"], nameof(hexString));
+                throw new ArgumentException(MessageStrings.Common_IncorrectHexadecimalString, nameof(hexString));
             }
 
             int index = 0, len = hexString.Length >> 1;

@@ -5,6 +5,7 @@
  */
 
 using CryptHash.Net.Hash.HashResults;
+using CryptHash.Net.Resources;
 using CryptHash.Net.Util;
 using CryptHash.Net.Util.EventHandlers;
 using System;
@@ -27,7 +28,7 @@ namespace CryptHash.Net.Hash.Base
                 return new HMACHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["HMAC.InputRequired"]
+                    Message = MessageStrings.HMAC_InputRequired
                 };
             }
 
@@ -51,7 +52,7 @@ namespace CryptHash.Net.Hash.Base
                     result = new HMACHashResult()
                     {
                         Success = true,
-                        Message = MessageDictionary.Instance["HMAC.ComputeSuccess"],
+                        Message = MessageStrings.HMAC_ComputeSuccess,
                         HashBytes = hash,
                         HashString = Encoding.HighPerformanceHexadecimal.ToHexString(hash),
                         Key = key,
@@ -79,7 +80,7 @@ namespace CryptHash.Net.Hash.Base
                 return new HMACHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["HMAC.InputRequired"]
+                    Message = MessageStrings.HMAC_InputRequired
                 };
             }
 
@@ -96,7 +97,7 @@ namespace CryptHash.Net.Hash.Base
                 return new HMACHashResult()
                 {
                     Success = false,
-                    Message = $"{MessageDictionary.Instance["Common.FileNotFound"]} \"{filePathToComputeHMAC}\"."
+                    Message = $"{MessageStrings.Common_FileNotFound} \"{filePathToComputeHMAC}\"."
                 };
             }
 
@@ -163,7 +164,7 @@ namespace CryptHash.Net.Hash.Base
                 result = new HMACHashResult()
                 {
                     Success = true,
-                    Message = MessageDictionary.Instance["HMAC.ComputeSuccess"],
+                    Message = MessageStrings.HMAC_ComputeSuccess,
                     HashString = Encoding.HighPerformanceHexadecimal.ToHexString(hash),
                     HashBytes = hash,
                     Key = key
@@ -192,7 +193,7 @@ namespace CryptHash.Net.Hash.Base
                 var hashesMatch = hmacResult.HashBytes.SequenceEqual(hmacBytes);
 
                 hmacResult.Success = hashesMatch;
-                hmacResult.Message = $"{(hashesMatch ? MessageDictionary.Instance["Hash.Match"] : MessageDictionary.Instance["Hash.DoesNotMatch"])}";
+                hmacResult.Message = $"{(hashesMatch ? MessageStrings.Hash_Match : MessageStrings.Hash_DoesNotMatch)}";
             }
 
             return hmacResult;
@@ -225,7 +226,7 @@ namespace CryptHash.Net.Hash.Base
                 var hashesMatch = hmacResult.HashBytes.SequenceEqual(hmacBytes);
 
                 hmacResult.Success = hashesMatch;
-                hmacResult.Message = $"{(hashesMatch ? MessageDictionary.Instance["Hash.Match"] : MessageDictionary.Instance["Hash.DoesNotMatch"])}";
+                hmacResult.Message = $"{(hashesMatch ? MessageStrings.Hash_Match : MessageStrings.Hash_DoesNotMatch)}";
             }
 
             return hmacResult;

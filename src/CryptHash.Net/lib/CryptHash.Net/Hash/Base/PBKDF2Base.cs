@@ -26,7 +26,7 @@
 //                return new PBKDF2HashResult()
 //                {
 //                    Success = false,
-//                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+//                    Message = MessageStrings.Hash_InputRequired
 //                };
 //            }
 
@@ -54,7 +54,7 @@
 //                        return new PBKDF2HashResult()
 //                        {
 //                            Success = false,
-//                            Message = $"{MessageDictionary.Instance["Common.AlgorithmNotSupported"]} \"{hmacAlgorithm.ToString()}\"."
+//                            Message = $"{MessageStrings.Common_AlgorithmNotSupported} \"{hmacAlgorithm.ToString()}\"."
 //                        };
 //                    }
 //            }
@@ -107,7 +107,7 @@
 //                return new PBKDF2HashResult()
 //                {
 //                    Success = false,
-//                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+//                    Message = MessageStrings.Hash_InputRequired
 //                };
 //            }
 
@@ -116,7 +116,7 @@
 //                return new PBKDF2HashResult()
 //                {
 //                    Success = false,
-//                    Message = MessageDictionary.Instance["Hash.VerificationHashRequired"]
+//                    Message = MessageStrings.Hash_VerificationHashRequired
 //                };
 //            }
 
@@ -127,7 +127,7 @@
 //                return new PBKDF2HashResult()
 //                {
 //                    Success = false,
-//                    Message = MessageDictionary.Instance["Common.IncorrectInputLengthError"]
+//                    Message = MessageStrings.Common_IncorrectInputLengthError
 //                };
 //            }
 
@@ -144,7 +144,7 @@
 //                return new PBKDF2HashResult()
 //                {
 //                    Success = true,
-//                    Message = MessageDictionary.Instance["Hash.Match"],
+//                    Message = MessageStrings.Hash_Match,
 //                    HashString = hash,
 //                    HashBytes = result.HashBytes,
 //                    PRF = hmacAlgorithm,
@@ -156,7 +156,7 @@
 //                return new PBKDF2HashResult()
 //                {
 //                    Success = false,
-//                    Message = MessageDictionary.Instance["Hash.DoesNotMatch"]
+//                    Message = MessageStrings.Hash_DoesNotMatch
 //                };
 //            }
 //        }

@@ -5,6 +5,7 @@
  */
 
 using CryptHash.Net.Hash.HashResults;
+using CryptHash.Net.Resources;
 using CryptHash.Net.Util;
 using System;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace CryptHash.Net.Hash
                         Success = true,
                         HashBytes = hashBytes,
                         HashString = Convert.ToBase64String(hashBytes),
-                        Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
+                        Message = MessageStrings.Hash_ComputeSuccess,
                         SaltBytes = salt,
                         Iterations = iterations,
                         DegreeOfParallelism = degreeOfParallelism,
@@ -70,7 +71,7 @@ namespace CryptHash.Net.Hash
                     Success = newHash.HashBytes.SequenceEqual(hash),
                     HashBytes = newHash.HashBytes,
                     HashString = newHash.HashString,
-                    Message = $"{(newHash.HashBytes.SequenceEqual(hash) ? MessageDictionary.Instance["Hash.Match"] : MessageDictionary.Instance["Hash.DoesNotMatch"])}",
+                    Message = $"{(newHash.HashBytes.SequenceEqual(hash) ? MessageStrings.Hash_Match : MessageStrings.Hash_DoesNotMatch)}",
                     SaltBytes = salt,
                     Iterations = iterations,
                     DegreeOfParallelism = degreeOfParallelism,

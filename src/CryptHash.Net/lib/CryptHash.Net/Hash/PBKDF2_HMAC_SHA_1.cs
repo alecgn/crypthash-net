@@ -5,6 +5,7 @@
  */
 
 using CryptHash.Net.Hash.HashResults;
+using CryptHash.Net.Resources;
 using CryptHash.Net.Util;
 using System;
 using System.Security.Cryptography;
@@ -29,7 +30,7 @@ namespace CryptHash.Net.Hash
                 return new PBKDF2HashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -52,7 +53,7 @@ namespace CryptHash.Net.Hash
                 return new PBKDF2HashResult()
                 {
                     Success = true,
-                    Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
+                    Message = MessageStrings.Hash_ComputeSuccess,
                     HashString = $"{Convert.ToBase64String(hashBytes)}",
                     HashBytes = hashBytes,
                     Iterations = iterationsForKeyDerivation,
@@ -77,7 +78,7 @@ namespace CryptHash.Net.Hash
                 return new PBKDF2HashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -86,7 +87,7 @@ namespace CryptHash.Net.Hash
                 return new PBKDF2HashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -97,7 +98,7 @@ namespace CryptHash.Net.Hash
                 return new PBKDF2HashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Common.IncorrectInputLengthError"]
+                    Message = MessageStrings.Common_IncorrectInputLengthError
                 };
             }
 
@@ -114,7 +115,7 @@ namespace CryptHash.Net.Hash
                 return new PBKDF2HashResult()
                 {
                     Success = true,
-                    Message = MessageDictionary.Instance["Hash.Match"],
+                    Message = MessageStrings.Hash_Match,
                     HashString = hash,
                     HashBytes = result.HashBytes,
                     Iterations = result.Iterations,
@@ -127,7 +128,7 @@ namespace CryptHash.Net.Hash
                 return new PBKDF2HashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.DoesNotMatch"]
+                    Message = MessageStrings.Hash_DoesNotMatch
                 };
             }
         }

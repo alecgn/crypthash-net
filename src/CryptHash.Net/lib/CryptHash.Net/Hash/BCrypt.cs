@@ -5,7 +5,7 @@
  */
 
 using CryptHash.Net.Hash.HashResults;
-using CryptHash.Net.Util;
+using CryptHash.Net.Resources;
 using System;
 using BCryptNet = BCrypt.Net;
 
@@ -20,7 +20,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -31,7 +31,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = true,
-                    Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
+                    Message = MessageStrings.Hash_ComputeSuccess,
                     HashString = hashedString
                 };
             }
@@ -52,7 +52,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -63,7 +63,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = true,
-                    Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
+                    Message = MessageStrings.Hash_ComputeSuccess,
                     HashString = hashedString
                 };
             }
@@ -84,7 +84,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -95,7 +95,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = true,
-                    Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
+                    Message = MessageStrings.Hash_ComputeSuccess,
                     HashString = hashedString
                 };
             }
@@ -116,7 +116,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -127,7 +127,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = true,
-                    Message = MessageDictionary.Instance["Hash.ComputeSuccess"],
+                    Message = MessageStrings.Hash_ComputeSuccess,
                     HashString = hashedString
                 };
             }
@@ -148,7 +148,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.InputRequired"]
+                    Message = MessageStrings.Hash_InputRequired
                 };
             }
 
@@ -157,7 +157,7 @@ namespace CryptHash.Net.Hash
                 return new GenericHashResult()
                 {
                     Success = false,
-                    Message = MessageDictionary.Instance["Hash.VerificationHashRequired"]
+                    Message = MessageStrings.Hash_VerificationHashRequired
                 };
             }
 
@@ -170,7 +170,7 @@ namespace CryptHash.Net.Hash
                     return new GenericHashResult()
                     {
                         Success = true,
-                        Message = MessageDictionary.Instance["Hash.Match"],
+                        Message = MessageStrings.Hash_Match,
                         HashString = hash
                     };
                 }
@@ -179,7 +179,7 @@ namespace CryptHash.Net.Hash
                     return new GenericHashResult()
                     {
                         Success = false,
-                        Message = MessageDictionary.Instance["Hash.DoesNotMatch"]
+                        Message = MessageStrings.Hash_DoesNotMatch
                     };
                 }
             }

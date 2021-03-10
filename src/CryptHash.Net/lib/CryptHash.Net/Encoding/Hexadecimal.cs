@@ -4,7 +4,7 @@
  *      https://github.com/alecgn
  */
 
-using CryptHash.Net.Util;
+using CryptHash.Net.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +65,7 @@ namespace CryptHash.Net.Encoding
 
             if (hexString.Length % 2 != 0)
             {
-                throw new ArgumentException(MessageDictionary.Instance["Common.IncorrectHexadecimalString"], nameof(hexString));
+                throw new ArgumentException(MessageStrings.Common_IncorrectHexadecimalString, nameof(hexString));
             }
 
             var byteArray = new byte[hexString.Length / 2];

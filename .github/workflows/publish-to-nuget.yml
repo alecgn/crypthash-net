@@ -1,0 +1,16 @@
+name: publish-to-nuget
+on: 
+    push:
+        branches:
+            - master
+jobs:
+  publish-to-nuget:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Publish to NuGet
+      uses: brandedoutcast/publish-nuget@v2
+      with:
+          PROJECT_FILE_PATH: src/CryptHash.Net/lib/CryptHash.Net/CryptHash.Net.csproj
+          NUGET_KEY: ${{secrets.NUGET_TOKEN}}
