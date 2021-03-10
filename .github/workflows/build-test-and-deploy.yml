@@ -1,13 +1,19 @@
-name: publish-to-nuget
+name: build-test-and-deploy
 on: 
     push:
         branches:
             - master
 jobs:
-  publish-to-nuget:
+  build-test-and-deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - name: Build
+      run: dotnet build --configuration Release src/CryptHash.Net/lib/CryptHash.Net/CryptHash.Net.csproj
+
+    - name: Run tests
+      run: dotnet test src/CryptHash.Net/lib/CryptHash.Net.Tests/CryptHash.Net.Tests.csproj
 
     - name: Publish to NuGet
       uses: brandedoutcast/publish-nuget@v2
