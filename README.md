@@ -4,6 +4,10 @@
 [![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) 
 [![Tests status (crypthash-net)](https://img.shields.io/appveyor/tests/alecgn/crypthash-net)](https://ci.appveyor.com/project/alecgn/crypthash-net)
 
+Backed with ❤️ by JetBrains software:  
+  
+[![Rider](./img/icon-rider.svg)](https://www.jetbrains.com/?from=crypthash-net) [![ReSharper](./img/icon-resharper.svg)](https://www.jetbrains.com/?from=crypthash-net)
+
 ### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption, hashing and encoding/decoding.
 
 The .NET Core console utility is designed to run in Windows, Linux and Mac, for text and files symmetric authenticated encryption/decryption, text/files hashing and text encoding/decoding. File checksum functionality is also available, you can calculate and verify the integrity of downloaded files from the internet with the source supplied hash.  
@@ -160,9 +164,3 @@ Publish it yourself using the following dotnet client command-line:
 
 **Complete RID LIST**
 (https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
-
---------------------------------------------------
-
-Backed with ❤️ by JetBrains software:  
-  
-[![Rider](./img/icon-rider.svg)](https://www.jetbrains.com/?from=crypthash-net) [![ReSharper](./img/icon-resharper.svg)](https://www.jetbrains.com/?from=crypthash-net)
