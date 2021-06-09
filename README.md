@@ -1,4 +1,6 @@
 # CryptHash.NET 
+
+### \*Warning\*: this repo is being migrated to https://github.com/alecgn/CryptographyHelpers
 [![Build and tests status (crypthash-net)](https://github.com/alecgn/crypthash-net/workflows/build-and-test/badge.svg)](#)
 [![Nuget version (CryptHash.Net)](https://img.shields.io/nuget/v/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) 
 [![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) 
