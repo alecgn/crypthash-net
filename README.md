@@ -1,14 +1,10 @@
 # CryptHash.NET 
 
-### \*Warning\*: this repo is being migrated to https://github.com/alecgn/CryptographyHelpers
+### \*Warning\*: this repo is being migrated to [https://github.com/alecgn/AleCGN.Security.Cryptography](https://github.com/alecgn/AleCGN.Security.Cryptography)
 [![Build and tests status (crypthash-net)](https://github.com/alecgn/crypthash-net/workflows/build-and-test/badge.svg)](#)
 [![Nuget version (CryptHash.Net)](https://img.shields.io/nuget/v/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) 
 [![Nuget downloads (CryptHash.Net)](https://img.shields.io/nuget/dt/CryptHash.Net)](https://nuget.org/packages/CryptHash.Net) 
 [![Tests status (crypthash-net)](https://img.shields.io/appveyor/tests/alecgn/crypthash-net)](https://ci.appveyor.com/project/alecgn/crypthash-net)
-
-Backed with ❤️ by JetBrains software:  
-  
-[![Rider](./img/icon-rider.svg)](https://www.jetbrains.com/?from=crypthash-net) [![ReSharper](./img/icon-resharper.svg)](https://www.jetbrains.com/?from=crypthash-net)
 
 ### A .NET multi-target Library and .NET Core Console Application utility for encryption/decryption, hashing and encoding/decoding.
 
